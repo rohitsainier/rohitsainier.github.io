@@ -228,8 +228,27 @@ img{
   font-weight: var(--font-semi);
   border-radius: .5rem;
 }
+.button_primary{
+  margin:5px;
+  display: inline-block;
+  background-color:#4070F4;
+  color: #fff;
+  padding: .40rem ;
+  font-weight: var(--font-semi);
+  border-radius: 7px;
+  border:none;
+  box-shadow: 10px 10px 36px rgba(0,0,0,.15);
+  text-align:left;
+}
+.button_primary:hover{
+  background-color:blue;
+
+}
 .button:hover{
   box-shadow: 0 10px 36px rgba(0,0,0,.15);
+}
+.skills_description{
+  padding:10px;
 }
 
 /* ===== ABOUT =====*/
