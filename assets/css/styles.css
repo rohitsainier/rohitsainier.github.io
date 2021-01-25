@@ -18,6 +18,7 @@
   --big-font-size: 2rem;
   --h2-font-size: 1.25rem;
   --normal-font-size: 0.938rem;
+
 }
 @media screen and (min-width: 768px){
   :root{
@@ -57,6 +58,7 @@ body{
   font-family: var(--body-font);
   font-size: var(--normal-font-size);
   color: var(--second-color);
+  background: linear-gradient(#FC466B,#3F5EFB);
 }
 h1,h2,p{
   margin: 0;
