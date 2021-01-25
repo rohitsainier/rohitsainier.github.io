@@ -266,6 +266,13 @@ img{
   width: 200px;
   border-radius: .5rem;
 }
+.about__text{
+  color:black;
+  font-weight:500;
+  padding: 5px;
+  font-size: larger;
+  font-family: inherit
+}
 
 /* ===== SKILLS =====*/
 .skills__container{
