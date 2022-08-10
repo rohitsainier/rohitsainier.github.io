@@ -23,16 +23,12 @@ module.exports = {
       url: 'https://www.linkedin.com/in/rohit-saini-aba50362/',
     },
     {
-      name: 'Codepen',
-      url: 'https://codepen.io/rohitsainier',
+      name: 'Youtube',
+      url: 'https://youtube.com',
     },
     {
       name: 'Instagram',
       url: 'https://www.instagram.com/connect.ios',
-    },
-    {
-      name: 'Twitter',
-      url: 'https://twitter.com/',
     },
   ],
 
