@@ -1,34 +1,34 @@
 module.exports = {
-  siteTitle: 'Yashita Namdeo',
+  siteTitle: 'Rohit Saini',
   siteDescription:
-    'Yashita Namdeo is an incoming Software Developer, based in India, who loves learning new things and helping tech beginners.',
+    'Rohit Saini is an iOS Engineer, based in India, who loves learning new things and helping tech beginners.',
   siteKeywords:
-    'Yashita Namdeo, Yashita, Namdeo, yashitanamdeo, software engineer, web developer, javascript, python, java, svvv, indore',
-  siteUrl: 'https://yashitanamdeo.github.io/',
+    'Rohit Saini, Rohit, Saini, RohitSaini, software engineer, ios developer, swift, ios, ios engineer, mvvm, kurukshetra, sainiutils',
+  siteUrl: 'https://rohitsainier.github.io/',
   siteLanguage: 'en_US',
   googleAnalyticsID: 'UA-45666519-2',
   googleVerification: 'DCl7VAf9tcz6eD9gb67NfkNnJ1PKRNcg8qQiwpbx9Lk',
-  name: 'Yashita Namdeo',
-  location: 'Indore, India',
-  email: 'yashita.namdeo2000@gmail.com',
-  github: 'https://github.com/yashitanamdeo',
+  name: 'Rohit Saini',
+  location: 'Kurukshetra, India',
+  email: 'rohitsainier@gmail.com',
+  github: 'https://github.com/rohitsainier',
   twitterHandle: '@',
   socialMedia: [
     {
       name: 'GitHub',
-      url: 'https://github.com/yashitanamdeo',
+      url: 'https://github.com/rohitsainier',
     },
     {
       name: 'Linkedin',
-      url: 'https://www.linkedin.com/in/yashitanamdeo/',
+      url: 'https://www.linkedin.com/in/rohit-saini-aba50362/',
     },
     {
       name: 'Codepen',
-      url: 'https://codepen.io/yashitanamdeo',
+      url: 'https://codepen.io/rohitsainier',
     },
     {
       name: 'Instagram',
-      url: 'https://www.instagram.com/yashitanamdeo',
+      url: 'https://www.instagram.com/connect.ios',
     },
     {
       name: 'Twitter',
