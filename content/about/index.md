@@ -14,8 +14,11 @@ skills:
   - Bash Scripting
   - MVVM
   - VIPER
+  - Github Actions
 ---
 
-Hello! I'm Rohit Saini, from Kurukshetra, where the sacred "Bhagavad Gita" scripture was first delivered. 
+Hello! My name is Rohit, and I like making things that are accessible online. When my brother gave me a Macbook Air in 2016, I became interested in iOS development and began creating little applications for amusement. 
 
-Here are the few skills i have learned over the past few years 
+Today, having started my career with a small startup, a rapid-growth business, and a large corporation has been a privilege. Building inclusive, accessible products and digital experiences for [Majid Al Futtaim](https://www.majidalfuttaim.com) is my main emphasis right now. 
+
+I've lately worked with the following technologies: 
