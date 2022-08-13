@@ -1,5 +1,5 @@
 ---
-date: '2020-03-01'
+date: '3'
 title: 'Member'
 company: 'Majid Al Futtaim'
 location: Gurugram, India

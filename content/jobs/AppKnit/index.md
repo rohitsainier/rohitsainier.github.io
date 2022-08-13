@@ -1,5 +1,5 @@
 ---
-date: '2021-05-19'
+date: '1'
 title: 'Senior iOS developer'
 company: 'App Knit'
 location: Chandigarh, India
