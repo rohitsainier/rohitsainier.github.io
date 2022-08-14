@@ -1,9 +1,8 @@
 ---
 date: '2'
 title: 'iOS App Resigner'
-cover: './disneyclone.png'
-github: ''
-external: 'https://disney-clone-83e44.web.app/'
+cover: 'cover3.png'
+external: 'https://applive.lambdatest.com/app'
 tech:
   - Golang
   - Fastlane

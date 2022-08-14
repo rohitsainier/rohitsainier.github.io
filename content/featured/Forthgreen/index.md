@@ -2,7 +2,6 @@
 date: '4'
 title: 'Forthgreen'
 cover: 'cover.png'
-github: ''
 external: 'https://forthgreen.com'
 tech:
   - MVVM

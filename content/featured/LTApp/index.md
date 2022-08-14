@@ -1,9 +1,8 @@
 ---
 date: '1'
 title: 'LTApp'
-cover: 'demo1.png'
-github: ''
-external: 'https://covid19-tracker-84ef4.web.app/'
+cover: 'cover4.png'
+external: 'https://applive.lambdatest.com/app'
 tech:
   - WebRTC
   - Http Server

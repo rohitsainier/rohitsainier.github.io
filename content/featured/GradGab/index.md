@@ -1,8 +1,7 @@
 ---
 date: '3'
 title: 'GradGab'
-cover: 'face-mask.png'
-github: 'https://github.com/yashitanamdeo/Realtime-Face-Mask-Detection'
+cover: 'cover2.png'
 external: 'https://www.gradgab.com'
 tech:
   - Amazon Chime SDK 
