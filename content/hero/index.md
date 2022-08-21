@@ -4,4 +4,5 @@ name: 'Rohit Saini'
 subtitle: 'I create iOS applications.'
 buttonText: 'Get In Touch'
 ---
-I’m an iOS engineer specializing in building (and occasionally designing) exceptional digital experiences. Currently, I’m focused on building accessible, human-centered products at [Majid Al Futtaim](https://www.majidalfuttaim.com).
+
+I have 5 years of expertise as an iOS engineer with a focus on creating (and occasionally designing) remarkable digital experiences. At [Majid Al Futtaim](https://www.majidalfuttaim.com), my current work focuses on developing products that are human-centered and accessible.
