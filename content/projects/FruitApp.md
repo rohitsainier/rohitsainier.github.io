@@ -1,5 +1,5 @@
 ---
-date: '3'
+date: '2021'
 title: 'Fruit App'
 github: 'https://github.com/Accessed-Denied/FruitApp'
 tech:

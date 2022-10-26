@@ -1,5 +1,5 @@
 ---
-date: '2'
+date: '2022'
 title: 'Furniture App'
 github: 'https://github.com/rohitsainier/FurnitureAppUI'
 tech:
