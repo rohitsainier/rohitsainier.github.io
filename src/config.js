@@ -24,7 +24,7 @@ module.exports = {
     },
     {
       name: 'Youtube',
-      url: 'https://youtube.com',
+      url: 'https://youtube.com/@rohitsainier',
     },
     {
       name: 'Instagram',
