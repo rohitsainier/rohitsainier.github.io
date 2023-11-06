@@ -49,3 +49,7 @@ window.onscroll = () => {
     this.innerHeight + this.scrollY >= document.scrollingElement.scrollHeight
   );
 };
+
+function openResume() {
+  window.open("/document/resume.pdf", "_blank");
+}
