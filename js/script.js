@@ -51,5 +51,5 @@ window.onscroll = () => {
 };
 
 function openResume() {
-  window.open("/document/resume.pdf", "_blank");
+  window.open("assets/document/resume.pdf", "_blank");
 }
