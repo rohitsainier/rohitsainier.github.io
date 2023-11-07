@@ -53,35 +53,3 @@ window.onscroll = () => {
 function openResume() {
   window.open("assets/document/resume.pdf", "_blank");
 }
-
-// Define function to send email
-function sendEmail() {
-  // Get form data
-  const name = document.querySelector('input[name="name"]').value;
-  const email = document.querySelector('input[name="email"]').value;
-  const mobile = document.querySelector('input[name="mobile"]').value;
-  const subject = document.querySelector('input[name="subject"]').value;
-  const message = document.querySelector('textarea[name="message"]').value;
-
-  // Check if all fields are not empty
-  if (
-    name !== "" &&
-    email !== "" &&
-    mobile !== "" &&
-    subject !== "" &&
-    message !== ""
-  ) {
-    // Construct email body
-    const body = `Name: ${name}\nEmail: ${email}\nMobile: ${mobile}\nSubject: ${subject}\nMessage: ${message}`;
-
-    // Send email using email client
-    window.location.href = `mailto:rohitsainier@gmail.com?subject=${subject}&body=${body}`;
-
-    // Display success message
-    const successMessage = document.querySelector(".success-message");
-    successMessage.style.display = "block";
-  } else {
-    // Display error message or perform any other action
-    alert("Please fill in all the fields before submitting.");
-  }
-}
