@@ -85,9 +85,9 @@ section {
   display: flex;
   align-items: center;
   padding: 0 9%;
-  background: url("/home.jpg") no-repeat;
-  background-size: cover;
-  background-position: center;
+  background: url("/assets/images/cover.png") no-repeat;
+  background-position: right;
+  background-size: 40%;
 }
 .home-content {
   max-width: 60rem;
