@@ -1,0 +1,26 @@
+[
+    {
+      "title": "ART OF SCHIELE",
+      "description": "An interactive exploration of Egon Schiele's artistry with horizontal scrolling and immersive animations.",
+      "tags": ["#content curation", "#art direction", "#web design", "#interaction design"],
+      "media": "assets/projects/Chatapp.png",
+      "type": "image",
+      "url": "https://example.com"
+    },
+    {
+      "title": "DATA VIBES",
+      "description": "Art meets data visualization in this interactive experience powered by WebGL and creative programming.",
+      "tags": ["#data", "#visualization", "#creativecoding"],
+      "media": "assets/projects/touchdown.png",
+      "type": "image",
+      "url": "https://example2.com"
+    },
+    {
+      "title": "STORY SCROLL",
+      "description": "A storytelling interface with vertical parallax, subtle motion graphics, and strong typographic rhythm.",
+      "tags": ["#storytelling", "#scrollmagic", "#motiondesign"],
+      "media": "assets/projects/forthgreen.png",
+      "type": "image",
+      "url": "https://example3.com"
+    }
+  ]

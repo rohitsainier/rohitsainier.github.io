@@ -1,296 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=chrome">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rohit Saini</title>
-    <link rel="icon" type="image/x-icon" href="assets/images/logo.png">
-    <link rel="stylesheet" href="css/style.css">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Project Portfolio — Rohit Saini</title>
 
-    <!-- box icons -->
-    <link
-      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
-      rel="stylesheet"
-     >
-  </head>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600&display=swap" rel="stylesheet"/>
 
-  <body>
-    <!-- header design -->
-    <header class="header">
-      <a href="#" class="logo">Rohit Saini.<span class="animate" style="--i:1;"></span></a>
-      <div class="bx bx-menu" id="menu-icon"><span class="animate" style="--i:2;"></span></div>
+  <!-- AOS Animation Library -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
-      <nav class="navbar">
-        <a href="#home" class="active">Home</a>
-        <a href="#about">About</a>
-        <a href="#experience">Experience</a>
-        <a href="#skills">Skills</a>
-        <a href="#projects">Projects</a>
+  <!-- Main stylesheet -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
 
-        <span class="active-nav"></span>
-        <span class="animate" style="--i:2;"></span>
-      </nav>
-    </header>
+  <!-- Grid Background -->
+  <div class="grid-bg"></div>
 
-    <!-- home section design -->
-    <section class="home show-animate" id="home">
-      <div class="home-content">
-        <h1>नमस्ते, my name is <span>Rohit Saini</span><span class="animate" style="--i:2;"></span></h1>
-        <div class="text-animate">
-          <h3>iOS Engineer</h3>
-          <span class="animate" style="--i:3;"></span>
-        </div>
-        <p>
-          With six years of experience in software development, I specialize in the iOS domain. I have developed an iOS application that streams device screens to browsers using WebRTC and created a server to resign multiple iOS apps with Fastlane and Golang. Currently, I am expanding my skills in Full Stack Development, focusing on React and Next.js. I also enjoy writing about tech and life on Medium and am passionate about fitness.
-          <span class="animate" style="--i:4;"></span>
-        </p>
-        <div class="btn-box">
-          <a href="mailto:rohitsainier@gmail.com" target="_blank" class="btn">Hire Me</a>
-          <a href="#" class="btn" onclick="openResume()">Resume</a>
-          <span class="animate" style="--i:5;"></span>
-        </div>
-      </div>
-      <div class="home-sci">
-       
-        <a href="https://www.linkedin.com/in/rohit-saini-aba50362/" target="_blank"><i class="bx bxl-linkedin"></i></a>
-      
-        <a href="https://github.com/rohitsainier" target="_blank"><i class="bx bxl-github"></i></a>
-        <a href="https://instagram.com/connect.ios" target="_blank"><i class="bx bxl-instagram"></i></a>
-        <a href="https://www.youtube.com/@rohitsainier" target="_blank"><i class="bx bxl-youtube"></i></a>
-        <a href="https://medium.com/@rohitsainier" target="_blank"><i class="bx bxl-medium"></i></a>
+  <!-- Project Grid Container -->
+  <main class="projects-wrapper"></main>
 
-        <span class="animate" style="--i:6;"></span>
-      </div>
+  <!-- JS to Load JSON Project Data -->
+  <script src="js/main.js"></script>
 
-      <div class="home-imgHover"></div>
-      <span class="animate home-img" style="--i:7;"></span>
-    </section>
-
-    <!-- about section design -->
-    <section class="about" id="about">
-      <h2 class="heading">About <span class="animate scroll" style="--i:1;"></span><span>Me</span></h2>
-      <div class="about-img">
-        <img src="/assets/images/profile.png" alt="" />
-        <span class="circle-spin"></span>
-        <span class="animate scroll" style="--i:2;"></span>
-      </div>
-
-      <div class="about-content">
-        <h3>iOS Engineer<span class="animate scroll" style="--i:3;"></span></h3>
-        <p>Hey there, I'm Rohit, and I'm all about bringing the online world within reach. Back in 2016, when my brother gifted me a Macbook Air, my fascination with iOS development took flight, leading me to tinker with tiny apps just for the fun of it.
-          My journey has been nothing short of a rollercoaster ride, starting from the humble grounds of a startup and propelling through the whirlwind of a rapid-growth business to the heights of a corporate behemoth – every step a privileged experience. Currently, my focus revolves around weaving together inclusive, accessible products and digital adventures for the vibrant universe of Majid Al Futtaim.
-          Additionally, my curiosity knows no bounds, especially when it comes to AI. I've delved into the world of GenAI and other cutting-edge AI tools, building small yet impactful products that harness the power of this exciting technology.
-          <span class="animate scroll" style="--i:4;"></span>
-        </p>
-      </div>
-    </section>
-
-    <!-- experience section design -->
-    <section class="experience" id="experience">
-      <h2 class="heading">My <span>Journey<span class="animate scroll" style="--i:1;"></span></span></h2>
-      <div class="experience-row">
-        <div class="experience-column">
-          <h3 class="title">Experience<span class="animate scroll" style="--i:2;"></span></h3>
-          <div class="experience-box">
-            <div class="experience-content">
-              <div class="content">
-                <div class="year">
-                  <i class="bx bxs-calendar"></i> Mar 2022 - Present
-                </div>
-                <h3>Senior iOS Engineer <a href="https://www.majidalfuttaim.com/" target="_blank" style="color: #4CA8EA;">@ Majid Al Futtaim</a></h3>
-                <p> I spearheaded the complete makeover of the Cart and Checkout Journey, transforming it from UIKit to SwiftUI for an enhanced user experience.</p>
-                <p> Leading the Post Order experience for Carrefour Mobile App.</p>
-              </div>
-            </div>
-            <div class="experience-content">
-              <div class="content">
-                <div class="year">
-                  <i class="bx bxs-calendar"></i> May 2021 – Feb 2022
-                </div>
-                <h3>Senior iOS Engineer <a href="https://www.lambdatest.com/" target="_blank" style="color: #4CA8EA;">@ Lambdatest</a></h3>
-                <p> POC for broadcasting the iOS device's screen to a web browser using WebRTC was successfully completed, which helped attract <a href="https://www.business-standard.com/article/companies/lambdatest-closes-45-million-in-a-venture-round-led-by-premji-invest-122032901312_1.html" target="_blank" style="color: #4CA8EA; font-weight: bold;">$45M</a> in funding.</p>
-                <p> iOS App Resigner was created to resign numerous applications at once, cutting the session starting time by 25%.</p>
-                <p> Accomplished POC for session restoration of iOS devices using iDevice.</p>
-                <p> Utilized XCUITest and Bash scripts to automate everyday operations, reducing manual labour by up to 40%.</p>
-              </div>
-            </div>
-            <div class="experience-content">
-              <div class="content">
-                <div class="year">
-                  <i class="bx bxs-calendar"></i> Jul 2018 – Apr 2021
-                </div>
-                <h3>Senior iOS developer <a href="https://app-knit.com/" target="_blank" style="color: #4CA8EA;">@ App Knit</a></h3>
-                <p> Completely managed, developed, and deployed 10+ projects.</p>
-                <p> The company's core codebase was improved by being refactored to match modern best practises, which increased performance and cut memory use by up to 30%.</p>
-                <p> Participated in code reviews and maintained git hygiene.</p>
-              </div>
-            </div>
-            <span class="animate scroll" style="--i:3;"></span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- skills section design -->
-
-    <section class="skills" id="skills">
-      <h2 class="heading">My <span>Skills</span><span class="animate scroll" style="--i:1;"></span></h2>
-
-      <div class="skills-row">
-        <div class="skills-column">
-          <h3 class="title">Coding Skills<span class="animate scroll" style="--i:2;"></span></h3>
-          <div class="skills-box">
-            <div class="skills-content">
-              <div class="progress">
-                <h3>Swift <span>100%</span></h3>
-                <div class="bar"><span></span></div>
-              </div>
-              <div class="progress">
-                <h3>Python <span>80%</span></h3>
-                <div class="bar"><span></span></div>
-              </div>
-
-              <div class="progress">
-                <h3>Golang<span>80%</span></h3>
-                <div class="bar"><span></span></div>
-              </div>
-
-              <div class="progress">
-                <h3>Bash<span>100%</span></h3>
-                <div class="bar"><span></span></div>
-              </div>
-            </div>
-            <span class="animate scroll" style="--i:3;"></span>
-          </div>
-        </div>
-
-        <div class="skills-column">
-          <h3 class="title">Professional Skills<span class="animate scroll" style="--i:5;"></span></h3>
-          <div class="skills-box">
-            <div class="skills-content">
-              <div class="progress">
-                <h3>iOS Development <span>100%</span></h3>
-                <div class="bar"><span></span></div>
-              </div>
-
-              <div class="progress">
-                <h3>Flutter<span>80%</span></h3>
-                <div class="bar"><span></span></div>
-              </div>
-
-              <div class="progress">
-                <h3>Next JS<span>40%</span></h3>
-                <div class="bar"><span></span></div>
-              </div>
-
-              <div class="progress">
-                <h3>Unit Testing<span>100%</span></h3>
-                <div class="bar"><span></span></div>
-              </div>
-
-              <div class="progress">
-                <h3>XCUITest <span>100%</span></h3>
-                <div class="bar"><span></span></div>
-              </div>
-
-              <div class="progress">
-                <h3>WebRTC <span>100%</span></h3>
-                <div class="bar"><span></span></div>
-              </div>
-
-              <div class="progress">
-                <h3>Firebase<span>100%</span></h3>
-                <div class="bar"><span></span></div>
-              </div>
-
-              <div class="progress">
-                <h3>GenAI<span>40%</span></h3>
-                <div class="bar"><span></span></div>
-              </div>
-              
-            </div>
-            <span class="animate scroll" style="--i:6;"></span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-     <!-- projects section design -->
-
-    <section class="projects" id="projects">
-      <h2 class="heading">Latest <span>Projects</span></h2>
-      <div class="projects-container">
-        <div class="projects-box">
-          <img src="/assets/projects/Chatapp.png" alt="">  
-          <div class="projects-layer">
-            <h4>Chat App using Firebase</h4>
-            <p>Built this chat application utilizing the power of Firebase, incorporating SDWebImage for efficient image caching, and Firestore as a reliable database. On top of that, Firebase Auth is seamlessly integrated for a secure and seamless authentication process. </p>
-            <a href="https://github.com/Accessed-Denied/friendly-broccoli" target="_blank"><i class='bx bx-link-external'></i></a>
-            <b>Swift Firebase Firestore SDWebImage </b>
-          </div>
-        </div>
-
-        <div class="projects-box">
-          <img src="/assets/projects/forthgreen.png" alt="">
-          <div class="projects-layer">
-            <h4>Forthgreen</h4>
-            <p>Forthgreen is an app designed to make ethical and vegan life simple. </p>
-            <a href="https://forthgreen.com/" target="_blank"><i class='bx bx-link-external'></i></a>
-            <b>MVVM AppleMaps </b>
-          </div>
-        </div>
-
-        <div class="projects-box">
-          <img src="/assets/projects/touchdown.png" alt="">
-          <div class="projects-layer">
-            <h4>Touch Down (Sports App)</h4>
-            <p>This is a sports app UI built using SwiftUI and Combine. It uses the Dummy json data to populate the UI. </p>
-            <a href="https://github.com/Accessed-Denied/TouchDown" target="_blank"><i class='bx bx-link-external'></i></a>
-            <b>SwiftUI Combine </b>
-          </div>
-        </div>
-
-        <div class="projects-box">
-          <img src="/assets/projects/resigner.png" alt="">
-          <div class="projects-layer">
-            <h4>iOS App Resigner</h4>
-            <p>iOS App Resigner can (re)sign apps and bundle them into ipa files that are ready to be installed on an iOS device. </p>
-            <a href="https://applive.lambdatest.com/app" target="_blank"><i class='bx bx-link-external'></i></a>
-            <b>Golang Fastlane Bash Scripting </b>
-          </div>
-        </div>
-
-        <div class="projects-box">
-          <img src="/assets/projects/LTApp.png" alt="">
-          <div class="projects-layer">
-            <h4>LTApp</h4>
-            <p>LTApp can stream iOS devices screen to web browser using WebRTC data channels. </p>
-            <p>It also helps to control iOS devices remotely. </p>
-            <a href="https://applive.lambdatest.com/app" target="_blank"><i class='bx bx-link-external'></i></a>
-            <b>WebRTC HttpServer WebSocket </b>
-          </div>
-        </div>
-      </div>
-   
-    </section>
-
-    <!-- footer design -->
-
-    <footer class="footer">
-      <div class="footer-text">
-        <p>Copyright &copy; 2023 by Rohit Saini | All Right Reserved.</p>
-
-      </span><span class="animate scroll" style="--i:1;"></span>
-      </div>
-
-      <div class="footer-iconTop">
-        <a href="#"><i class="bx bx-up-arrow-alt"></i></a>
-
-      </span><span class="animate scroll" style="--i:3;"></span>
-      </div>
-    </footer>
-
-    <script src="js/script.js"></script>
-  </body>
+  <!-- AOS Script -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  AOS.init({
+    duration: 1000,
+    once: true, // Run once when in view
+  });
+</script>
+</body>
 </html>
