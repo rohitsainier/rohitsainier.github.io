@@ -24,10 +24,11 @@ fetch('data/projects.json')
 
       const html = `
         <section class="project ${isReversed}" data-aos="${index % 2 === 0 ? 'fade-right' : 'fade-left'}">
-          <div class="project-info">
-            <h2>${project.title}</h2>
+          <div class="project-box">
+            <h3>${project.title}</h3>
             <p>${project.description}</p>
             <div class="tags">${tags}</div>
+             <div class="dot"></div>
           </div>
           <div class="media-preview">
             ${media}

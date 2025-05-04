@@ -1,4 +1,25 @@
 /* Root styles */
+
+@font-face {
+  font-family: 'PP Neue Montreal';
+  src: url('fonts/PPNeueMontreal-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'PP Neue Montreal';
+  src: url('fonts/PPNeueMontreal-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+
+body {
+  font-family: 'PP Neue Montreal', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
@@ -7,7 +28,7 @@ body {
 }
 
 /* Grid Background Overlay */
-.grid-bg {
+/* .grid-bg {
   position: fixed;
   top: 0;
   left: 0;
@@ -16,25 +37,55 @@ body {
   background-image: 
     linear-gradient(to right, rgba(0,0,0,0.3) 0.7px, transparent 1px),
     linear-gradient(to bottom, rgba(0,0,0,0.3) 0.7px, transparent 1px);
-  background-size: 135px 135px;
+  background-size: 115px 115px;
   z-index: -1;
+} */
+
+
+.grid-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  pointer-events: none;
 }
+
+/* Horizontal lines only */
+.grid-horizontal {
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0.7px, transparent 1px);
+  background-size: 115px 115px;
+  background-position: 0 57.5px; /* Half of 115px to center lines */
+}
+
+/* Vertical lines only */
+.grid-vertical {
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.3) 0.7px, transparent 1px);
+  background-size: 115px 115px;
+  background-position: 57.5px 0; /* Half of 115px to center lines */
+}
+
 
 /* Content Wrapper */
 .projects-wrapper {
-  display: flex;
-  flex-direction: column;
+  position: relative;
+  z-index: 1;
+  padding: 0rem 0; /* Optional spacing */
+  margin-right: 10px;
 }
 
 /* Project Card Layout */
 .project {
+  width: 78%;
+  margin-left: 10px;
+  margin: auto;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  padding: 80px 40px;
-  min-height: 120vh;
-  align-items: center;
+  min-height: 100vh;
+  align-items:center;
   box-sizing: border-box;
+
 }
 
 /* Reverses content order for alternating projects */
@@ -54,17 +105,16 @@ body {
 .media-preview {
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: left;
   justify-content: center;
 }
 
 .media-preview video,
 .media-preview img {
-  width: 90%;
-  max-height: 80vh;
-  border-radius: 12px;
+  max-height: 70vh;
   object-fit: cover;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  margin: 5px;
 }
 
 /* View Site Button */
@@ -90,9 +140,10 @@ body {
   padding: 20px;
 }
 
-.project-info h2 {
-  font-size: 2.5rem;
-  font-weight: 600;
+.project-info h3 {
+  font-size: 26px;
+  color:#202020;
+  font-weight: 550;
   margin-bottom: 20px;
 }
 
@@ -122,7 +173,7 @@ body {
   .media-preview video,
   .media-preview img {
     width: 100%;
-    max-height: 60vh;
+    max-height: 70vh;
   }
 
   .view-button {
@@ -133,3 +184,80 @@ body {
     direction: ltr;
   }
 }
+
+
+.project-box {
+  width:84%;
+  margin: auto;
+  background-color:transparent;
+  padding: 2rem;
+  font-family: 'PP Neue Montreal', sans-serif;
+  max-width: 500px;
+  position: relative;
+  color: #111;
+}
+
+.project-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 12px;
+  height: 32px;
+  background-color: black;
+}
+
+.project-box::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 32px;
+  width: 2px;
+  height: calc(100% - 40px);
+  background-color: black;
+}
+
+.dot {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 10px;
+  height: 10px;
+  background-color: black;
+  border-radius: 50%;
+}
+
+.project-box h3 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.project-box p {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.project-box .featured {
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+}
+
+.project-box .featured strong {
+  font-weight: bold;
+}
+
+.project-box .tags {
+  font-size: 0.9rem;
+  color: #111;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.project-box .tags span {
+  white-space: nowrap;
+}
+
+
