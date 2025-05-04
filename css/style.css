@@ -18,6 +18,8 @@ body {
   font-family: 'PP Neue Montreal', sans-serif;
   margin: 0;
   padding: 0;
+  width: 100%;
+  background-color: #f1f1f1; /* Light background like your screenshot */
 }
 
 body {
@@ -53,27 +55,23 @@ body {
 }
 
 /* Horizontal lines only */
-.grid-horizontal {
-  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0.7px, transparent 1px);
-  background-size: 115px 115px;
-  background-position: 0 57.5px; /* Half of 115px to center lines */
-}
-
-/* Vertical lines only */
-.grid-vertical {
-  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.3) 0.7px, transparent 1px);
-  background-size: 115px 115px;
-  background-position: 57.5px 0; /* Half of 115px to center lines */
-}
 
 
 /* Content Wrapper */
 .projects-wrapper {
   position: relative;
   z-index: 1;
-  padding: 0rem 0; /* Optional spacing */
-  margin-right: 10px;
+  padding: 4rem 2rem; /* Add padding to show top/bottom grid */
+  min-height: 100vh; /* Ensures it covers the full viewport height */
+
+  background-image:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+    linear-gradient(to right, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+  background-size: 115px 115px;
+  background-position: 0 0;
 }
+
+
 
 /* Project Card Layout */
 .project {
@@ -85,6 +83,7 @@ body {
   min-height: 100vh;
   align-items:center;
   box-sizing: border-box;
+
 
 }
 
@@ -260,4 +259,53 @@ body {
   white-space: nowrap;
 }
 
+.about-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 4rem;
+  padding: 6rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  height: 100vh;
+  align-items: center;
+}
 
+.about-heading h2 {
+  font-size: 4rem;
+  font-weight: bold;
+  color: #111;
+  margin: 0;
+}
+
+.about-content {
+  column-count: 2;
+  column-gap: 3rem;
+  line-height: 1.8;
+  font-size: 1.125rem;
+  color: #111;
+}
+
+.about-content p {
+  margin-bottom: 1.5rem;
+  break-inside: avoid;
+}
+
+@media (max-width: 768px) {
+  .about-wrapper {
+    grid-template-columns: 1fr;
+    padding: 4rem 1.5rem;
+    gap: 2rem;
+    height: auto;
+  }
+
+  .about-heading h2 {
+    font-size: 2.5rem;
+    text-align: center;
+  }
+
+  .about-content {
+    column-count: 1;
+    font-size: 1rem;
+    text-align: justify;
+  }
+}

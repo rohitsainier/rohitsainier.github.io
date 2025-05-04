@@ -1,4 +1,29 @@
-[
+{
+  "bio": {
+    "name": "Your Name",
+    "role": "Webflow Developer & Multi-Disciplinary Designer",
+    "location": "City, Country",
+    "email": "your.email@example.com",
+    "portfolio": "https://yourportfolio.com"
+  },
+  "about": {
+    "heading": "ABOUT",
+    "description": [
+      "I’m a multi-disciplinary designer and Webflow developer, passionate about crafting ideas, visuals, and typography into unforgettable digital experiences. With a genuine belief in the transformative power of design, I am constantly exploring the vast creative world, from architecture, art, graphic design, illustration, motion design, and UX design. My journey began in architecture, however, my passion for limitless creativity led me to explore the endless possibilities that creative development has to offer.",
+      "With over 2 years of hands-on experience in Webflow, I bring a unique blend of design and development skills to every project. My goal is to deliver digital experiences that not only engage and inspire but also achieve tangible results for my clients. When working on websites, I place a strong emphasis on crafting unique layouts, captivating interactions, and good use of typography, blending these elements to create a seamless user experience that leaves a lasting impression."
+    ]
+  },
+  "skills": [
+    "Webflow",
+    "UI/UX Design",
+    "Interaction Design",
+    "Typography",
+    "HTML/CSS",
+    "Graphic Design",
+    "Motion Design",
+    "CMS Integration"
+  ],
+  "projects": [
     {
       "title": "ART OF SCHIELE",
       "description": "Ananas Media is a creative media agency specializing in video production, photography, and graphic design services. The website is designed to showcase their work effectively. It features interactions to enhance user engagement, custom video players and CMS integration.",
@@ -23,4 +48,20 @@
       "type": "image",
       "url": "https://example3.com"
     }
-  ]
+  ],
+  "education": [
+    {
+      "institution": "Your University Name",
+      "degree": "Bachelor of Architecture",
+      "year": "2019 – 2024",
+      "location": "City, Country"
+    }
+  ],
+  "contact": {
+    "email": "your.email@example.com",
+    "phone": "+1234567890",
+    "linkedin": "https://linkedin.com/in/yourname",
+    "instagram": "https://instagram.com/yourhandle",
+    "dribbble": "https://dribbble.com/yourhandle"
+  }
+}

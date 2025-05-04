@@ -5,7 +5,33 @@ fetch('data/projects.json')
     }
     return res.json();
   })
-  .then((projects) => {
+  .then((data) => {
+    const { about, projects } = data;
+
+    // -------- Render About Section --------
+    const aboutWrapper = document.querySelector('.about-wrapper');
+
+    if (!aboutWrapper) {
+      console.error("'.about-wrapper' not found in HTML!");
+    } else {
+      const descriptionHTML = about.description
+        .map(paragraph => `<p>${paragraph}</p>`)
+        .join('');
+
+        const aboutHTML = `
+        <div class="about-heading">
+          <h2>${about.heading}</h2>
+        </div>
+        <div class="about-content">
+          ${about.description.map(paragraph => `<p>${paragraph}</p>`).join('')}
+        </div>
+      `;
+      
+
+      aboutWrapper.innerHTML = aboutHTML;
+    }
+
+    // -------- Render Projects Section (same as before) --------
     const wrapper = document.querySelector('.projects-wrapper');
 
     if (!wrapper) {
@@ -28,7 +54,7 @@ fetch('data/projects.json')
             <h3>${project.title}</h3>
             <p>${project.description}</p>
             <div class="tags">${tags}</div>
-             <div class="dot"></div>
+            <div class="dot"></div>
           </div>
           <div class="media-preview">
             ${media}
@@ -41,5 +67,5 @@ fetch('data/projects.json')
     });
   })
   .catch((error) => {
-    console.error("Error loading project data:", error);
+    console.error("Error loading data:", error);
   });
