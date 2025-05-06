@@ -14,6 +14,280 @@
   font-style: normal;
 }
 
+/* Header styles */
+.sticky-header {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  background-color: #f2f2f2;
+  border-bottom: 1px solid #e0e0e0;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+}
+
+.header-left {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  text-decoration: none;
+  color: #000;
+}
+
+.logo-icon {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+}
+
+.header-center {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+}
+
+.nav-links li {
+  margin: 0 15px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #000;
+  font-weight: 500;
+}
+
+.header-right {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.donate-btn {
+  background-color: #5e5ee6;
+  color: white;
+  border: none;
+  padding: 10px 30px;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+
+/* Add large title banner */
+.banner {
+  width: 100%;
+  padding: 60px 20px;
+  background-color: #f2f2f2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.banner h1 {
+  font-size: 8rem;
+  font-weight: 800;
+  letter-spacing: -2px;
+}
+
+/* Main content padding */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 5vh 5vw;
+}
+
+.main-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.title-section {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 4rem;
+}
+
+.profile-image {
+  width: 350px;
+  height: 350px;
+  background-color: #ddd;
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-image-pixels {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+}
+
+.pixel {
+  width: 100%;
+  height: 100%;
+}
+
+.titles {
+  flex-grow: 1;
+}
+
+h1, h2 {
+  font-size: 8rem;
+  font-weight: 800;
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+.circular-text {
+  position: absolute;
+  bottom: 1rem;
+  right: 10rem;
+  width: 100px;
+  height: 100px;
+}
+
+.circular-text svg {
+  width: 100%;
+  height: 100%;
+}
+
+.circular-text-path {
+  fill: none;
+}
+
+.circular-text text {
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.sun {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  background-color: #FFD700;
+  border-radius: 50%;
+}
+
+
+/* Partners Section */
+.partners-section {
+  margin: 80px 0;
+  width: 100%;
+}
+
+.partners-header {
+  margin-bottom: 40px;
+}
+
+.page-numbers {
+  font-size: 16px;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.section-title {
+  font-size: 4rem;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 40px;
+}
+
+.partners-content {
+  width: 100%;
+}
+
+.partner-item {
+  border-bottom: 1px solid #e0e0e0;
+  padding: 30px 0;
+}
+
+.partner-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.partner-name {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.toggle-btn {
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.partner-description {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, padding 0.3s ease;
+  padding: 0 40px 0 0;
+}
+
+.partner-item.open .partner-description {
+  max-height: 500px;
+  padding: 20px 40px 20px 0;
+}
+
+.partner-description p {
+  margin-bottom: 20px;
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+.visit-btn {
+  display: inline-block;
+  border: 1px solid #222;
+  padding: 12px 24px;
+  border-radius: 50px;
+  text-decoration: none;
+  color: #222;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.visit-btn:hover {
+  background-color: #222;
+  color: #fff;
+}
+
+.arrow {
+  margin-left: 8px;
+}
+
+
 body {
   font-family: 'PP Neue Montreal', sans-serif;
   margin: 0;
