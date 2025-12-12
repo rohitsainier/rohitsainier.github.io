@@ -1,296 +1,1922 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=chrome">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rohit Saini</title>
-    <link rel="icon" type="image/x-icon" href="assets/images/logo.png">
-    <link rel="stylesheet" href="css/style.css">
-
-    <!-- box icons -->
+    <title>Rohit Saini | AI + iOS Engineer</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link
-      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
-      rel="stylesheet"
-     >
-  </head>
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Space Grotesk', sans-serif;
+            cursor: none;
+        }
 
-  <body>
-    <!-- header design -->
-    <header class="header">
-      <a href="#" class="logo">Rohit Saini.<span class="animate" style="--i:1;"></span></a>
-      <div class="bx bx-menu" id="menu-icon"><span class="animate" style="--i:2;"></span></div>
+        /* Custom Cursor */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #6366f1;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s, width 0.3s, height 0.3s, background 0.3s;
+            transform: translate(-50%, -50%);
+        }
 
-      <nav class="navbar">
-        <a href="#home" class="active">Home</a>
-        <a href="#about">About</a>
-        <a href="#experience">Experience</a>
-        <a href="#skills">Skills</a>
-        <a href="#projects">Projects</a>
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background: #a855f7;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+        }
 
-        <span class="active-nav"></span>
-        <span class="animate" style="--i:2;"></span>
-      </nav>
-    </header>
+        .cursor.hover {
+            width: 50px;
+            height: 50px;
+            background: rgba(99, 102, 241, 0.1);
+            border-color: #a855f7;
+        }
 
-    <!-- home section design -->
-    <section class="home show-animate" id="home">
-      <div class="home-content">
-        <h1>नमस्ते, my name is <span>Rohit Saini</span><span class="animate" style="--i:2;"></span></h1>
-        <div class="text-animate">
-          <h3>iOS Engineer</h3>
-          <span class="animate" style="--i:3;"></span>
-        </div>
-        <p>
-          With six years of experience in software development, I specialize in the iOS domain. I have developed an iOS application that streams device screens to browsers using WebRTC and created a server to resign multiple iOS apps with Fastlane and Golang. Currently, I am expanding my skills in Full Stack Development, focusing on React and Next.js. I also enjoy writing about tech and life on Medium and am passionate about fitness.
-          <span class="animate" style="--i:4;"></span>
-        </p>
-        <div class="btn-box">
-          <a href="mailto:rohitsainier@gmail.com" target="_blank" class="btn">Hire Me</a>
-          <a href="#" class="btn" onclick="openResume()">Resume</a>
-          <span class="animate" style="--i:5;"></span>
-        </div>
-      </div>
-      <div class="home-sci">
-       
-        <a href="https://www.linkedin.com/in/rohit-saini-aba50362/" target="_blank"><i class="bx bxl-linkedin"></i></a>
-      
-        <a href="https://github.com/rohitsainier" target="_blank"><i class="bx bxl-github"></i></a>
-        <a href="https://instagram.com/connect.ios" target="_blank"><i class="bx bxl-instagram"></i></a>
-        <a href="https://www.youtube.com/@rohitsainier" target="_blank"><i class="bx bxl-youtube"></i></a>
-        <a href="https://medium.com/@rohitsainier" target="_blank"><i class="bx bxl-medium"></i></a>
+        /* Scroll Progress */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #6366f1, #a855f7, #ec4899);
+            z-index: 9999;
+            transition: width 0.1s;
+        }
 
-        <span class="animate" style="--i:6;"></span>
-      </div>
+        /* Noise Overlay */
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
 
-      <div class="home-imgHover"></div>
-      <span class="animate home-img" style="--i:7;"></span>
-    </section>
+        /* Mouse Spotlight */
+        .spotlight {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 1;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s;
+        }
 
-    <!-- about section design -->
-    <section class="about" id="about">
-      <h2 class="heading">About <span class="animate scroll" style="--i:1;"></span><span>Me</span></h2>
-      <div class="about-img">
-        <img src="/assets/images/profile.png" alt="" />
-        <span class="circle-spin"></span>
-        <span class="animate scroll" style="--i:2;"></span>
-      </div>
+        /* Animated Background */
+        .gradient-bg {
+            background: #0a0a0f;
+            min-height: 100vh;
+        }
 
-      <div class="about-content">
-        <h3>iOS Engineer<span class="animate scroll" style="--i:3;"></span></h3>
-        <p>Hey there, I'm Rohit, and I'm all about bringing the online world within reach. Back in 2016, when my brother gifted me a Macbook Air, my fascination with iOS development took flight, leading me to tinker with tiny apps just for the fun of it.
-          My journey has been nothing short of a rollercoaster ride, starting from the humble grounds of a startup and propelling through the whirlwind of a rapid-growth business to the heights of a corporate behemoth – every step a privileged experience. Currently, my focus revolves around weaving together inclusive, accessible products and digital adventures for the vibrant universe of Majid Al Futtaim.
-          Additionally, my curiosity knows no bounds, especially when it comes to AI. I've delved into the world of GenAI and other cutting-edge AI tools, building small yet impactful products that harness the power of this exciting technology.
-          <span class="animate scroll" style="--i:4;"></span>
-        </p>
-      </div>
-    </section>
+        /* Network Canvas */
+        #networkCanvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+        }
 
-    <!-- experience section design -->
-    <section class="experience" id="experience">
-      <h2 class="heading">My <span>Journey<span class="animate scroll" style="--i:1;"></span></span></h2>
-      <div class="experience-row">
-        <div class="experience-column">
-          <h3 class="title">Experience<span class="animate scroll" style="--i:2;"></span></h3>
-          <div class="experience-box">
-            <div class="experience-content">
-              <div class="content">
-                <div class="year">
-                  <i class="bx bxs-calendar"></i> Mar 2022 - Present
+        /* 3D Tilt Card */
+        .tilt-card {
+            transform-style: preserve-3d;
+            transition: transform 0.1s;
+        }
+
+        .tilt-card-inner {
+            transform: translateZ(30px);
+        }
+
+        /* Magnetic Button */
+        .magnetic-btn {
+            position: relative;
+            transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        /* Text Scramble */
+        .scramble-text {
+            display: inline-block;
+        }
+
+        /* Marquee */
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .marquee-content {
+            display: inline-flex;
+            animation: marquee 30s linear infinite;
+        }
+
+        .marquee-content:hover {
+            animation-play-state: paused;
+        }
+
+        @keyframes marquee {
+            from {
+                transform: translateX(0);
+            }
+
+            to {
+                transform: translateX(-50%);
+            }
+        }
+
+        /* iPhone Mockup */
+        .iphone-mockup {
+            position: relative;
+            width: 280px;
+            height: 560px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 45px;
+            padding: 12px;
+            box-shadow:
+                0 0 0 3px #2a2a4a,
+                0 0 0 6px #1a1a2e,
+                0 25px 50px rgba(0, 0, 0, 0.5),
+                inset 0 0 20px rgba(255, 255, 255, 0.05);
+        }
+
+        .iphone-screen {
+            width: 100%;
+            height: 100%;
+            background: #0f0f1a;
+            border-radius: 35px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .iphone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 30px;
+            background: #0a0a0f;
+            border-radius: 0 0 20px 20px;
+            z-index: 10;
+        }
+
+        .iphone-notch::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 8px;
+            background: #1a1a2e;
+            border-radius: 10px;
+        }
+
+        /* App Carousel */
+        .app-carousel {
+            display: flex;
+            transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .app-screen {
+            min-width: 100%;
+            padding: 50px 15px 15px;
+        }
+
+        /* Glowing Orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            25% {
+                transform: translate(50px, -50px) scale(1.1);
+            }
+
+            50% {
+                transform: translate(-30px, 30px) scale(0.9);
+            }
+
+            75% {
+                transform: translate(30px, 50px) scale(1.05);
+            }
+        }
+
+        /* Section Reveal */
+        .reveal-section {
+            opacity: 0;
+            transform: translateY(80px);
+            transition: all 1s cubic-bezier(0.17, 0.55, 0.55, 1);
+        }
+
+        .reveal-section.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Stagger children */
+        .stagger-children>* {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s cubic-bezier(0.17, 0.55, 0.55, 1);
+        }
+
+        .stagger-children.active>*:nth-child(1) {
+            transition-delay: 0.1s;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stagger-children.active>*:nth-child(2) {
+            transition-delay: 0.2s;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stagger-children.active>*:nth-child(3) {
+            transition-delay: 0.3s;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stagger-children.active>*:nth-child(4) {
+            transition-delay: 0.4s;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stagger-children.active>*:nth-child(5) {
+            transition-delay: 0.5s;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stagger-children.active>*:nth-child(6) {
+            transition-delay: 0.6s;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Gradient Text */
+        .gradient-text {
+            background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Glass Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Glow effect */
+        .glow-box {
+            box-shadow: 0 0 60px rgba(99, 102, 241, 0.2);
+        }
+
+        /* Code font */
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Navigation */
+        .nav-glass {
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Skill pill hover */
+        .skill-pill {
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .skill-pill:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Project card glow on hover */
+        .project-card::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+            border-radius: 20px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .project-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Terminal */
+        .terminal {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .terminal-line::before {
+            content: '$ ';
+            color: #22c55e;
+        }
+
+        .typing-effect {
+            overflow: hidden;
+            border-right: 2px solid #a855f7;
+            white-space: nowrap;
+            animation: typing 3s steps(40) infinite, blink 0.5s step-end infinite alternate;
+        }
+
+        @keyframes typing {
+
+            0%,
+            90%,
+            100% {
+                width: 0;
+            }
+
+            30%,
+            60% {
+                width: 100%;
+            }
+        }
+
+        @keyframes blink {
+            50% {
+                border-color: transparent;
+            }
+        }
+
+        /* Button shine */
+        .btn-shine {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-shine::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-shine:hover::before {
+            left: 100%;
+        }
+
+        /* Timeline */
+        .timeline-item {
+            position: relative;
+            padding-left: 30px;
+            border-left: 2px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 0;
+            width: 14px;
+            height: 14px;
+            background: #6366f1;
+            border-radius: 50%;
+            border: 3px solid #0a0a0f;
+        }
+
+        .timeline-item:hover::before {
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.6);
+        }
+    </style>
+</head>
+
+<body class="gradient-bg text-white overflow-x-hidden">
+    <!-- Custom Cursor -->
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-dot" id="cursorDot"></div>
+
+    <!-- Scroll Progress -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- Noise Overlay -->
+    <div class="noise-overlay"></div>
+
+    <!-- Mouse Spotlight -->
+    <div class="spotlight" id="spotlight"></div>
+
+    <!-- Network Canvas -->
+    <canvas id="networkCanvas"></canvas>
+
+    <!-- Floating Orbs -->
+    <div class="orb w-96 h-96 bg-indigo-600 top-20 -left-48" style="animation-delay: 0s;"></div>
+    <div class="orb w-80 h-80 bg-purple-600 top-1/2 -right-40" style="animation-delay: -5s;"></div>
+    <div class="orb w-72 h-72 bg-pink-600 bottom-20 left-1/3" style="animation-delay: -10s;"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 nav-glass">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <a href="#" class="text-2xl font-bold gradient-text hover-target">RS.</a>
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="#about" class="hover:text-indigo-400 transition-colors hover-target">About</a>
+                    <a href="#experience" class="hover:text-indigo-400 transition-colors hover-target">Experience</a>
+                    <a href="#work" class="hover:text-indigo-400 transition-colors hover-target">Projects</a>
+                    <a href="#skills" class="hover:text-indigo-400 transition-colors hover-target">Skills</a>
+                    <a href="#contact"
+                        class="magnetic-btn bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-2 rounded-full btn-shine hover-target">
+                        Let's Talk
+                    </a>
                 </div>
-                <h3>Senior iOS Engineer <a href="https://www.majidalfuttaim.com/" target="_blank" style="color: #4CA8EA;">@ Majid Al Futtaim</a></h3>
-                <p> I spearheaded the complete makeover of the Cart and Checkout Journey, transforming it from UIKit to SwiftUI for an enhanced user experience.</p>
-                <p> Leading the Post Order experience for Carrefour Mobile App.</p>
-              </div>
+                <button id="menuBtn" class="md:hidden text-2xl hover-target">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
-            <div class="experience-content">
-              <div class="content">
-                <div class="year">
-                  <i class="bx bxs-calendar"></i> May 2021 – Feb 2022
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="fixed inset-0 z-40 bg-black/95 backdrop-blur-lg hidden">
+        <div class="flex flex-col items-center justify-center h-full gap-8 text-2xl">
+            <a href="#about" class="hover:text-indigo-400 transition-colors mobile-link">About</a>
+            <a href="#experience" class="hover:text-indigo-400 transition-colors mobile-link">Experience</a>
+            <a href="#work" class="hover:text-indigo-400 transition-colors mobile-link">Projects</a>
+            <a href="#skills" class="hover:text-indigo-400 transition-colors mobile-link">Skills</a>
+            <a href="#contact" class="hover:text-indigo-400 transition-colors mobile-link">Contact</a>
+            <button id="closeMenu" class="absolute top-6 right-6 text-3xl">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex items-center justify-center relative px-6 pt-20">
+        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+            <div class="text-center lg:text-left z-10">
+                <div
+                    class="inline-block px-4 py-2 bg-indigo-500/10 border border-indigo-500/30 rounded-full mb-6 reveal-section">
+                    <span class="text-indigo-400 text-sm font-mono">🚀 8+ Years Experience | India</span>
                 </div>
-                <h3>Senior iOS Engineer <a href="https://www.lambdatest.com/" target="_blank" style="color: #4CA8EA;">@ Lambdatest</a></h3>
-                <p> POC for broadcasting the iOS device's screen to a web browser using WebRTC was successfully completed, which helped attract <a href="https://www.business-standard.com/article/companies/lambdatest-closes-45-million-in-a-venture-round-led-by-premji-invest-122032901312_1.html" target="_blank" style="color: #4CA8EA; font-weight: bold;">$45M</a> in funding.</p>
-                <p> iOS App Resigner was created to resign numerous applications at once, cutting the session starting time by 25%.</p>
-                <p> Accomplished POC for session restoration of iOS devices using iDevice.</p>
-                <p> Utilized XCUITest and Bash scripts to automate everyday operations, reducing manual labour by up to 40%.</p>
-              </div>
-            </div>
-            <div class="experience-content">
-              <div class="content">
-                <div class="year">
-                  <i class="bx bxs-calendar"></i> Jul 2018 – Apr 2021
+
+                <h1 class="text-5xl md:text-7xl font-bold mb-6 reveal-section">
+                    <span class="block text-gray-400 text-2xl md:text-3xl mb-2">Hello, I'm</span>
+                    <span class="scramble-text gradient-text" data-text="Rohit Saini">Rohit Saini</span>
+                </h1>
+
+                <div class="mb-6 reveal-section">
+                    <div class="terminal bg-gray-900/50 border border-gray-800 rounded-xl p-4 inline-block">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                        </div>
+                        <div class="terminal-line text-gray-300">
+                            <span class="typing-effect" id="terminalText">AI + iOS Engineer | ComfyUI & N8N
+                                Expert</span>
+                        </div>
+                    </div>
                 </div>
-                <h3>Senior iOS developer <a href="https://app-knit.com/" target="_blank" style="color: #4CA8EA;">@ App Knit</a></h3>
-                <p> Completely managed, developed, and deployed 10+ projects.</p>
-                <p> The company's core codebase was improved by being refactored to match modern best practises, which increased performance and cut memory use by up to 30%.</p>
-                <p> Participated in code reviews and maintained git hygiene.</p>
-              </div>
+
+                <p class="text-gray-400 text-lg mb-8 max-w-lg mx-auto lg:mx-0 reveal-section">
+                    Building <span class="text-white font-semibold">scalable mobile apps</span> and
+                    <span class="text-white font-semibold">AI-driven creative automation systems</span>.
+                    Bridging the worlds of mobile development and generative AI for media and content innovation.
+                </p>
+
+                <div class="flex flex-wrap gap-4 justify-center lg:justify-start reveal-section">
+                    <a href="#work"
+                        class="magnetic-btn bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-4 rounded-full font-semibold btn-shine flex items-center gap-3 hover-target">
+                        <span>View My Work</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a href="mailto:rohitsainier@gmail.com"
+                        class="magnetic-btn border border-gray-600 hover:border-indigo-500 px-8 py-4 rounded-full font-semibold transition-all hover-target">
+                        <i class="fas fa-envelope mr-2"></i> Get In Touch
+                    </a>
+                </div>
+
+                <div class="flex gap-6 mt-10 justify-center lg:justify-start reveal-section">
+                    <a href="https://github.com/rohitsainier" target="_blank"
+                        class="w-12 h-12 glass-card rounded-full flex items-center justify-center hover:bg-indigo-500/20 transition-all hover-target">
+                        <i class="fab fa-github text-xl"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/in/rohitsainier/" target="_blank"
+                        class="w-12 h-12 glass-card rounded-full flex items-center justify-center hover:bg-indigo-500/20 transition-all hover-target">
+                        <i class="fab fa-linkedin text-xl"></i>
+                    </a>
+                    <a href="https://www.youtube.com/@rohitsainier" target="_blank"
+                        class="w-12 h-12 glass-card rounded-full flex items-center justify-center hover:bg-indigo-500/20 transition-all hover-target">
+                        <i class="fab fa-youtube text-xl"></i>
+                    </a>
+                    <a href="https://medium.com/@rohitsainier" target="_blank"
+                        class="w-12 h-12 glass-card rounded-full flex items-center justify-center hover:bg-indigo-500/20 transition-all hover-target">
+                        <i class="fab fa-medium text-xl"></i>
+                    </a>
+                </div>
             </div>
-            <span class="animate scroll" style="--i:3;"></span>
-          </div>
+
+            <!-- iPhone Mockup -->
+            <div class="flex justify-center reveal-section">
+                <div class="relative">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full blur-3xl opacity-20 scale-150">
+                    </div>
+                    <div class="iphone-mockup tilt-card hover-target" id="iphoneMockup">
+                        <div class="iphone-screen">
+                            <div class="iphone-notch"></div>
+                            <div class="app-carousel" id="appCarousel">
+                                <!-- App Screen 1 - Carrefour -->
+                                <div class="app-screen bg-gradient-to-br from-blue-900 to-blue-700">
+                                    <div class="text-center">
+                                        <i class="fas fa-shopping-cart text-5xl text-blue-300 mb-4"></i>
+                                        <h3 class="text-lg font-bold mb-2">Carrefour UAE</h3>
+                                        <p class="text-xs text-gray-300 mb-4">10M+ Users Retail App</p>
+                                        <div class="bg-white/10 rounded-xl p-3 mb-3">
+                                            <p class="text-xs text-left text-gray-200">Cart & Checkout Flow</p>
+                                        </div>
+                                        <div class="bg-blue-600/30 rounded-xl p-3">
+                                            <p class="text-xs text-left text-blue-200">SwiftUI Migration</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- App Screen 2 - AI Subtitle -->
+                                <div class="app-screen bg-gradient-to-br from-purple-900 to-pink-900">
+                                    <div class="text-center">
+                                        <i class="fas fa-closed-captioning text-5xl text-purple-300 mb-4"></i>
+                                        <h3 class="text-lg font-bold mb-2">AI Subtitle Clipper</h3>
+                                        <p class="text-xs text-gray-300 mb-4">Whisper AI Powered</p>
+                                        <div
+                                            class="w-24 h-24 mx-auto bg-purple-800/50 rounded-2xl flex items-center justify-center mb-3">
+                                            <i class="fas fa-waveform-lines text-3xl text-purple-300"></i>
+                                        </div>
+                                        <p class="text-xs text-purple-300">2-3 hrs saved per video</p>
+                                    </div>
+                                </div>
+                                <!-- App Screen 3 - Ghibli Generator -->
+                                <div class="app-screen bg-gradient-to-br from-green-900 to-teal-900">
+                                    <div class="text-center">
+                                        <i class="fas fa-palette text-5xl text-green-300 mb-4"></i>
+                                        <h3 class="text-lg font-bold mb-2">Ghibli Generator</h3>
+                                        <p class="text-xs text-gray-300 mb-4">Stable Diffusion + ComfyUI</p>
+                                        <div class="flex justify-around mb-4">
+                                            <div>
+                                                <i class="fas fa-image text-2xl text-green-400"></i>
+                                                <p class="text-xs text-gray-400 mt-1">AI Art</p>
+                                            </div>
+                                            <div>
+                                                <i class="fas fa-wifi-slash text-2xl text-teal-400"></i>
+                                                <p class="text-xs text-gray-400 mt-1">Offline</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Carousel Dots -->
+                            <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                                <button class="carousel-dot w-2 h-2 rounded-full bg-white transition-all"
+                                    data-index="0"></button>
+                                <button class="carousel-dot w-2 h-2 rounded-full bg-white/30 transition-all"
+                                    data-index="1"></button>
+                                <button class="carousel-dot w-2 h-2 rounded-full bg-white/30 transition-all"
+                                    data-index="2"></button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Floating Elements -->
+                    <div class="absolute -top-8 -right-8 px-4 py-2 glass-card rounded-full animate-bounce">
+                        <i class="fab fa-swift text-orange-500 mr-2"></i>Swift
+                    </div>
+                    <div class="absolute -bottom-4 -left-8 px-4 py-2 glass-card rounded-full animate-bounce"
+                        style="animation-delay: 0.5s;">
+                        <i class="fas fa-brain text-purple-500 mr-2"></i>ComfyUI
+                    </div>
+                    <div class="absolute top-1/2 -right-12 px-4 py-2 glass-card rounded-full animate-bounce"
+                        style="animation-delay: 1s;">
+                        <i class="fas fa-robot text-pink-500 mr-2"></i>Whisper
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
+
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2">
+            <div class="w-6 h-10 border-2 border-gray-600 rounded-full flex justify-center">
+                <div class="w-1 h-3 bg-indigo-500 rounded-full mt-2 animate-bounce"></div>
+            </div>
+        </div>
     </section>
 
-    <!-- skills section design -->
-
-    <section class="skills" id="skills">
-      <h2 class="heading">My <span>Skills</span><span class="animate scroll" style="--i:1;"></span></h2>
-
-      <div class="skills-row">
-        <div class="skills-column">
-          <h3 class="title">Coding Skills<span class="animate scroll" style="--i:2;"></span></h3>
-          <div class="skills-box">
-            <div class="skills-content">
-              <div class="progress">
-                <h3>Swift <span>100%</span></h3>
-                <div class="bar"><span></span></div>
-              </div>
-              <div class="progress">
-                <h3>Python <span>80%</span></h3>
-                <div class="bar"><span></span></div>
-              </div>
-
-              <div class="progress">
-                <h3>Golang<span>80%</span></h3>
-                <div class="bar"><span></span></div>
-              </div>
-
-              <div class="progress">
-                <h3>Bash<span>100%</span></h3>
-                <div class="bar"><span></span></div>
-              </div>
+    <!-- Tech Marquee -->
+    <section class="py-12 border-y border-gray-800/50 relative z-10">
+        <div class="marquee-container">
+            <div class="marquee-content">
+                <div class="flex items-center gap-12 px-6">
+                    <span class="text-2xl font-bold text-gray-600 flex items-center gap-3"><i
+                            class="fab fa-swift text-orange-500"></i> Swift</span>
+                    <span class="text-gray-700">✦</span>
+                    <span class="text-2xl font-bold text-gray-600 flex items-center gap-3"><i
+                            class="fab fa-apple text-white"></i> SwiftUI</span>
+                    <span class="text-gray-700">✦</span>
+                    <span class="text-2xl font-bold text-gray-600 flex items-center gap-3"><i
+                            class="fas fa-brain text-purple-500"></i> ComfyUI</span>
+                    <span class="text-gray-700">✦</span>
+                    <span class="text-2xl font-bold text-gray-600 flex items-center gap-3"><i
+                            class="fas fa-robot text-blue-500"></i> N8N</span>
+                    <span class="text-gray-700">✦</span>
+                    <span class="text-2xl font-bold text-gray-600 flex items-center gap-3"><i
+                            class="fas fa-image text-green-500"></i> Stable Diffusion</span>
+                    <span class="text-gray-700">✦</span>
+                    <span class="text-2xl font-bold text-gray-600 flex items-center gap-3"><i
+                            class="fas fa-microphone text-pink-500"></i> Whisper</span>
+                    <span class="text-gray-700">✦</span>
+                    <span class="text-2xl font-bold text-gray-600 flex items-center gap-3"><i
+                            class="fab fa-python text-yellow-500"></i> Python</span>
+                    <span class="text-gray-700">✦</span>
+                    <span class="text-2xl font-bold text-gray-600 flex items-center gap-3"><i
+                            class="fas fa-fire text-orange-600"></i> Firebase</span>
+                    <span class="text-gray-700">✦</span>
+                </div>
+                <div class="flex items-center gap-12 px-6">
+                    <span class="text-2xl font-bold text-gray-600 flex items-center gap-3"><i
+                            class="fab fa-swift text-orange-500"></i> Swift</span>
+                    <span class="text-gray-700">✦</span>
+                    <span class="text-2xl font-bold text-gray-600 flex items-center gap-3"><i
+                            class="fab fa-apple text-white"></i> SwiftUI</span>
+                    <span class="text-gray-700">✦</span>
+                    <span class="text-2xl font-bold text-gray-600 flex items-center gap-3"><i
+                            class="fas fa-brain text-purple-500"></i> ComfyUI</span>
+                    <span class="text-gray-700">✦</span>
+                    <span class="text-2xl font-bold text-gray-600 flex items-center gap-3"><i
+                            class="fas fa-robot text-blue-500"></i> N8N</span>
+                    <span class="text-gray-700">✦</span>
+                    <span class="text-2xl font-bold text-gray-600 flex items-center gap-3"><i
+                            class="fas fa-image text-green-500"></i> Stable Diffusion</span>
+                    <span class="text-gray-700">✦</span>
+                    <span class="text-2xl font-bold text-gray-600 flex items-center gap-3"><i
+                            class="fas fa-microphone text-pink-500"></i> Whisper</span>
+                    <span class="text-gray-700">✦</span>
+                    <span class="text-2xl font-bold text-gray-600 flex items-center gap-3"><i
+                            class="fab fa-python text-yellow-500"></i> Python</span>
+                    <span class="text-gray-700">✦</span>
+                    <span class="text-2xl font-bold text-gray-600 flex items-center gap-3"><i
+                            class="fas fa-fire text-orange-600"></i> Firebase</span>
+                    <span class="text-gray-700">✦</span>
+                </div>
             </div>
-            <span class="animate scroll" style="--i:3;"></span>
-          </div>
         </div>
-
-        <div class="skills-column">
-          <h3 class="title">Professional Skills<span class="animate scroll" style="--i:5;"></span></h3>
-          <div class="skills-box">
-            <div class="skills-content">
-              <div class="progress">
-                <h3>iOS Development <span>100%</span></h3>
-                <div class="bar"><span></span></div>
-              </div>
-
-              <div class="progress">
-                <h3>Flutter<span>80%</span></h3>
-                <div class="bar"><span></span></div>
-              </div>
-
-              <div class="progress">
-                <h3>Next JS<span>40%</span></h3>
-                <div class="bar"><span></span></div>
-              </div>
-
-              <div class="progress">
-                <h3>Unit Testing<span>100%</span></h3>
-                <div class="bar"><span></span></div>
-              </div>
-
-              <div class="progress">
-                <h3>XCUITest <span>100%</span></h3>
-                <div class="bar"><span></span></div>
-              </div>
-
-              <div class="progress">
-                <h3>WebRTC <span>100%</span></h3>
-                <div class="bar"><span></span></div>
-              </div>
-
-              <div class="progress">
-                <h3>Firebase<span>100%</span></h3>
-                <div class="bar"><span></span></div>
-              </div>
-
-              <div class="progress">
-                <h3>GenAI<span>40%</span></h3>
-                <div class="bar"><span></span></div>
-              </div>
-              
-            </div>
-            <span class="animate scroll" style="--i:6;"></span>
-          </div>
-        </div>
-      </div>
     </section>
 
-     <!-- projects section design -->
+    <!-- About Section -->
+    <section id="about" class="py-32 px-6 relative z-10">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div class="reveal-section">
+                    <p class="text-indigo-400 font-mono mb-4">// ABOUT ME</p>
+                    <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                        Bridging <span class="gradient-text">iOS & Generative AI</span> for Innovation
+                    </h2>
+                    <p class="text-gray-400 text-lg leading-relaxed mb-6">
+                        I'm an AI + iOS Engineer with 8+ years of experience building scalable mobile apps and AI-driven
+                        creative automation systems.
+                        I specialize in ComfyUI and N8N, creating custom nodes and optimizing workflows for cutting-edge
+                        media production.
+                    </p>
+                    <p class="text-gray-400 text-lg leading-relaxed mb-8">
+                        From migrating high-traffic retail apps to SwiftUI at Carrefour (10M+ users) to building
+                        AI-powered video editing tools
+                        with Whisper and Stable Diffusion, I transform complex technologies into seamless user
+                        experiences.
+                    </p>
 
-    <section class="projects" id="projects">
-      <h2 class="heading">Latest <span>Projects</span></h2>
-      <div class="projects-container">
-        <div class="projects-box">
-          <img src="/assets/projects/Chatapp.png" alt="">  
-          <div class="projects-layer">
-            <h4>Chat App using Firebase</h4>
-            <p>Built this chat application utilizing the power of Firebase, incorporating SDWebImage for efficient image caching, and Firestore as a reliable database. On top of that, Firebase Auth is seamlessly integrated for a secure and seamless authentication process. </p>
-            <a href="https://github.com/Accessed-Denied/friendly-broccoli" target="_blank"><i class='bx bx-link-external'></i></a>
-            <b>Swift Firebase Firestore SDWebImage </b>
-          </div>
-        </div>
+                    <!-- Stats -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 stagger-children" id="statsGrid">
+                        <div class="text-center p-4 glass-card rounded-2xl">
+                            <h3 class="text-3xl font-bold gradient-text counter" data-target="8">0</h3>
+                            <p class="text-gray-500 text-sm mt-1">Years Exp.</p>
+                        </div>
+                        <div class="text-center p-4 glass-card rounded-2xl">
+                            <h3 class="text-3xl font-bold gradient-text counter" data-target="10">0</h3>
+                            <p class="text-gray-500 text-sm mt-1">Projects</p>
+                        </div>
+                        <div class="text-center p-4 glass-card rounded-2xl">
+                            <h3 class="text-3xl font-bold gradient-text">10M+</h3>
+                            <p class="text-gray-500 text-sm mt-1">Users Served</p>
+                        </div>
+                        <div class="text-center p-4 glass-card rounded-2xl">
+                            <h3 class="text-3xl font-bold gradient-text">$45M</h3>
+                            <p class="text-gray-500 text-sm mt-1">Funding POC</p>
+                        </div>
+                    </div>
+                </div>
 
-        <div class="projects-box">
-          <img src="/assets/projects/forthgreen.png" alt="">
-          <div class="projects-layer">
-            <h4>Forthgreen</h4>
-            <p>Forthgreen is an app designed to make ethical and vegan life simple. </p>
-            <a href="https://forthgreen.com/" target="_blank"><i class='bx bx-link-external'></i></a>
-            <b>MVVM AppleMaps </b>
-          </div>
+                <div class="reveal-section">
+                    <div class="relative">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-3xl blur-2xl opacity-20">
+                        </div>
+                        <div class="relative glass-card rounded-3xl p-8 glow-box">
+                            <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+                                <span class="w-10 h-10 bg-indigo-500/20 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-code text-indigo-400"></i>
+                                </span>
+                                What I Do
+                            </h3>
+                            <div class="space-y-4">
+                                <div
+                                    class="flex items-start gap-4 p-4 bg-gray-900/30 rounded-xl hover:bg-gray-900/50 transition-colors hover-target">
+                                    <div
+                                        class="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center shrink-0">
+                                        <i class="fab fa-swift text-orange-500 text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold mb-1">iOS Development</h4>
+                                        <p class="text-sm text-gray-400">Swift, SwiftUI, UIKit, Combine, MVVM</p>
+                                    </div>
+                                </div>
+                                <div
+                                    class="flex items-start gap-4 p-4 bg-gray-900/30 rounded-xl hover:bg-gray-900/50 transition-colors hover-target">
+                                    <div
+                                        class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center shrink-0">
+                                        <i class="fas fa-brain text-purple-500 text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold mb-1">AI & ComfyUI</h4>
+                                        <p class="text-sm text-gray-400">Custom nodes, Stable Diffusion, Whisper, TTS
+                                        </p>
+                                    </div>
+                                </div>
+                                <div
+                                    class="flex items-start gap-4 p-4 bg-gray-900/30 rounded-xl hover:bg-gray-900/50 transition-colors hover-target">
+                                    <div
+                                        class="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center shrink-0">
+                                        <i class="fas fa-robot text-blue-500 text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold mb-1">Workflow Automation</h4>
+                                        <p class="text-sm text-gray-400">N8N, Graph automation, Text-to-Video pipelines
+                                        </p>
+                                    </div>
+                                </div>
+                                <div
+                                    class="flex items-start gap-4 p-4 bg-gray-900/30 rounded-xl hover:bg-gray-900/50 transition-colors hover-target">
+                                    <div
+                                        class="w-12 h-12 bg-pink-500/20 rounded-xl flex items-center justify-center shrink-0">
+                                        <i class="fas fa-video text-pink-500 text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold mb-1">Real-time Streaming</h4>
+                                        <p class="text-sm text-gray-400">WebRTC, Screen streaming, Remote device control
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <div class="projects-box">
-          <img src="/assets/projects/touchdown.png" alt="">
-          <div class="projects-layer">
-            <h4>Touch Down (Sports App)</h4>
-            <p>This is a sports app UI built using SwiftUI and Combine. It uses the Dummy json data to populate the UI. </p>
-            <a href="https://github.com/Accessed-Denied/TouchDown" target="_blank"><i class='bx bx-link-external'></i></a>
-            <b>SwiftUI Combine </b>
-          </div>
-        </div>
-
-        <div class="projects-box">
-          <img src="/assets/projects/resigner.png" alt="">
-          <div class="projects-layer">
-            <h4>iOS App Resigner</h4>
-            <p>iOS App Resigner can (re)sign apps and bundle them into ipa files that are ready to be installed on an iOS device. </p>
-            <a href="https://applive.lambdatest.com/app" target="_blank"><i class='bx bx-link-external'></i></a>
-            <b>Golang Fastlane Bash Scripting </b>
-          </div>
-        </div>
-
-        <div class="projects-box">
-          <img src="/assets/projects/LTApp.png" alt="">
-          <div class="projects-layer">
-            <h4>LTApp</h4>
-            <p>LTApp can stream iOS devices screen to web browser using WebRTC data channels. </p>
-            <p>It also helps to control iOS devices remotely. </p>
-            <a href="https://applive.lambdatest.com/app" target="_blank"><i class='bx bx-link-external'></i></a>
-            <b>WebRTC HttpServer WebSocket </b>
-          </div>
-        </div>
-      </div>
-   
     </section>
 
-    <!-- footer design -->
+    <!-- Experience Section -->
+    <section id="experience" class="py-32 px-6 relative z-10">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-16 reveal-section">
+                <p class="text-indigo-400 font-mono mb-4">// EXPERIENCE</p>
+                <h2 class="text-4xl md:text-5xl font-bold">
+                    Professional <span class="gradient-text">Journey</span>
+                </h2>
+            </div>
 
-    <footer class="footer">
-      <div class="footer-text">
-        <p>Copyright &copy; 2023 by Rohit Saini | All Right Reserved.</p>
+            <div class="space-y-12">
+                <!-- Majid Al Futtaim -->
+                <div class="timeline-item reveal-section">
+                    <div class="glass-card rounded-2xl p-8 hover-target">
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+                            <div>
+                                <h3 class="text-2xl font-bold gradient-text">Majid Al Futtaim</h3>
+                                <p class="text-lg text-gray-300">Senior iOS Engineer</p>
+                            </div>
+                            <div class="mt-2 md:mt-0">
+                                <span class="px-4 py-2 bg-indigo-500/20 text-indigo-400 rounded-full text-sm">Mar 2022 –
+                                    Present</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-500 mb-4"><i class="fas fa-map-marker-alt mr-2"></i>Gurgaon, India</p>
+                        <ul class="space-y-3 text-gray-400">
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-check-circle text-green-500 mt-1"></i>
+                                <span>Migrated Cart, Checkout, and Post-Order Journeys to SwiftUI, reducing UI
+                                    maintenance time by <span class="text-white font-semibold">30%</span> for
+                                    Carrefour's retail app (10M+ users)</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-check-circle text-green-500 mt-1"></i>
+                                <span>Delivered pixel-perfect UI for high-traffic commerce flows, contributing to a
+                                    <span class="text-white font-semibold">15% increase</span> in conversion
+                                    rates</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-check-circle text-green-500 mt-1"></i>
+                                <span>Championed adoption of Combine, reducing state management bugs by <span
+                                        class="text-white font-semibold">40%</span></span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-check-circle text-green-500 mt-1"></i>
+                                <span>Mentored 3 junior iOS developers, improving code quality by <span
+                                        class="text-white font-semibold">25%</span></span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
 
-      </span><span class="animate scroll" style="--i:1;"></span>
-      </div>
+                <!-- LambdaTest -->
+                <div class="timeline-item reveal-section">
+                    <div class="glass-card rounded-2xl p-8 hover-target">
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+                            <div>
+                                <h3 class="text-2xl font-bold gradient-text">LambdaTest</h3>
+                                <p class="text-lg text-gray-300">Senior iOS Engineer</p>
+                            </div>
+                            <div class="mt-2 md:mt-0">
+                                <span class="px-4 py-2 bg-purple-500/20 text-purple-400 rounded-full text-sm">May 2021 –
+                                    Feb 2022</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-500 mb-4"><i class="fas fa-map-marker-alt mr-2"></i>Noida, India</p>
+                        <ul class="space-y-3 text-gray-400">
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-check-circle text-green-500 mt-1"></i>
+                                <span>Delivered POC for streaming iOS device screen to web browser using WebRTC,
+                                    contributing to a <span class="text-white font-semibold">$45M funding
+                                        round</span></span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-check-circle text-green-500 mt-1"></i>
+                                <span>Developed iOS App Resigner reducing session startup time by <span
+                                        class="text-white font-semibold">25%</span></span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-check-circle text-green-500 mt-1"></i>
+                                <span>Built iOS session restoration POC, improving user retention by <span
+                                        class="text-white font-semibold">10%</span></span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-check-circle text-green-500 mt-1"></i>
+                                <span>Automated daily tasks with Bash scripts and XCUITest, reducing manual effort by
+                                    <span class="text-white font-semibold">40%</span></span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
 
-      <div class="footer-iconTop">
-        <a href="#"><i class="bx bx-up-arrow-alt"></i></a>
+                <!-- AppKnit -->
+                <div class="timeline-item reveal-section">
+                    <div class="glass-card rounded-2xl p-8 hover-target">
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+                            <div>
+                                <h3 class="text-2xl font-bold gradient-text">AppKnit</h3>
+                                <p class="text-lg text-gray-300">Senior iOS Developer</p>
+                            </div>
+                            <div class="mt-2 md:mt-0">
+                                <span class="px-4 py-2 bg-pink-500/20 text-pink-400 rounded-full text-sm">Jul 2018 – Apr
+                                    2021</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-500 mb-4"><i class="fas fa-map-marker-alt mr-2"></i>Chandigarh, India</p>
+                        <ul class="space-y-3 text-gray-400">
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-check-circle text-green-500 mt-1"></i>
+                                <span>Led, Developed & Deployed <span class="text-white font-semibold">10+
+                                        projects</span> end to end</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-check-circle text-green-500 mt-1"></i>
+                                <span>Onboarded junior developers, increasing team velocity by <span
+                                        class="text-white font-semibold">15%</span></span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-check-circle text-green-500 mt-1"></i>
+                                <span>Refactored core codebase, reducing memory consumption by <span
+                                        class="text-white font-semibold">30%</span></span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
-      </span><span class="animate scroll" style="--i:3;"></span>
-      </div>
+            <!-- Education -->
+            <div class="mt-16 reveal-section">
+                <div class="glass-card rounded-2xl p-8 hover-target">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-14 h-14 bg-indigo-500/20 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-graduation-cap text-2xl text-indigo-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold">Bachelor's in Information Technology</h3>
+                            <p class="text-gray-400">Kurukshetra University, Kurukshetra</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-500"><i class="fas fa-calendar mr-2"></i>Jul 2013 – Jun 2017</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Work Section -->
+    <section id="work" class="py-32 px-6 relative z-10">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 reveal-section">
+                <p class="text-indigo-400 font-mono mb-4">// FEATURED PROJECTS</p>
+                <h2 class="text-4xl md:text-5xl font-bold">
+                    Apps That <span class="gradient-text">Make a Difference</span>
+                </h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 stagger-children" id="projectsGrid">
+                <!-- Project 1 - AI Subtitle Clipper -->
+                <div class="project-card tilt-card relative glass-card rounded-2xl overflow-hidden hover-target">
+                    <div class="h-56 bg-gradient-to-br from-purple-600 to-pink-700 p-6 flex flex-col justify-between">
+                        <div class="flex justify-between items-start">
+                            <div
+                                class="w-14 h-14 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
+                                <i class="fas fa-closed-captioning text-3xl"></i>
+                            </div>
+                            <div class="flex gap-2 flex-wrap justify-end">
+                                <span class="px-3 py-1 bg-white/20 backdrop-blur rounded-full text-xs">Whisper</span>
+                                <span class="px-3 py-1 bg-white/20 backdrop-blur rounded-full text-xs">macOS</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold mb-1">AI Subtitle Clipper</h3>
+                            <p class="text-white/70 text-sm">MacOS Video Editing Tool</p>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-gray-400 text-sm mb-4">Built using Python + macOS native APIs, integrating
+                            Whisper AI for highly accurate subtitle transcription. Saves 2-3 hours per video.</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2 text-purple-400 text-sm">
+                                <i class="fas fa-clock"></i>
+                                <span>2-3 hrs saved/video</span>
+                            </div>
+                            <a href="https://www.youtube.com/watch?v=sFUcKSDLl0s" target="_blank"
+                                class="w-10 h-10 bg-purple-500/20 rounded-full flex items-center justify-center hover:bg-purple-500/40 transition-colors">
+                                <i class="fas fa-play text-purple-400"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 2 - Ghibli Generator -->
+                <div class="project-card tilt-card relative glass-card rounded-2xl overflow-hidden hover-target">
+                    <div class="h-56 bg-gradient-to-br from-green-600 to-teal-700 p-6 flex flex-col justify-between">
+                        <div class="flex justify-between items-start">
+                            <div
+                                class="w-14 h-14 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
+                                <i class="fas fa-palette text-3xl"></i>
+                            </div>
+                            <div class="flex gap-2 flex-wrap justify-end">
+                                <span class="px-3 py-1 bg-white/20 backdrop-blur rounded-full text-xs">ComfyUI</span>
+                                <span class="px-3 py-1 bg-white/20 backdrop-blur rounded-full text-xs">FastAPI</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold mb-1">Ghibli Generator</h3>
+                            <p class="text-white/70 text-sm">Custom ComfyUI Node + FastAPI</p>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-gray-400 text-sm mb-4">Custom ComfyUI node for Ghibli-style visuals using local
+                            Stable Diffusion. FastAPI UI for style control. Fully offline-capable.</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2 text-green-400 text-sm">
+                                <i class="fas fa-wifi-slash"></i>
+                                <span>Fully Offline</span>
+                            </div>
+                            <a href="https://youtu.be/uLCA_WXkIkY?si=7_jEyuuLSK7FS2Sg" target="_blank"
+                                class="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center hover:bg-green-500/40 transition-colors">
+                                <i class="fas fa-play text-green-400"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 3 - Carrefour UAE -->
+                <div class="project-card tilt-card relative glass-card rounded-2xl overflow-hidden hover-target">
+                    <div class="h-56 bg-gradient-to-br from-blue-600 to-cyan-700 p-6 flex flex-col justify-between">
+                        <div class="flex justify-between items-start">
+                            <div
+                                class="w-14 h-14 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
+                                <i class="fas fa-shopping-cart text-3xl"></i>
+                            </div>
+                            <div class="flex gap-2 flex-wrap justify-end">
+                                <span class="px-3 py-1 bg-white/20 backdrop-blur rounded-full text-xs">SwiftUI</span>
+                                <span class="px-3 py-1 bg-white/20 backdrop-blur rounded-full text-xs">Combine</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold mb-1">Carrefour UAE</h3>
+                            <p class="text-white/70 text-sm">High-traffic Retail App</p>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-gray-400 text-sm mb-4">Led Post Order, Cart Checkout, and Order Confirmation
+                            squad. Migrated from UIKit to SwiftUI for modern, maintainable UI.</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2 text-blue-400 text-sm">
+                                <i class="fas fa-users"></i>
+                                <span>10M+ users</span>
+                            </div>
+                            <a href="https://apps.apple.com/us/app/maf-carrefour-online-shopping/id626805470"
+                                target="_blank"
+                                class="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center hover:bg-blue-500/40 transition-colors">
+                                <i class="fab fa-app-store text-blue-400"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 4 - LTApp -->
+                <div class="project-card tilt-card relative glass-card rounded-2xl overflow-hidden hover-target">
+                    <div class="h-56 bg-gradient-to-br from-orange-600 to-red-700 p-6 flex flex-col justify-between">
+                        <div class="flex justify-between items-start">
+                            <div
+                                class="w-14 h-14 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
+                                <i class="fas fa-mobile-screen text-3xl"></i>
+                            </div>
+                            <div class="flex gap-2 flex-wrap justify-end">
+                                <span class="px-3 py-1 bg-white/20 backdrop-blur rounded-full text-xs">WebRTC</span>
+                                <span class="px-3 py-1 bg-white/20 backdrop-blur rounded-full text-xs">MVVM</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold mb-1">LTApp</h3>
+                            <p class="text-white/70 text-sm">iOS Device Streaming</p>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-gray-400 text-sm mb-4">Stream iOS device screen to web browser using WebRTC data
+                            channels. Remote device control capabilities.</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2 text-orange-400 text-sm">
+                                <i class="fas fa-trophy"></i>
+                                <span>$45M Funding POC</span>
+                            </div>
+                            <a href="https://applive.lambdatest.com/app" target="_blank"
+                                class="w-10 h-10 bg-orange-500/20 rounded-full flex items-center justify-center hover:bg-orange-500/40 transition-colors">
+                                <i class="fas fa-arrow-right text-orange-400"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 5 - Text to Video -->
+                <div class="project-card tilt-card relative glass-card rounded-2xl overflow-hidden hover-target">
+                    <div class="h-56 bg-gradient-to-br from-violet-600 to-purple-700 p-6 flex flex-col justify-between">
+                        <div class="flex justify-between items-start">
+                            <div
+                                class="w-14 h-14 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
+                                <i class="fas fa-video text-3xl"></i>
+                            </div>
+                            <div class="flex gap-2 flex-wrap justify-end">
+                                <span class="px-3 py-1 bg-white/20 backdrop-blur rounded-full text-xs">N8N</span>
+                                <span class="px-3 py-1 bg-white/20 backdrop-blur rounded-full text-xs">TTS</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold mb-1">Text-to-Video Workflows</h3>
+                            <p class="text-white/70 text-sm">AI Content Automation</p>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-gray-400 text-sm mb-4">Automated content pipelines using N8N and ComfyUI for
+                            text-to-video generation with TTS (f5) integration.</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2 text-violet-400 text-sm">
+                                <i class="fas fa-robot"></i>
+                                <span>Full Automation</span>
+                            </div>
+                            <a href="#"
+                                class="w-10 h-10 bg-violet-500/20 rounded-full flex items-center justify-center hover:bg-violet-500/40 transition-colors">
+                                <i class="fas fa-arrow-right text-violet-400"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 6 - More Projects -->
+                <div class="project-card tilt-card relative glass-card rounded-2xl overflow-hidden hover-target">
+                    <div class="h-56 bg-gradient-to-br from-gray-700 to-gray-900 p-6 flex flex-col justify-between">
+                        <div class="flex justify-between items-start">
+                            <div
+                                class="w-14 h-14 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
+                                <i class="fas fa-folder-open text-3xl"></i>
+                            </div>
+                            <div class="flex gap-2">
+                                <span class="px-3 py-1 bg-white/20 backdrop-blur rounded-full text-xs">10+ Apps</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold mb-1">More Projects</h3>
+                            <p class="text-white/70 text-sm">End-to-end Deployments</p>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-gray-400 text-sm mb-4">Led, developed & deployed 10+ projects end to end at
+                            AppKnit with various tech stacks and domains.</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2 text-gray-400 text-sm">
+                                <i class="fas fa-code-branch"></i>
+                                <span>Full Stack</span>
+                            </div>
+                            <a href="https://github.com/rohitsainier" target="_blank"
+                                class="w-10 h-10 bg-gray-500/20 rounded-full flex items-center justify-center hover:bg-gray-500/40 transition-colors">
+                                <i class="fab fa-github text-gray-400"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="py-32 px-6 relative z-10">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 reveal-section">
+                <p class="text-indigo-400 font-mono mb-4">// SKILLS & TOOLS</p>
+                <h2 class="text-4xl md:text-5xl font-bold">
+                    My <span class="gradient-text">Tech Arsenal</span>
+                </h2>
+            </div>
+
+            <!-- AI & ComfyUI -->
+            <div class="mb-12 reveal-section">
+                <h3 class="text-xl font-bold mb-6 text-center text-indigo-400">AI & ComfyUI</h3>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <div class="skill-pill px-6 py-4 glass-card rounded-2xl flex items-center gap-3 hover-target">
+                        <i class="fas fa-brain text-3xl text-purple-500"></i>
+                        <div>
+                            <p class="font-semibold">ComfyUI</p>
+                            <p class="text-xs text-gray-500">Custom Nodes</p>
+                        </div>
+                    </div>
+                    <div class="skill-pill px-6 py-4 glass-card rounded-2xl flex items-center gap-3 hover-target">
+                        <i class="fas fa-robot text-3xl text-blue-500"></i>
+                        <div>
+                            <p class="font-semibold">N8N</p>
+                            <p class="text-xs text-gray-500">Workflow Automation</p>
+                        </div>
+                    </div>
+                    <div class="skill-pill px-6 py-4 glass-card rounded-2xl flex items-center gap-3 hover-target">
+                        <i class="fas fa-image text-3xl text-green-500"></i>
+                        <div>
+                            <p class="font-semibold">Stable Diffusion</p>
+                            <p class="text-xs text-gray-500">Image Generation</p>
+                        </div>
+                    </div>
+                    <div class="skill-pill px-6 py-4 glass-card rounded-2xl flex items-center gap-3 hover-target">
+                        <i class="fas fa-microphone text-3xl text-pink-500"></i>
+                        <div>
+                            <p class="font-semibold">Whisper</p>
+                            <p class="text-xs text-gray-500">Speech Recognition</p>
+                        </div>
+                    </div>
+                    <div class="skill-pill px-6 py-4 glass-card rounded-2xl flex items-center gap-3 hover-target">
+                        <i class="fas fa-volume-up text-3xl text-cyan-500"></i>
+                        <div>
+                            <p class="font-semibold">TTS (f5)</p>
+                            <p class="text-xs text-gray-500">Text-to-Speech</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Languages & Frameworks -->
+            <div class="mb-12 reveal-section">
+                <h3 class="text-xl font-bold mb-6 text-center text-orange-400">Languages & Frameworks</h3>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <div class="skill-pill px-6 py-4 glass-card rounded-2xl flex items-center gap-3 hover-target">
+                        <i class="fab fa-swift text-3xl text-orange-500"></i>
+                        <div>
+                            <p class="font-semibold">Swift</p>
+                            <p class="text-xs text-gray-500">Expert</p>
+                        </div>
+                    </div>
+                    <div class="skill-pill px-6 py-4 glass-card rounded-2xl flex items-center gap-3 hover-target">
+                        <i class="fab fa-apple text-3xl text-white"></i>
+                        <div>
+                            <p class="font-semibold">SwiftUI</p>
+                            <p class="text-xs text-gray-500">Expert</p>
+                        </div>
+                    </div>
+                    <div class="skill-pill px-6 py-4 glass-card rounded-2xl flex items-center gap-3 hover-target">
+                        <i class="fab fa-python text-3xl text-yellow-500"></i>
+                        <div>
+                            <p class="font-semibold">Python</p>
+                            <p class="text-xs text-gray-500">Advanced</p>
+                        </div>
+                    </div>
+                    <div class="skill-pill px-6 py-4 glass-card rounded-2xl flex items-center gap-3 hover-target">
+                        <i class="fas fa-mobile-alt text-3xl text-blue-400"></i>
+                        <div>
+                            <p class="font-semibold">UIKit</p>
+                            <p class="text-xs text-gray-500">Expert</p>
+                        </div>
+                    </div>
+                    <div class="skill-pill px-6 py-4 glass-card rounded-2xl flex items-center gap-3 hover-target">
+                        <i class="fas fa-broadcast-tower text-3xl text-red-500"></i>
+                        <div>
+                            <p class="font-semibold">WebRTC</p>
+                            <p class="text-xs text-gray-500">Advanced</p>
+                        </div>
+                    </div>
+                    <div class="skill-pill px-6 py-4 glass-card rounded-2xl flex items-center gap-3 hover-target">
+                        <i class="fas fa-fire text-3xl text-orange-600"></i>
+                        <div>
+                            <p class="font-semibold">Firebase</p>
+                            <p class="text-xs text-gray-500">Advanced</p>
+                        </div>
+                    </div>
+                    <div class="skill-pill px-6 py-4 glass-card rounded-2xl flex items-center gap-3 hover-target">
+                        <i class="fas fa-project-diagram text-3xl text-pink-400"></i>
+                        <div>
+                            <p class="font-semibold">GraphQL</p>
+                            <p class="text-xs text-gray-500">Advanced</p>
+                        </div>
+                    </div>
+                    <div class="skill-pill px-6 py-4 glass-card rounded-2xl flex items-center gap-3 hover-target">
+                        <i class="fas fa-rocket text-3xl text-indigo-400"></i>
+                        <div>
+                            <p class="font-semibold">Fastlane</p>
+                            <p class="text-xs text-gray-500">Advanced</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testing & Automation -->
+            <div class="mb-12 reveal-section">
+                <h3 class="text-xl font-bold mb-6 text-center text-green-400">Testing & Automation</h3>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <div class="skill-pill px-6 py-4 glass-card rounded-2xl flex items-center gap-3 hover-target">
+                        <i class="fas fa-vial text-3xl text-green-500"></i>
+                        <div>
+                            <p class="font-semibold">TDD</p>
+                            <p class="text-xs text-gray-500">Expert</p>
+                        </div>
+                    </div>
+                    <div class="skill-pill px-6 py-4 glass-card rounded-2xl flex items-center gap-3 hover-target">
+                        <i class="fas fa-check-double text-3xl text-blue-500"></i>
+                        <div>
+                            <p class="font-semibold">XCUITest</p>
+                            <p class="text-xs text-gray-500">Advanced</p>
+                        </div>
+                    </div>
+                    <div class="skill-pill px-6 py-4 glass-card rounded-2xl flex items-center gap-3 hover-target">
+                        <i class="fas fa-terminal text-3xl text-gray-400"></i>
+                        <div>
+                            <p class="font-semibold">Bash</p>
+                            <p class="text-xs text-gray-500">Advanced</p>
+                        </div>
+                    </div>
+                    <div class="skill-pill px-6 py-4 glass-card rounded-2xl flex items-center gap-3 hover-target">
+                        <i class="fas fa-sync-alt text-3xl text-purple-500"></i>
+                        <div>
+                            <p class="font-semibold">CI/CD</p>
+                            <p class="text-xs text-gray-500">Advanced</p>
+                        </div>
+                    </div>
+                    <div class="skill-pill px-6 py-4 glass-card rounded-2xl flex items-center gap-3 hover-target">
+                        <i class="fab fa-git-alt text-3xl text-orange-500"></i>
+                        <div>
+                            <p class="font-semibold">Git</p>
+                            <p class="text-xs text-gray-500">Expert</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Soft Skills -->
+            <div class="reveal-section">
+                <h3 class="text-xl font-bold mb-6 text-center text-yellow-400">Collaboration & Leadership</h3>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <div class="skill-pill px-6 py-4 glass-card rounded-2xl flex items-center gap-3 hover-target">
+                        <i class="fas fa-users text-3xl text-yellow-500"></i>
+                        <div>
+                            <p class="font-semibold">Cross-functional</p>
+                            <p class="text-xs text-gray-500">Collaboration</p>
+                        </div>
+                    </div>
+                    <div class="skill-pill px-6 py-4 glass-card rounded-2xl flex items-center gap-3 hover-target">
+                        <i class="fas fa-code-branch text-3xl text-cyan-500"></i>
+                        <div>
+                            <p class="font-semibold">Code Reviews</p>
+                            <p class="text-xs text-gray-500">Best Practices</p>
+                        </div>
+                    </div>
+                    <div class="skill-pill px-6 py-4 glass-card rounded-2xl flex items-center gap-3 hover-target">
+                        <i class="fas fa-chalkboard-teacher text-3xl text-pink-500"></i>
+                        <div>
+                            <p class="font-semibold">Mentorship</p>
+                            <p class="text-xs text-gray-500">Team Growth</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Publications & Certifications -->
+    <section class="py-20 px-6 relative z-10">
+        <div class="max-w-5xl mx-auto">
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Publications -->
+                <div class="reveal-section">
+                    <div class="glass-card rounded-2xl p-8 h-full hover-target">
+                        <h3 class="text-2xl font-bold mb-6 gradient-text flex items-center gap-3">
+                            <i class="fas fa-pen-fancy"></i> Publications
+                        </h3>
+                        <div class="space-y-4">
+                            <a href="https://medium.com/@rohitsainier" target="_blank"
+                                class="flex items-center gap-4 p-4 bg-gray-900/30 rounded-xl hover:bg-gray-900/50 transition-colors">
+                                <div class="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center">
+                                    <i class="fab fa-medium text-2xl text-green-400"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold">Medium</p>
+                                    <p class="text-sm text-gray-400">@rohitsainier</p>
+                                </div>
+                                <i class="fas fa-external-link-alt ml-auto text-gray-500"></i>
+                            </a>
+                            <a href="https://www.youtube.com/@rohitsainier" target="_blank"
+                                class="flex items-center gap-4 p-4 bg-gray-900/30 rounded-xl hover:bg-gray-900/50 transition-colors">
+                                <div class="w-12 h-12 bg-red-500/20 rounded-xl flex items-center justify-center">
+                                    <i class="fab fa-youtube text-2xl text-red-400"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold">YouTube</p>
+                                    <p class="text-sm text-gray-400">@rohitsainier</p>
+                                </div>
+                                <i class="fas fa-external-link-alt ml-auto text-gray-500"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Certifications & Interests -->
+                <div class="reveal-section">
+                    <div class="glass-card rounded-2xl p-8 h-full hover-target">
+                        <h3 class="text-2xl font-bold mb-6 gradient-text flex items-center gap-3">
+                            <i class="fas fa-certificate"></i> Certifications & More
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="p-4 bg-gray-900/30 rounded-xl">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <i class="fas fa-award text-yellow-500"></i>
+                                    <p class="font-semibold">NPTEL C Language</p>
+                                </div>
+                                <p class="text-sm text-gray-400">IIT Kanpur Certification</p>
+                            </div>
+                            <div class="p-4 bg-gray-900/30 rounded-xl">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <i class="fas fa-language text-blue-500"></i>
+                                    <p class="font-semibold">Languages</p>
+                                </div>
+                                <p class="text-sm text-gray-400">English, Hindi</p>
+                            </div>
+                            <div class="p-4 bg-gray-900/30 rounded-xl">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <i class="fas fa-heart text-pink-500"></i>
+                                    <p class="font-semibold">Interests</p>
+                                </div>
+                                <p class="text-sm text-gray-400">Singing, Fitness Yoga, Calisthenics</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-32 px-6 relative z-10">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-16 reveal-section">
+                <p class="text-indigo-400 font-mono mb-4">// LET'S CONNECT</p>
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                    Have an Idea? <span class="gradient-text">Let's Build It!</span>
+                </h2>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+                    I'm always excited to work on new projects. Whether you need iOS development,
+                    AI integration, or creative automation—I'd love to hear from you.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6 mb-12 stagger-children" id="contactCards">
+                <a href="mailto:rohitsainier@gmail.com"
+                    class="glass-card rounded-2xl p-6 text-center hover:bg-indigo-500/10 transition-all hover-target">
+                    <div class="w-16 h-16 bg-indigo-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-envelope text-2xl text-indigo-400"></i>
+                    </div>
+                    <h3 class="font-semibold mb-1">Email Me</h3>
+                    <p class="text-gray-500 text-sm">rohitsainier@gmail.com</p>
+                </a>
+                <a href="tel:+918708584615"
+                    class="glass-card rounded-2xl p-6 text-center hover:bg-purple-500/10 transition-all hover-target">
+                    <div class="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-phone text-2xl text-purple-400"></i>
+                    </div>
+                    <h3 class="font-semibold mb-1">Call Me</h3>
+                    <p class="text-gray-500 text-sm">+91 8708584615</p>
+                </a>
+                <a href="https://www.linkedin.com/in/rohitsainier/" target="_blank"
+                    class="glass-card rounded-2xl p-6 text-center hover:bg-pink-500/10 transition-all hover-target">
+                    <div class="w-16 h-16 bg-pink-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fab fa-linkedin text-2xl text-pink-400"></i>
+                    </div>
+                    <h3 class="font-semibold mb-1">LinkedIn</h3>
+                    <p class="text-gray-500 text-sm">rohitsainier</p>
+                </a>
+            </div>
+
+            <form class="reveal-section glass-card rounded-3xl p-8 glow-box">
+                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-300">Your Name</label>
+                        <input type="text" placeholder="John Doe"
+                            class="w-full bg-gray-900/50 border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500 transition-colors hover-target">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-gray-300">Your Email</label>
+                        <input type="email" placeholder="john@example.com"
+                            class="w-full bg-gray-900/50 border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500 transition-colors hover-target">
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-medium mb-2 text-gray-300">Project Type</label>
+                    <select
+                        class="w-full bg-gray-900/50 border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500 transition-colors hover-target">
+                        <option>iOS App Development</option>
+                        <option>AI/ML Integration</option>
+                        <option>ComfyUI/N8N Workflows</option>
+                        <option>Consulting</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-medium mb-2 text-gray-300">Your Message</label>
+                    <textarea rows="5" placeholder="Tell me about your project..."
+                        class="w-full bg-gray-900/50 border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500 transition-colors resize-none hover-target"></textarea>
+                </div>
+                <button type="submit"
+                    class="magnetic-btn w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 py-4 rounded-xl font-semibold transition-all btn-shine flex items-center justify-center gap-2 hover-target">
+                    <span>Send Message</span>
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-6 border-t border-gray-800/50 relative z-10">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="flex items-center gap-4">
+                    <span class="text-2xl font-bold gradient-text">RS.</span>
+                    <span class="text-gray-500">© 2024 Rohit Saini</span>
+                </div>
+                <div class="flex items-center gap-2 text-gray-500">
+                    <span>Built with</span>
+                    <i class="fas fa-heart text-red-500"></i>
+                    <span>from India</span>
+                    <span>🇮🇳</span>
+                </div>
+                <div class="flex gap-4">
+                    <a href="https://github.com/rohitsainier" target="_blank"
+                        class="w-10 h-10 glass-card rounded-full flex items-center justify-center hover:bg-indigo-500/20 transition-all hover-target">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/in/rohitsainier/" target="_blank"
+                        class="w-10 h-10 glass-card rounded-full flex items-center justify-center hover:bg-indigo-500/20 transition-all hover-target">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <a href="https://www.youtube.com/@rohitsainier" target="_blank"
+                        class="w-10 h-10 glass-card rounded-full flex items-center justify-center hover:bg-indigo-500/20 transition-all hover-target">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                    <a href="https://medium.com/@rohitsainier" target="_blank"
+                        class="w-10 h-10 glass-card rounded-full flex items-center justify-center hover:bg-indigo-500/20 transition-all hover-target">
+                        <i class="fab fa-medium"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
     </footer>
 
-    <script src="js/script.js"></script>
-  </body>
+    <script>
+        // Custom Cursor
+        const cursor = document.getElementById('cursor');
+        const cursorDot = document.getElementById('cursorDot');
+        const spotlight = document.getElementById('spotlight');
+
+        let mouseX = 0, mouseY = 0;
+        let cursorX = 0, cursorY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+
+            cursorDot.style.left = mouseX + 'px';
+            cursorDot.style.top = mouseY + 'px';
+
+            spotlight.style.left = mouseX + 'px';
+            spotlight.style.top = mouseY + 'px';
+        });
+
+        function animateCursor() {
+            cursorX += (mouseX - cursorX) * 0.1;
+            cursorY += (mouseY - cursorY) * 0.1;
+
+            cursor.style.left = cursorX + 'px';
+            cursor.style.top = cursorY + 'px';
+
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        // Hover effect for cursor
+        document.querySelectorAll('.hover-target').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+
+        // Scroll Progress
+        window.addEventListener('scroll', () => {
+            const scrollProgress = document.getElementById('scrollProgress');
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = (scrollTop / docHeight) * 100;
+            scrollProgress.style.width = progress + '%';
+        });
+
+        // Network Canvas
+        const canvas = document.getElementById('networkCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let mouse = { x: null, y: null, radius: 150 };
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.radius = Math.random() * 2 + 1;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(99, 102, 241, 0.5)';
+                ctx.fill();
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+
+                // Mouse interaction
+                if (mouse.x) {
+                    const dx = mouse.x - this.x;
+                    const dy = mouse.y - this.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < mouse.radius) {
+                        const angle = Math.atan2(dy, dx);
+                        this.x -= Math.cos(angle) * 2;
+                        this.y -= Math.sin(angle) * 2;
+                    }
+                }
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            const numParticles = Math.min(80, Math.floor((canvas.width * canvas.height) / 15000));
+            for (let i = 0; i < numParticles; i++) {
+                particles.push(new Particle());
+            }
+        }
+        initParticles();
+
+        function connectParticles() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 120) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(99, 102, 241, ${0.2 - distance / 600})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animateNetwork() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            connectParticles();
+            requestAnimationFrame(animateNetwork);
+        }
+        animateNetwork();
+
+        canvas.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+
+        // 3D Tilt Effect
+        document.querySelectorAll('.tilt-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = (y - centerY) / 10;
+                const rotateY = (centerX - x) / 10;
+
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+            });
+        });
+
+        // Magnetic Buttons
+        document.querySelectorAll('.magnetic-btn').forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+
+                btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+            });
+
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = 'translate(0, 0)';
+            });
+        });
+
+        // Text Scramble Effect
+        class TextScramble {
+            constructor(el) {
+                this.el = el;
+                this.chars = '!<>-_\\/[]{}—=+*^?#________';
+                this.update = this.update.bind(this);
+            }
+
+            setText(newText) {
+                const oldText = this.el.innerText;
+                const length = Math.max(oldText.length, newText.length);
+                const promise = new Promise(resolve => this.resolve = resolve);
+                this.queue = [];
+
+                for (let i = 0; i < length; i++) {
+                    const from = oldText[i] || '';
+                    const to = newText[i] || '';
+                    const start = Math.floor(Math.random() * 40);
+                    const end = start + Math.floor(Math.random() * 40);
+                    this.queue.push({ from, to, start, end });
+                }
+
+                cancelAnimationFrame(this.frameRequest);
+                this.frame = 0;
+                this.update();
+                return promise;
+            }
+
+            update() {
+                let output = '';
+                let complete = 0;
+
+                for (let i = 0, n = this.queue.length; i < n; i++) {
+                    let { from, to, start, end, char } = this.queue[i];
+
+                    if (this.frame >= end) {
+                        complete++;
+                        output += to;
+                    } else if (this.frame >= start) {
+                        if (!char || Math.random() < 0.28) {
+                            char = this.chars[Math.floor(Math.random() * this.chars.length)];
+                            this.queue[i].char = char;
+                        }
+                        output += `<span class="text-indigo-400">${char}</span>`;
+                    } else {
+                        output += from;
+                    }
+                }
+
+                this.el.innerHTML = output;
+
+                if (complete === this.queue.length) {
+                    this.resolve();
+                } else {
+                    this.frameRequest = requestAnimationFrame(this.update);
+                    this.frame++;
+                }
+            }
+        }
+
+        const scrambleEl = document.querySelector('.scramble-text');
+        if (scrambleEl) {
+            const fx = new TextScramble(scrambleEl);
+            const texts = ['Rohit Saini', 'iOS Engineer', 'AI Engineer', 'ComfyUI Expert'];
+            let counter = 0;
+
+            const next = () => {
+                fx.setText(texts[counter]).then(() => {
+                    setTimeout(next, 3000);
+                });
+                counter = (counter + 1) % texts.length;
+            };
+
+            setTimeout(next, 2000);
+        }
+
+        // iPhone Carousel
+        const carousel = document.getElementById('appCarousel');
+        const dots = document.querySelectorAll('.carousel-dot');
+        let currentSlide = 0;
+
+        function goToSlide(index) {
+            currentSlide = index;
+            carousel.style.transform = `translateX(-${index * 100}%)`;
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('bg-white', i === index);
+                dot.classList.toggle('bg-white/30', i !== index);
+            });
+        }
+
+        dots.forEach((dot, i) => {
+            dot.addEventListener('click', () => goToSlide(i));
+        });
+
+        // Auto-rotate carousel
+        setInterval(() => {
+            currentSlide = (currentSlide + 1) % 3;
+            goToSlide(currentSlide);
+        }, 4000);
+
+        // Reveal on Scroll
+        function reveal() {
+            const reveals = document.querySelectorAll('.reveal-section, .stagger-children');
+            reveals.forEach(el => {
+                const windowHeight = window.innerHeight;
+                const elementTop = el.getBoundingClientRect().top;
+                const elementVisible = 100;
+
+                if (elementTop < windowHeight - elementVisible) {
+                    el.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', reveal);
+        reveal();
+
+        // Counter Animation
+        function animateCounters() {
+            const counters = document.querySelectorAll('.counter');
+            counters.forEach(counter => {
+                const target = parseInt(counter.dataset.target);
+                const increment = target / 50;
+                let current = 0;
+
+                const updateCounter = () => {
+                    if (current < target) {
+                        current += increment;
+                        counter.textContent = Math.ceil(current) + '+';
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        counter.textContent = target + '+';
+                    }
+                };
+
+                const observer = new IntersectionObserver((entries) => {
+                    if (entries[0].isIntersecting) {
+                        updateCounter();
+                        observer.disconnect();
+                    }
+                });
+
+                observer.observe(counter);
+            });
+        }
+        animateCounters();
+
+        // Form submission
+        document.querySelector('form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            alert('Thanks for reaching out! I\'ll get back to you soon. 🚀');
+            this.reset();
+        });
+
+        // Mobile menu
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const closeMenu = document.getElementById('closeMenu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        if (menuBtn && mobileMenu) {
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.remove('hidden');
+            });
+
+            closeMenu.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+        }
+
+        // Hide custom cursor on mobile
+        if ('ontouchstart' in window) {
+            cursor.style.display = 'none';
+            cursorDot.style.display = 'none';
+            document.body.style.cursor = 'auto';
+            document.querySelectorAll('*').forEach(el => {
+                el.style.cursor = 'auto';
+            });
+        }
+    </script>
+</body>
+
 </html>
