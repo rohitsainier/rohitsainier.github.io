@@ -109,7 +109,7 @@ const siteData = {
                 role: "Principal AI Engineer",
                 duration: "Present",
                 durationColor: "bg-red-500/20 text-red-400",
-                location: "New Delhi, India",
+                location: "Noida, India",
                 achievements: [
                     `Architected and deployed <span class="text-white font-semibold">Virtual AI Anchor</span> system capable of presenting news autonomously, reducing anchor dependency by <span class="text-white font-semibold">60%</span> for routine bulletins`,
                     `Built <span class="text-white font-semibold">Newspaper & Magazine Builder</span> that analyzes existing templates using AI/ML, automating layout generation and reducing manual design effort by <span class="text-white font-semibold">70%</span>`,
@@ -121,7 +121,7 @@ const siteData = {
             {
                 company: "Majid Al Futtaim",
                 role: "Senior iOS Engineer",
-                duration: "Mar 2022 – Present",
+                duration: "Mar 2022 – Aug 2025",
                 durationColor: "bg-indigo-500/20 text-indigo-400",
                 location: "Gurgaon, India",
                 achievements: [
