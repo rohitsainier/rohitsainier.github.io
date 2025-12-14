@@ -490,7 +490,7 @@ const siteData = {
             type: "video",
             // Video source options - priority: videoLocal > videoUrl
             videoUrl: "https://www.youtube.com/shorts/WwilmdQh6qA",
-            videoLocal: "./assets/videos/s1.mp4",
+            videoLocal: null, // e.g., "./assets/videos/screen1-video.mp4"
             // Poster/thumbnail options - priority: posterLocal > posterUrl
             posterUrl: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=280&h=500&fit=crop",
             posterLocal: null, // e.g., "./assets/images/posters/screen1-poster.jpg"
