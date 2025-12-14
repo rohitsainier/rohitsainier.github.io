@@ -400,3 +400,411 @@ html {
 .timeline-item:hover::before {
     box-shadow: 0 0 20px rgba(99, 102, 241, 0.6);
 }
+
+/* ============================================
+   VIDEO IPHONE MOCKUP STYLES
+   ============================================ */
+
+.video-screen {
+    min-width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    padding: 0 !important;
+}
+
+.iphone-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 35px;
+}
+
+.video-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+    padding: 60px 20px 20px;
+    pointer-events: none;
+}
+
+.video-info {
+    text-align: center;
+}
+
+.video-play-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: white;
+    font-size: 20px;
+    z-index: 10;
+}
+
+.video-play-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%) scale(1.1);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+}
+
+.video-play-btn i {
+    margin-left: 3px; /* Center the play icon visually */
+}
+
+/* Hide play button when video is playing */
+.video-screen:has(video:not([paused])) .video-play-btn {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Show pause on hover when playing */
+.video-screen:hover .video-play-btn {
+    opacity: 1;
+    pointer-events: all;
+}
+
+/* ============================================
+   PROJECT CARD IMAGE STYLES
+   ============================================ */
+
+.project-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.project-card img {
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.project-card:hover img {
+    transform: scale(1.1);
+}
+
+/* Image loading placeholder */
+.project-card .h-56 {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+/* Skeleton loading animation for images */
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.project-card img[loading] {
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.03) 25%,
+        rgba(255, 255, 255, 0.08) 50%,
+        rgba(255, 255, 255, 0.03) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+/* ============================================
+   ENHANCED PROJECT CARD HOVER EFFECTS
+   ============================================ */
+
+.project-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        135deg,
+        rgba(99, 102, 241, 0.1) 0%,
+        rgba(168, 85, 247, 0.1) 50%,
+        rgba(236, 72, 153, 0.1) 100%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.project-card:hover::after {
+    opacity: 1;
+}
+
+/* Ensure content is above the overlay */
+.project-card > * {
+    position: relative;
+    z-index: 2;
+}
+
+/* ============================================
+   RESPONSIVE VIDEO STYLES
+   ============================================ */
+
+@media (max-width: 768px) {
+    .video-play-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 16px;
+    }
+    
+    .video-overlay {
+        padding: 40px 15px 15px;
+    }
+}
+
+/* ============================================
+   CAROUSEL VIDEO PAUSE ON SLIDE
+   ============================================ */
+
+.app-carousel .video-screen:not(.active-slide) video {
+    /* Videos not in view should be paused */
+}
+
+/* ============================================
+   LOADING SPINNER
+   ============================================ */
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: rgba(99, 102, 241, 0.8);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ============================================
+   VIDEO IPHONE MOCKUP STYLES
+   ============================================ */
+
+.video-screen {
+    min-width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    padding: 0 !important;
+}
+
+.iphone-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 35px;
+    transition: opacity 0.3s ease;
+}
+
+.video-loader {
+    transition: opacity 0.3s ease;
+}
+
+.video-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+    padding: 60px 20px 20px;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.video-info {
+    text-align: center;
+}
+
+.video-play-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: white;
+    font-size: 20px;
+    z-index: 10;
+}
+
+.video-play-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%) scale(1.1);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+}
+
+.video-play-btn i {
+    margin-left: 3px;
+}
+
+/* Video error fallback */
+.video-error-fallback {
+    z-index: 4;
+}
+
+/* ============================================
+   PROJECT CARD IMAGE STYLES
+   ============================================ */
+
+.project-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.project-image {
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.3s ease;
+}
+
+.project-card:hover .project-image {
+    transform: scale(1.1);
+}
+
+/* Image loading state */
+.image-loader {
+    z-index: 5;
+    transition: opacity 0.3s ease;
+}
+
+.image-fallback {
+    z-index: 3;
+}
+
+/* Image placeholder shimmer */
+.project-card .h-56 {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.image-loader {
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.03) 25%,
+        rgba(255, 255, 255, 0.08) 50%,
+        rgba(255, 255, 255, 0.03) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+/* ============================================
+   ENHANCED PROJECT CARD HOVER EFFECTS
+   ============================================ */
+
+.project-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        135deg,
+        rgba(99, 102, 241, 0.1) 0%,
+        rgba(168, 85, 247, 0.1) 50%,
+        rgba(236, 72, 153, 0.1) 100%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.project-card:hover::after {
+    opacity: 1;
+}
+
+/* Ensure content is above the overlay */
+.project-card > * {
+    position: relative;
+    z-index: 2;
+}
+
+/* ============================================
+   FILE NOT FOUND STATES
+   ============================================ */
+
+.file-not-found {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.file-not-found i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.file-not-found p {
+    font-size: 0.75rem;
+}
+
+/* ============================================
+   RESPONSIVE VIDEO STYLES
+   ============================================ */
+
+@media (max-width: 768px) {
+    .video-play-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 16px;
+    }
+    
+    .video-overlay {
+        padding: 40px 15px 15px;
+    }
+    
+    .loading-spinner {
+        width: 30px;
+        height: 30px;
+        border-width: 2px;
+    }
+}
+
+/* ============================================
+   LAZY LOADING SUPPORT
+   ============================================ */
+
+img[loading="lazy"] {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+img[loading="lazy"].loaded,
+img[loading="lazy"]:not([src=""]) {
+    opacity: 1;
+}

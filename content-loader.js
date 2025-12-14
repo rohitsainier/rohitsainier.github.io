@@ -1,6 +1,67 @@
-// content-loader.js - Renders content from data.js
+// content-loader.js - Renders content from data.js (with local file support)
 (function() {
     'use strict';
+
+    // ============================================
+    // ASSET HELPER FUNCTIONS
+    // ============================================
+    
+    /**
+     * Get the appropriate image source (local takes priority over URL)
+     * @param {Object} item - Object containing imageLocal and imageUrl
+     * @returns {string|null} - Image source or null if none available
+     */
+    function getImageSource(item) {
+        if (item.imageLocal && item.imageLocal.trim() !== '') {
+            return item.imageLocal;
+        }
+        if (item.imageUrl && item.imageUrl.trim() !== '') {
+            return item.imageUrl;
+        }
+        return null;
+    }
+
+    /**
+     * Get the appropriate video source (local takes priority over URL)
+     * @param {Object} item - Object containing videoLocal and videoUrl
+     * @returns {string|null} - Video source or null if none available
+     */
+    function getVideoSource(item) {
+        if (item.videoLocal && item.videoLocal.trim() !== '') {
+            return item.videoLocal;
+        }
+        if (item.videoUrl && item.videoUrl.trim() !== '') {
+            return item.videoUrl;
+        }
+        return null;
+    }
+
+    /**
+     * Get the appropriate poster source (local takes priority over URL)
+     * @param {Object} item - Object containing posterLocal and posterUrl
+     * @returns {string} - Poster source or empty string
+     */
+    function getPosterSource(item) {
+        if (item.posterLocal && item.posterLocal.trim() !== '') {
+            return item.posterLocal;
+        }
+        if (item.posterUrl && item.posterUrl.trim() !== '') {
+            return item.posterUrl;
+        }
+        return '';
+    }
+
+    /**
+     * Check if a file exists (for local files)
+     * Note: This only works client-side for already-loaded resources
+     */
+    function isValidSource(src) {
+        return src && src.trim() !== '';
+    }
+
+    // ============================================
+    // MAIN RENDER FUNCTION
+    // ============================================
 
     function renderContent() {
         if (typeof siteData === 'undefined') {
@@ -28,7 +89,7 @@
         // Experience
         renderExperience(data);
 
-        // Projects
+        // Projects (with image support)
         renderProjects(data);
 
         // Skills
@@ -43,7 +104,7 @@
         // Footer
         renderFooter(data);
 
-        // iPhone Screens - Also renders carousel dots
+        // iPhone Screens (with video support)
         renderIphoneScreens(data);
 
         console.log('Content loaded successfully!');
@@ -51,6 +112,10 @@
         // Dispatch custom event when content is ready
         document.dispatchEvent(new CustomEvent('contentLoaded', { detail: { data: data } }));
     }
+
+    // ============================================
+    // RENDER FUNCTIONS
+    // ============================================
 
     function renderNavigation(data) {
         // Desktop Nav
@@ -235,35 +300,74 @@
         }
     }
 
+    // UPDATED: renderProjects with local/URL image support
     function renderProjects(data) {
         setText('proj-label', data.projects.sectionLabel);
         setHTML('proj-title', data.projects.title);
 
         const projectsGrid = document.getElementById('projectsGrid');
         if (projectsGrid) {
-            // Log to debug
             console.log('Rendering projects:', data.projects.items.length);
             
             const projectsHTML = data.projects.items.map((project, index) => {
-                console.log(`Rendering project ${index + 1}:`, project.title);
+                // Get image source (local takes priority)
+                const imageSrc = getImageSource(project);
+                const hasImage = isValidSource(imageSrc);
+                
                 return `
-                    <div class="project-card tilt-card relative glass-card rounded-2xl overflow-hidden hover-target" data-project="${project.id}">
-                        <div class="h-56 bg-gradient-to-br ${project.gradient} p-6 flex flex-col justify-between">
-                            <div class="flex justify-between items-start">
-                                <div class="w-14 h-14 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
-                                    <i class="${project.icon} text-3xl"></i>
+                    <div class="project-card tilt-card relative glass-card rounded-2xl overflow-hidden hover-target group" data-project="${project.id}">
+                        <!-- Image/Gradient Header -->
+                        <div class="h-56 relative overflow-hidden">
+                            ${hasImage ? `
+                                <!-- Project Image -->
+                                <img 
+                                    src="${imageSrc}" 
+                                    alt="${project.title}"
+                                    class="project-image w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                    loading="lazy"
+                                    onerror="handleImageError(this, '${project.gradient}', '${project.icon}')"
+                                />
+                                <!-- Fallback gradient (hidden by default, shown on error) -->
+                                <div class="image-fallback absolute inset-0 bg-gradient-to-br ${project.gradient} hidden items-center justify-center">
+                                    <i class="${project.icon} text-6xl text-white/50"></i>
+                                </div>
+                            ` : `
+                                <!-- Gradient Background if no image -->
+                                <div class="absolute inset-0 bg-gradient-to-br ${project.gradient} flex items-center justify-center">
+                                    <i class="${project.icon} text-6xl text-white/50"></i>
+                                </div>
+                            `}
+                            
+                            <!-- Overlay -->
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                            
+                            <!-- Loading indicator -->
+                            ${hasImage ? `
+                                <div class="image-loader absolute inset-0 bg-gradient-to-br ${project.gradient} flex items-center justify-center">
+                                    <div class="loading-spinner"></div>
+                                </div>
+                            ` : ''}
+                            
+                            <!-- Top Content -->
+                            <div class="absolute top-0 left-0 right-0 p-6 flex justify-between items-start z-10">
+                                <div class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center">
+                                    <i class="${project.icon} text-2xl text-white"></i>
                                 </div>
                                 <div class="flex gap-2 flex-wrap justify-end">
                                     ${project.tags.map(tag => `
-                                        <span class="px-3 py-1 bg-white/20 backdrop-blur rounded-full text-xs">${tag}</span>
+                                        <span class="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs text-white">${tag}</span>
                                     `).join('')}
                                 </div>
                             </div>
-                            <div>
-                                <h3 class="text-2xl font-bold mb-1">${project.title}</h3>
+                            
+                            <!-- Bottom Content (on image) -->
+                            <div class="absolute bottom-0 left-0 right-0 p-6 z-10">
+                                <h3 class="text-2xl font-bold text-white mb-1">${project.title}</h3>
                                 <p class="text-white/70 text-sm">${project.subtitle}</p>
                             </div>
                         </div>
+                        
+                        <!-- Card Body -->
                         <div class="p-6">
                             <p class="text-gray-400 text-sm mb-4">${project.description}</p>
                             <div class="flex items-center justify-between">
@@ -272,7 +376,7 @@
                                     <span>${project.metric.text}</span>
                                 </div>
                                 <a href="${project.link}" target="_blank" 
-                                   class="w-10 h-10 ${project.linkBg} ${project.linkHover} rounded-full flex items-center justify-center transition-colors">
+                                   class="w-10 h-10 ${project.linkBg} ${project.linkHover} rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110">
                                     <i class="${project.linkIcon} ${project.linkColor}"></i>
                                 </a>
                             </div>
@@ -282,9 +386,54 @@
             }).join('');
             
             projectsGrid.innerHTML = projectsHTML;
+            
+            // Initialize image loading handlers
+            initImageLoadHandlers();
+            
             console.log('Projects rendered, total count in DOM:', projectsGrid.children.length);
         }
     }
+
+    // Image loading handlers
+    function initImageLoadHandlers() {
+        const images = document.querySelectorAll('.project-image');
+        images.forEach(img => {
+            const loader = img.parentElement.querySelector('.image-loader');
+            
+            // When image loads successfully
+            img.addEventListener('load', function() {
+                if (loader) {
+                    loader.style.display = 'none';
+                }
+                this.style.opacity = '1';
+            });
+            
+            // Initial state
+            img.style.opacity = '0';
+            img.style.transition = 'opacity 0.3s ease';
+        });
+    }
+
+    // Global function for image error handling
+    window.handleImageError = function(img, gradient, icon) {
+        // Hide the broken image
+        img.style.display = 'none';
+        
+        // Show the fallback
+        const fallback = img.nextElementSibling;
+        if (fallback && fallback.classList.contains('image-fallback')) {
+            fallback.classList.remove('hidden');
+            fallback.classList.add('flex');
+        }
+        
+        // Hide loader if present
+        const loader = img.parentElement.querySelector('.image-loader');
+        if (loader) {
+            loader.style.display = 'none';
+        }
+        
+        console.warn(`Image failed to load: ${img.src}`);
+    };
 
     function renderSkills(data) {
         setText('skills-label', data.skills.sectionLabel);
@@ -385,25 +534,106 @@
         }
     }
 
+    // UPDATED: renderIphoneScreens with local/URL video support
     function renderIphoneScreens(data) {
         const appCarousel = document.getElementById('appCarousel');
         const carouselDotsContainer = document.getElementById('carouselDots');
         
         if (appCarousel && data.iphoneScreens) {
             const screenCount = data.iphoneScreens.length;
-            console.log('Rendering iPhone screens:', screenCount);
+            console.log('Rendering iPhone screens with videos:', screenCount);
             
-            // Render screens
-            appCarousel.innerHTML = data.iphoneScreens.map(screen => `
-                <div class="app-screen bg-gradient-to-br ${screen.gradient}">
-                    <div class="text-center">
-                        <i class="${screen.icon} text-5xl ${screen.iconColor} mb-4"></i>
-                        <h3 class="text-lg font-bold mb-2">${screen.title}</h3>
-                        <p class="text-xs text-gray-300 mb-4">${screen.subtitle}</p>
-                        ${screen.content}
-                    </div>
-                </div>
-            `).join('');
+            // Render video screens
+            appCarousel.innerHTML = data.iphoneScreens.map((screen, index) => {
+                if (screen.type === 'video') {
+                    // Get video and poster sources (local takes priority)
+                    const videoSrc = getVideoSource(screen);
+                    const posterSrc = getPosterSource(screen);
+                    const hasVideo = isValidSource(videoSrc);
+                    
+                    if (!hasVideo) {
+                        // No video available, show poster or gradient fallback
+                        return `
+                            <div class="app-screen video-screen" data-index="${index}">
+                                ${posterSrc ? `
+                                    <img 
+                                        src="${posterSrc}" 
+                                        alt="${screen.title}"
+                                        class="w-full h-full object-cover rounded-[35px]"
+                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                                    />
+                                ` : ''}
+                                <div class="absolute inset-0 bg-gradient-to-br from-indigo-900 to-purple-900 flex flex-col items-center justify-center rounded-[35px] ${posterSrc ? 'hidden' : ''}">
+                                    <i class="fas fa-video-slash text-4xl text-white/30 mb-4"></i>
+                                    <p class="text-white/50 text-sm">Video not available</p>
+                                </div>
+                                <div class="video-overlay">
+                                    <div class="video-info">
+                                        <h3 class="text-sm font-bold text-white">${screen.title}</h3>
+                                        <p class="text-xs text-white/70">${screen.subtitle}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    return `
+                        <div class="app-screen video-screen" data-index="${index}">
+                            <!-- Video Loading Indicator -->
+                            <div class="video-loader absolute inset-0 bg-gradient-to-br from-indigo-900 to-purple-900 flex items-center justify-center rounded-[35px] z-5">
+                                <div class="loading-spinner"></div>
+                            </div>
+                            
+                            <video 
+                                class="iphone-video"
+                                src="${videoSrc}"
+                                poster="${posterSrc}"
+                                loop
+                                playsinline
+                                preload="metadata"
+                                onerror="handleVideoError(this, ${index})"
+                                onloadeddata="handleVideoLoaded(this)"
+                            ></video>
+                            
+                            <!-- Video Error Fallback -->
+                            <div class="video-error-fallback absolute inset-0 bg-gradient-to-br from-indigo-900 to-purple-900 hidden flex-col items-center justify-center rounded-[35px]">
+                                ${posterSrc ? `
+                                    <img 
+                                        src="${posterSrc}" 
+                                        alt="${screen.title}"
+                                        class="w-full h-full object-cover rounded-[35px] absolute inset-0"
+                                    />
+                                    <div class="absolute inset-0 bg-black/50 rounded-[35px]"></div>
+                                ` : ''}
+                                <i class="fas fa-exclamation-triangle text-3xl text-yellow-500 mb-2 relative z-10"></i>
+                                <p class="text-white/70 text-xs relative z-10">Video unavailable</p>
+                            </div>
+                            
+                            <div class="video-overlay">
+                                <div class="video-info">
+                                    <h3 class="text-sm font-bold text-white">${screen.title}</h3>
+                                    <p class="text-xs text-white/70">${screen.subtitle}</p>
+                                </div>
+                            </div>
+                            <button class="video-play-btn" aria-label="Play video">
+                                <i class="fas fa-play"></i>
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    // Fallback for non-video screens (legacy support)
+                    return `
+                        <div class="app-screen bg-gradient-to-br ${screen.gradient || 'from-indigo-900 to-purple-900'}" data-index="${index}">
+                            <div class="text-center pt-10">
+                                <i class="${screen.icon} text-5xl ${screen.iconColor} mb-4"></i>
+                                <h3 class="text-lg font-bold mb-2">${screen.title}</h3>
+                                <p class="text-xs text-gray-300 mb-4">${screen.subtitle}</p>
+                                ${screen.content || ''}
+                            </div>
+                        </div>
+                    `;
+                }
+            }).join('');
             
             // Render dots dynamically
             if (carouselDotsContainer) {
@@ -414,10 +644,56 @@
             
             // Store screen count for carousel logic
             window.carouselScreenCount = screenCount;
+            
+            console.log('iPhone screens rendered');
         }
     }
 
-    // Helper Functions
+    // Global video error handler
+    window.handleVideoError = function(video, index) {
+        console.warn(`Video failed to load at index ${index}: ${video.src}`);
+        
+        const screen = video.closest('.video-screen');
+        if (screen) {
+            // Hide video
+            video.style.display = 'none';
+            
+            // Hide loader
+            const loader = screen.querySelector('.video-loader');
+            if (loader) loader.style.display = 'none';
+            
+            // Show error fallback
+            const fallback = screen.querySelector('.video-error-fallback');
+            if (fallback) {
+                fallback.classList.remove('hidden');
+                fallback.classList.add('flex');
+            }
+            
+            // Hide play button
+            const playBtn = screen.querySelector('.video-play-btn');
+            if (playBtn) playBtn.style.display = 'none';
+        }
+    };
+
+    // Global video loaded handler
+    window.handleVideoLoaded = function(video) {
+        const screen = video.closest('.video-screen');
+        if (screen) {
+            // Hide loader
+            const loader = screen.querySelector('.video-loader');
+            if (loader) {
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 300);
+            }
+        }
+    };
+
+    // ============================================
+    // HELPER FUNCTIONS
+    // ============================================
+
     function setText(id, text) {
         const el = document.getElementById(id);
         if (el) el.textContent = text;

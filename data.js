@@ -1,8 +1,17 @@
-// data.js - All content data (Merged)
+// data.js - All content data (with local file support)
 const siteData = {
     meta: {
         title: "Rohit Saini | AI + iOS Engineer"
     },
+    
+    // Base paths for assets (change these based on your setup)
+    assetPaths: {
+        images: "./assets/images/",
+        videos: "./assets/videos/",
+        projectImages: "./assets/images/projects/",
+        posters: "./assets/images/posters/"
+    },
+    
     personal: {
         name: "Rohit Saini",
         initials: "RS.",
@@ -30,9 +39,7 @@ const siteData = {
     hero: {
         badge: "🚀 8+ Years Experience | India",
         greeting: "Hello, I'm",
-        description: `Building <span class="text-white font-semibold">scalable mobile apps</span> and
-            <span class="text-white font-semibold">AI-driven creative automation systems</span>.
-            Bridging the worlds of mobile development and generative AI for media and content innovation.`,
+        description: `Building <span class="text-white font-semibold">scalable mobile apps</span> and <span class="text-white font-semibold">AI-driven creative automation systems</span>. Bridging the worlds of mobile development and generative AI for media and content innovation.`,
         floatingTags: [
             { icon: "fab fa-swift", text: "Swift", color: "orange-500" },
             { icon: "fas fa-brain", text: "ComfyUI", color: "purple-500" },
@@ -174,6 +181,11 @@ const siteData = {
                 description: "Built AI-powered virtual anchor system for India Today Group that can autonomously present news with natural speech and expressions.",
                 gradient: "from-red-600 to-orange-700",
                 icon: "fas fa-user-tie",
+                // Image options - use ONE of these:
+                // Option 1: URL
+                imageUrl: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=600&fit=crop",
+                // Option 2: Local file (relative to index.html)
+                imageLocal: null, // e.g., "./assets/images/projects/virtual-ai-anchor.jpg"
                 tags: ["AI/ML", "TTS", "Lip-Sync"],
                 metric: { icon: "fas fa-microphone-alt", text: "60% less anchor dependency", color: "text-red-400" },
                 link: "#",
@@ -189,6 +201,8 @@ const siteData = {
                 description: "Automated newspaper and magazine layout system that analyzes existing templates using AI/ML to generate new layouts automatically.",
                 gradient: "from-amber-600 to-yellow-700",
                 icon: "fas fa-newspaper",
+                imageUrl: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&h=600&fit=crop",
+                imageLocal: null,
                 tags: ["AI/ML", "Automation"],
                 metric: { icon: "fas fa-clock", text: "70% effort reduction", color: "text-amber-400" },
                 link: "#",
@@ -204,6 +218,8 @@ const siteData = {
                 description: "Intelligent video conversion system with speaker focus tracking and multiple templates for social media-ready vertical content.",
                 gradient: "from-cyan-600 to-blue-700",
                 icon: "fas fa-mobile-screen",
+                imageUrl: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=800&h=600&fit=crop",
+                imageLocal: null,
                 tags: ["ComfyUI", "FFmpeg"],
                 metric: { icon: "fas fa-bolt", text: "80% faster conversion", color: "text-cyan-400" },
                 link: "#",
@@ -219,6 +235,8 @@ const siteData = {
                 description: "Built using Python + macOS native APIs, integrating Whisper AI for highly accurate subtitle transcription. Saves 2-3 hours per video.",
                 gradient: "from-purple-600 to-pink-700",
                 icon: "fas fa-closed-captioning",
+                imageUrl: "https://images.unsplash.com/photo-1536240478700-b869070f9279?w=800&h=600&fit=crop",
+                imageLocal: null,
                 tags: ["Whisper", "macOS"],
                 metric: { icon: "fas fa-clock", text: "2-3 hrs saved/video", color: "text-purple-400" },
                 link: "https://www.youtube.com/watch?v=sFUcKSDLl0s",
@@ -234,6 +252,8 @@ const siteData = {
                 description: "Custom ComfyUI node for Ghibli-style visuals using local Stable Diffusion. FastAPI UI for style control. Fully offline-capable.",
                 gradient: "from-green-600 to-teal-700",
                 icon: "fas fa-palette",
+                imageUrl: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=800&h=600&fit=crop",
+                imageLocal: null,
                 tags: ["ComfyUI", "FastAPI"],
                 metric: { icon: "fas fa-wifi-slash", text: "Fully Offline", color: "text-green-400" },
                 link: "https://youtu.be/uLCA_WXkIkY?si=7_jEyuuLSK7FS2Sg",
@@ -249,6 +269,8 @@ const siteData = {
                 description: "Led Post Order, Cart Checkout, and Order Confirmation squad. Migrated from UIKit to SwiftUI for modern, maintainable UI.",
                 gradient: "from-blue-600 to-cyan-700",
                 icon: "fas fa-shopping-cart",
+                imageUrl: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop",
+                imageLocal: null,
                 tags: ["SwiftUI", "Combine"],
                 metric: { icon: "fas fa-users", text: "10M+ users", color: "text-blue-400" },
                 link: "https://apps.apple.com/us/app/maf-carrefour-online-shopping/id626805470",
@@ -264,6 +286,8 @@ const siteData = {
                 description: "Stream iOS device screen to web browser using WebRTC data channels. Remote device control capabilities.",
                 gradient: "from-orange-600 to-red-700",
                 icon: "fas fa-mobile-screen",
+                imageUrl: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&h=600&fit=crop",
+                imageLocal: null,
                 tags: ["WebRTC", "MVVM"],
                 metric: { icon: "fas fa-trophy", text: "$45M Funding POC", color: "text-orange-400" },
                 link: "https://applive.lambdatest.com/app",
@@ -279,6 +303,8 @@ const siteData = {
                 description: "Automated content pipelines using N8N and ComfyUI for text-to-video generation with TTS (f5) integration.",
                 gradient: "from-violet-600 to-purple-700",
                 icon: "fas fa-video",
+                imageUrl: "https://images.unsplash.com/photo-1626379953822-baec19c3accd?w=800&h=600&fit=crop",
+                imageLocal: null,
                 tags: ["N8N", "TTS"],
                 metric: { icon: "fas fa-robot", text: "Full Automation", color: "text-violet-400" },
                 link: "#",
@@ -294,6 +320,8 @@ const siteData = {
                 description: "Led, developed & deployed 10+ projects end to end at AppKnit with various tech stacks and domains.",
                 gradient: "from-gray-700 to-gray-900",
                 icon: "fas fa-folder-open",
+                imageUrl: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=600&fit=crop",
+                imageLocal: null,
                 tags: ["10+ Apps"],
                 metric: { icon: "fas fa-code-branch", text: "Full Stack", color: "text-gray-400" },
                 link: "https://github.com/rohitsainier",
@@ -455,68 +483,46 @@ const siteData = {
         builtWith: "Built with",
         location: "from India"
     },
+    
+    // iPhone screens with VIDEO support (local and URL)
     iphoneScreens: [
         {
-            gradient: "from-red-900 to-orange-700",
-            icon: "fas fa-user-tie",
-            iconColor: "text-red-300",
+            type: "video",
+            // Video source options - priority: videoLocal > videoUrl
+            videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-woman-typing-on-a-laptop-4702-large.mp4",
+            videoLocal: "./assets/videos/s1.mp4",
+            // Poster/thumbnail options - priority: posterLocal > posterUrl
+            posterUrl: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=280&h=500&fit=crop",
+            posterLocal: null, // e.g., "./assets/images/posters/screen1-poster.jpg"
             title: "Virtual AI Anchor",
-            subtitle: "India Today Group",
-            content: `
-                <div class="bg-white/10 rounded-xl p-3 mb-3">
-                    <p class="text-xs text-left text-gray-200">AI News Presenter</p>
-                </div>
-                <div class="bg-red-600/30 rounded-xl p-3">
-                    <p class="text-xs text-left text-red-200">60% less anchor dependency</p>
-                </div>
-            `
+            subtitle: "India Today Group"
         },
         {
-            gradient: "from-blue-900 to-blue-700",
-            icon: "fas fa-shopping-cart",
-            iconColor: "text-blue-300",
+            type: "video",
+            videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-hands-using-a-smartphone-at-night-40805-large.mp4",
+            videoLocal: null,
+            posterUrl: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=280&h=500&fit=crop",
+            posterLocal: null,
             title: "Carrefour UAE",
-            subtitle: "10M+ Users Retail App",
-            content: `
-                <div class="bg-white/10 rounded-xl p-3 mb-3">
-                    <p class="text-xs text-left text-gray-200">Cart & Checkout Flow</p>
-                </div>
-                <div class="bg-blue-600/30 rounded-xl p-3">
-                    <p class="text-xs text-left text-blue-200">SwiftUI Migration</p>
-                </div>
-            `
+            subtitle: "10M+ Users Retail App"
         },
         {
-            gradient: "from-purple-900 to-pink-900",
-            icon: "fas fa-closed-captioning",
-            iconColor: "text-purple-300",
+            type: "video",
+            videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-editing-photos-on-a-computer-4598-large.mp4",
+            videoLocal: null,
+            posterUrl: "https://images.unsplash.com/photo-1536240478700-b869070f9279?w=280&h=500&fit=crop",
+            posterLocal: null,
             title: "AI Subtitle Clipper",
-            subtitle: "Whisper AI Powered",
-            content: `
-                <div class="w-24 h-24 mx-auto bg-purple-800/50 rounded-2xl flex items-center justify-center mb-3">
-                    <i class="fas fa-waveform-lines text-3xl text-purple-300"></i>
-                </div>
-                <p class="text-xs text-purple-300">2-3 hrs saved per video</p>
-            `
+            subtitle: "Whisper AI Powered"
         },
         {
-            gradient: "from-green-900 to-teal-900",
-            icon: "fas fa-palette",
-            iconColor: "text-green-300",
+            type: "video",
+            videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-futuristic-devices-99786-large.mp4",
+            videoLocal: null,
+            posterUrl: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=280&h=500&fit=crop",
+            posterLocal: null,
             title: "Ghibli Generator",
-            subtitle: "Stable Diffusion + ComfyUI",
-            content: `
-                <div class="flex justify-around mb-4">
-                    <div>
-                        <i class="fas fa-image text-2xl text-green-400"></i>
-                        <p class="text-xs text-gray-400 mt-1">AI Art</p>
-                    </div>
-                    <div>
-                        <i class="fas fa-wifi-slash text-2xl text-teal-400"></i>
-                        <p class="text-xs text-gray-400 mt-1">Offline</p>
-                    </div>
-                </div>
-            `
+            subtitle: "Stable Diffusion + ComfyUI"
         }
     ]
 };

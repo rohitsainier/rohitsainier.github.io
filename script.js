@@ -338,16 +338,47 @@ function initTextScramble() {
     }
 }
 
+
 function initCarousel() {
     const carousel = document.getElementById('appCarousel');
     const dotsContainer = document.getElementById('carouselDots');
-    
+
     if (!carousel || !dotsContainer) return;
-    
+
     const dots = dotsContainer.querySelectorAll('.carousel-dot');
     const screenCount = window.carouselScreenCount || dots.length;
+    const videos = carousel.querySelectorAll('.iphone-video');
+    const playBtns = carousel.querySelectorAll('.video-play-btn');
+    
     let currentSlide = 0;
     let carouselInterval;
+
+    function pauseAllVideos() {
+        videos.forEach((video, i) => {
+            if (video && !video.error) {
+                video.pause();
+            }
+            if (playBtns[i]) {
+                playBtns[i].innerHTML = '<i class="fas fa-play"></i>';
+            }
+        });
+    }
+
+    function playCurrentVideo() {
+        pauseAllVideos();
+        const currentVideo = videos[currentSlide];
+        const currentPlayBtn = playBtns[currentSlide];
+        
+        if (currentVideo && !currentVideo.error && currentVideo.readyState >= 2) {
+            currentVideo.play().then(() => {
+                if (currentPlayBtn) {
+                    currentPlayBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                }
+            }).catch((err) => {
+                console.log('Autoplay blocked or video error:', err.message);
+            });
+        }
+    }
 
     function goToSlide(index) {
         currentSlide = index;
@@ -356,28 +387,108 @@ function initCarousel() {
             dot.classList.toggle('bg-white', i === index);
             dot.classList.toggle('bg-white/30', i !== index);
         });
+        
+        // Handle video playback with delay for smooth transition
+        setTimeout(() => {
+            playCurrentVideo();
+        }, 300);
     }
 
     // Add click handlers to dots
     dots.forEach((dot, i) => {
         dot.addEventListener('click', () => {
             goToSlide(i);
-            // Reset interval on manual navigation
             clearInterval(carouselInterval);
             startAutoRotate();
         });
     });
 
+    // Handle play button clicks
+    playBtns.forEach((btn, index) => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const video = videos[index];
+            if (video && !video.error) {
+                if (video.paused) {
+                    pauseAllVideos();
+                    video.play().then(() => {
+                        btn.innerHTML = '<i class="fas fa-pause"></i>';
+                    }).catch(() => {});
+                    // Pause auto-rotation when manually playing
+                    clearInterval(carouselInterval);
+                } else {
+                    video.pause();
+                    btn.innerHTML = '<i class="fas fa-play"></i>';
+                    // Resume auto-rotation
+                    startAutoRotate();
+                }
+            }
+        });
+    });
+
+    // Swipe support for mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+    
+    carousel.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    
+    carousel.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    }, { passive: true });
+    
+    function handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = touchStartX - touchEndX;
+        
+        if (Math.abs(diff) > swipeThreshold) {
+            if (diff > 0 && currentSlide < screenCount - 1) {
+                // Swipe left - next slide
+                goToSlide(currentSlide + 1);
+            } else if (diff < 0 && currentSlide > 0) {
+                // Swipe right - previous slide
+                goToSlide(currentSlide - 1);
+            }
+            clearInterval(carouselInterval);
+            startAutoRotate();
+        }
+    }
+
     function startAutoRotate() {
         carouselInterval = setInterval(() => {
             currentSlide = (currentSlide + 1) % screenCount;
             goToSlide(currentSlide);
-        }, 4000);
+        }, 6000); // 6 seconds per slide for videos
     }
 
-    // Start auto-rotation
+    // Start auto-rotation and play first video
     startAutoRotate();
     
+    // Wait a bit for videos to load before playing
+    setTimeout(() => {
+        playCurrentVideo();
+    }, 1000);
+
+    // Pause videos when not in viewport
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) {
+                pauseAllVideos();
+                clearInterval(carouselInterval);
+            } else {
+                playCurrentVideo();
+                startAutoRotate();
+            }
+        });
+    }, { threshold: 0.3 });
+
+    const mockup = document.getElementById('iphoneMockup');
+    if (mockup) {
+        observer.observe(mockup);
+    }
+
     console.log('Carousel initialized with', screenCount, 'screens');
 }
 
