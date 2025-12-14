@@ -479,7 +479,7 @@ const siteData = {
         ]
     },
     footer: {
-        copyright: "© 2024 Rohit Saini",
+        copyright: "© 2026 Rohit Saini",
         builtWith: "Built with",
         location: "from India"
     },
@@ -489,7 +489,7 @@ const siteData = {
         {
             type: "video",
             // Video source options - priority: videoLocal > videoUrl
-            videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-woman-typing-on-a-laptop-4702-large.mp4",
+            videoUrl: "https://www.youtube.com/shorts/WwilmdQh6qA",
             videoLocal: "./assets/videos/s1.mp4",
             // Poster/thumbnail options - priority: posterLocal > posterUrl
             posterUrl: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=280&h=500&fit=crop",
