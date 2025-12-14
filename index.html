@@ -100,32 +100,34 @@
             </div>
 
             <!-- iPhone Mockup -->
-            <div class="flex justify-center reveal-section">
-                <div class="relative">
-                    <div class="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full blur-3xl opacity-20 scale-150"></div>
-                    <div class="iphone-mockup tilt-card hover-target" id="iphoneMockup">
-                        <div class="iphone-screen">
-                            <div class="iphone-notch"></div>
-                            <div class="app-carousel" id="appCarousel">
-                                <!-- Populated by JS -->
-                            </div>
-                            <div class="carousel-dots-container absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2" id="carouselDots">
-                                <!-- Populated by JS -->
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Floating Elements -->
-                    <div class="floating-tag absolute -top-8 -right-8 px-4 py-2 glass-card rounded-full animate-bounce">
-                        <i class="fab fa-swift text-orange-500 mr-2"></i>Swift
-                    </div>
-                    <div class="floating-tag absolute -bottom-4 -left-8 px-4 py-2 glass-card rounded-full animate-bounce" style="animation-delay: 0.5s;">
-                        <i class="fas fa-brain text-purple-500 mr-2"></i>ComfyUI
-                    </div>
-                    <div class="floating-tag absolute top-1/2 -right-12 px-4 py-2 glass-card rounded-full animate-bounce" style="animation-delay: 1s;">
-                        <i class="fas fa-robot text-pink-500 mr-2"></i>Whisper
-                    </div>
+<div class="flex justify-center reveal-section">
+    <div class="relative">
+        <div class="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full blur-3xl opacity-20 scale-150"></div>
+        <div class="iphone-mockup tilt-card hover-target" id="iphoneMockup">
+            <div class="iphone-screen">
+                <div class="iphone-notch"></div>
+                <!-- Carousel fills entire screen -->
+                <div class="app-carousel" id="appCarousel">
+                    <!-- Populated by JS -->
+                </div>
+                <!-- Dots overlaid on top -->
+                <div class="carousel-dots-container" id="carouselDots">
+                    <!-- Populated by JS -->
                 </div>
             </div>
+        </div>
+        <!-- Floating Elements -->
+        <div class="floating-tag absolute -top-8 -right-8 px-4 py-2 glass-card rounded-full animate-bounce">
+            <i class="fab fa-swift text-orange-500 mr-2"></i>Swift
+        </div>
+        <div class="floating-tag absolute -bottom-4 -left-8 px-4 py-2 glass-card rounded-full animate-bounce" style="animation-delay: 0.5s;">
+            <i class="fas fa-brain text-purple-500 mr-2"></i>ComfyUI
+        </div>
+        <div class="floating-tag absolute top-1/2 -right-12 px-4 py-2 glass-card rounded-full animate-bounce" style="animation-delay: 1s;">
+            <i class="fas fa-robot text-pink-500 mr-2"></i>Whisper
+        </div>
+    </div>
+</div>
         </div>
 
         <!-- Scroll Indicator -->

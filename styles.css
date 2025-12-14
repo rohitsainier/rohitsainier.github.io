@@ -1,9 +1,20 @@
+/* ============================================
+   BASE STYLES
+   ============================================ */
+
 * {
     font-family: 'Space Grotesk', sans-serif;
     cursor: none;
 }
 
-/* Custom Cursor */
+html {
+    scroll-behavior: smooth;
+}
+
+/* ============================================
+   CUSTOM CURSOR
+   ============================================ */
+
 .cursor {
     width: 20px;
     height: 20px;
@@ -34,7 +45,23 @@
     border-color: #a855f7;
 }
 
-/* Scroll Progress */
+/* Hide cursor on touch devices */
+@media (hover: none) and (pointer: coarse) {
+    .cursor,
+    .cursor-dot {
+        display: none !important;
+    }
+    
+    *,
+    body {
+        cursor: auto !important;
+    }
+}
+
+/* ============================================
+   SCROLL PROGRESS
+   ============================================ */
+
 .scroll-progress {
     position: fixed;
     top: 0;
@@ -45,7 +72,10 @@
     transition: width 0.1s;
 }
 
-/* Noise Overlay */
+/* ============================================
+   NOISE OVERLAY
+   ============================================ */
+
 .noise-overlay {
     position: fixed;
     inset: 0;
@@ -55,7 +85,10 @@
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
 }
 
-/* Mouse Spotlight */
+/* ============================================
+   MOUSE SPOTLIGHT
+   ============================================ */
+
 .spotlight {
     position: fixed;
     width: 600px;
@@ -68,7 +101,10 @@
     transition: opacity 0.3s;
 }
 
-/* Animated Background */
+/* ============================================
+   ANIMATED BACKGROUND
+   ============================================ */
+
 .gradient-bg {
     background: #0a0a0f;
     min-height: 100vh;
@@ -81,7 +117,48 @@
     z-index: 0;
 }
 
-/* 3D Tilt Card */
+/* ============================================
+   FLOATING ORBS
+   ============================================ */
+
+.orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.5;
+    animation: float 20s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+    25% {
+        transform: translate(50px, -50px) scale(1.1);
+    }
+    50% {
+        transform: translate(-30px, 30px) scale(0.9);
+    }
+    75% {
+        transform: translate(30px, 50px) scale(1.05);
+    }
+}
+
+/* ============================================
+   NAVIGATION
+   ============================================ */
+
+.nav-glass {
+    background: rgba(10, 10, 15, 0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* ============================================
+   3D TILT CARD
+   ============================================ */
+
 .tilt-card {
     transform-style: preserve-3d;
     transition: transform 0.1s;
@@ -91,18 +168,27 @@
     transform: translateZ(30px);
 }
 
-/* Magnetic Button */
+/* ============================================
+   MAGNETIC BUTTON
+   ============================================ */
+
 .magnetic-btn {
     position: relative;
     transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-/* Text Scramble */
+/* ============================================
+   TEXT SCRAMBLE
+   ============================================ */
+
 .scramble-text {
     display: inline-block;
 }
 
-/* Marquee */
+/* ============================================
+   MARQUEE
+   ============================================ */
+
 .marquee-container {
     overflow: hidden;
     white-space: nowrap;
@@ -121,13 +207,15 @@
     from {
         transform: translateX(0);
     }
-
     to {
         transform: translateX(-50%);
     }
 }
 
-/* iPhone Mockup */
+/* ============================================
+   IPHONE MOCKUP - MAIN CONTAINER
+   ============================================ */
+
 .iphone-mockup {
     position: relative;
     width: 280px;
@@ -160,7 +248,7 @@
     height: 30px;
     background: #0a0a0f;
     border-radius: 0 0 20px 20px;
-    z-index: 10;
+    z-index: 20;
 }
 
 .iphone-notch::before {
@@ -175,47 +263,206 @@
     border-radius: 10px;
 }
 
-/* App Carousel */
+/* ============================================
+   APP CAROUSEL - FULL HEIGHT
+   ============================================ */
+
 .app-carousel {
     display: flex;
+    width: 100%;
+    height: 100%;
     transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .app-screen {
     min-width: 100%;
-    padding: 50px 15px 15px;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
 }
 
-/* Glowing Orbs */
-.orb {
+/* ============================================
+   VIDEO SCREEN - FULL COVERAGE
+   ============================================ */
+
+.video-screen {
+    min-width: 100%;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.iphone-video {
     position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 35px;
+    z-index: 1;
+    transition: opacity 0.3s ease;
+}
+
+.video-loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    transition: opacity 0.3s ease;
+    border-radius: 35px;
+}
+
+.video-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.5) 50%, transparent 100%);
+    padding: 80px 20px 50px;
+    pointer-events: none;
+    z-index: 10;
+    border-radius: 0 0 35px 35px;
+}
+
+.video-info {
+    text-align: center;
+}
+
+.video-info h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 4px;
+}
+
+.video-info p {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.video-play-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.5;
-    animation: float 20s ease-in-out infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: white;
+    font-size: 20px;
+    z-index: 15;
 }
 
-@keyframes float {
+.video-play-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%) scale(1.1);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+}
 
-    0%,
-    100% {
-        transform: translate(0, 0) scale(1);
-    }
+.video-play-btn i {
+    margin-left: 3px;
+}
 
-    25% {
-        transform: translate(50px, -50px) scale(1.1);
-    }
+.video-error-fallback {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    border-radius: 35px;
+}
 
-    50% {
-        transform: translate(-30px, 30px) scale(0.9);
-    }
+/* ============================================
+   CAROUSEL DOTS - OVERLAID ON VIDEO
+   ============================================ */
 
-    75% {
-        transform: translate(30px, 50px) scale(1.05);
+.carousel-dots-container {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 25;
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+}
+
+.carousel-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+}
+
+.carousel-dot:hover {
+    transform: scale(1.2);
+}
+
+.carousel-dot.bg-white {
+    background: white;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.carousel-dot.bg-white\/30 {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* ============================================
+   LOADING SPINNER
+   ============================================ */
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: rgba(99, 102, 241, 0.8);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
     }
 }
 
-/* Section Reveal */
+/* ============================================
+   FLOATING TAGS (around iPhone)
+   ============================================ */
+
+.floating-tag {
+    z-index: 10;
+}
+
+/* ============================================
+   SECTION REVEAL ANIMATIONS
+   ============================================ */
+
 .reveal-section {
     opacity: 0;
     transform: translateY(80px);
@@ -227,14 +474,16 @@
     transform: translateY(0);
 }
 
-/* Stagger children */
+/* ============================================
+   STAGGER CHILDREN ANIMATIONS
+   ============================================ */
+
 .stagger-children > * {
     opacity: 0;
     transform: translateY(30px);
     transition: all 0.6s cubic-bezier(0.17, 0.55, 0.55, 1);
 }
 
-/* Staggered delays for animation effect */
 .stagger-children.active > *:nth-child(1) { transition-delay: 0.05s; }
 .stagger-children.active > *:nth-child(2) { transition-delay: 0.1s; }
 .stagger-children.active > *:nth-child(3) { transition-delay: 0.15s; }
@@ -247,17 +496,17 @@
 .stagger-children.active > *:nth-child(10) { transition-delay: 0.5s; }
 .stagger-children.active > *:nth-child(11) { transition-delay: 0.55s; }
 .stagger-children.active > *:nth-child(12) { transition-delay: 0.6s; }
-
-/* For any children beyond 12, use a base delay */
 .stagger-children.active > *:nth-child(n+13) { transition-delay: 0.65s; }
 
-/* Make ALL children visible when parent is active */
 .stagger-children.active > * {
     opacity: 1;
     transform: translateY(0);
 }
 
-/* Gradient Text */
+/* ============================================
+   GRADIENT TEXT
+   ============================================ */
+
 .gradient-text {
     background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
     -webkit-background-clip: text;
@@ -265,62 +514,32 @@
     background-clip: text;
 }
 
-/* Glass Card */
+/* ============================================
+   GLASS CARD
+   ============================================ */
+
 .glass-card {
     background: rgba(255, 255, 255, 0.03);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* Glow effect */
 .glow-box {
     box-shadow: 0 0 60px rgba(99, 102, 241, 0.2);
 }
 
-/* Code font */
+/* ============================================
+   CODE FONT
+   ============================================ */
+
 .font-mono {
     font-family: 'JetBrains Mono', monospace;
 }
 
-/* Smooth scroll */
-html {
-    scroll-behavior: smooth;
-}
+/* ============================================
+   TERMINAL
+   ============================================ */
 
-/* Navigation */
-.nav-glass {
-    background: rgba(10, 10, 15, 0.8);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-/* Skill pill hover */
-.skill-pill {
-    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.skill-pill:hover {
-    transform: translateY(-5px) scale(1.05);
-    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
-}
-
-/* Project card glow on hover */
-.project-card::before {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
-    border-radius: 20px;
-    z-index: -1;
-    opacity: 0;
-    transition: opacity 0.3s;
-}
-
-.project-card:hover::before {
-    opacity: 1;
-}
-
-/* Terminal */
 .terminal {
     font-family: 'JetBrains Mono', monospace;
 }
@@ -338,13 +557,11 @@ html {
 }
 
 @keyframes typing {
-
     0%,
     90%,
     100% {
         width: 0;
     }
-
     30%,
     60% {
         width: 100%;
@@ -357,7 +574,10 @@ html {
     }
 }
 
-/* Button shine */
+/* ============================================
+   BUTTON SHINE
+   ============================================ */
+
 .btn-shine {
     position: relative;
     overflow: hidden;
@@ -378,7 +598,10 @@ html {
     left: 100%;
 }
 
-/* Timeline */
+/* ============================================
+   TIMELINE
+   ============================================ */
+
 .timeline-item {
     position: relative;
     padding-left: 30px;
@@ -402,83 +625,20 @@ html {
 }
 
 /* ============================================
-   VIDEO IPHONE MOCKUP STYLES
+   SKILL PILL
    ============================================ */
 
-.video-screen {
-    min-width: 100%;
-    height: 100%;
-    position: relative;
-    overflow: hidden;
-    padding: 0 !important;
+.skill-pill {
+    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-.iphone-video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 35px;
-}
-
-.video-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
-    padding: 60px 20px 20px;
-    pointer-events: none;
-}
-
-.video-info {
-    text-align: center;
-}
-
-.video-play-btn {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 60px;
-    height: 60px;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    color: white;
-    font-size: 20px;
-    z-index: 10;
-}
-
-.video-play-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: translate(-50%, -50%) scale(1.1);
-    box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
-}
-
-.video-play-btn i {
-    margin-left: 3px; /* Center the play icon visually */
-}
-
-/* Hide play button when video is playing */
-.video-screen:has(video:not([paused])) .video-play-btn {
-    opacity: 0;
-    pointer-events: none;
-}
-
-/* Show pause on hover when playing */
-.video-screen:hover .video-play-btn {
-    opacity: 1;
-    pointer-events: all;
+.skill-pill:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
 }
 
 /* ============================================
-   PROJECT CARD IMAGE STYLES
+   PROJECT CARD
    ============================================ */
 
 .project-card {
@@ -486,43 +646,20 @@ html {
     overflow: hidden;
 }
 
-.project-card img {
-    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+.project-card::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+    border-radius: 20px;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s;
 }
 
-.project-card:hover img {
-    transform: scale(1.1);
+.project-card:hover::before {
+    opacity: 1;
 }
-
-/* Image loading placeholder */
-.project-card .h-56 {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-}
-
-/* Skeleton loading animation for images */
-@keyframes shimmer {
-    0% {
-        background-position: -200% 0;
-    }
-    100% {
-        background-position: 200% 0;
-    }
-}
-
-.project-card img[loading] {
-    background: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0.03) 25%,
-        rgba(255, 255, 255, 0.08) 50%,
-        rgba(255, 255, 255, 0.03) 75%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
-}
-
-/* ============================================
-   ENHANCED PROJECT CARD HOVER EFFECTS
-   ============================================ */
 
 .project-card::after {
     content: '';
@@ -544,138 +681,14 @@ html {
     opacity: 1;
 }
 
-/* Ensure content is above the overlay */
 .project-card > * {
     position: relative;
     z-index: 2;
 }
 
 /* ============================================
-   RESPONSIVE VIDEO STYLES
+   PROJECT CARD IMAGES
    ============================================ */
-
-@media (max-width: 768px) {
-    .video-play-btn {
-        width: 50px;
-        height: 50px;
-        font-size: 16px;
-    }
-    
-    .video-overlay {
-        padding: 40px 15px 15px;
-    }
-}
-
-/* ============================================
-   CAROUSEL VIDEO PAUSE ON SLIDE
-   ============================================ */
-
-.app-carousel .video-screen:not(.active-slide) video {
-    /* Videos not in view should be paused */
-}
-
-/* ============================================
-   LOADING SPINNER
-   ============================================ */
-
-.loading-spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid rgba(255, 255, 255, 0.1);
-    border-top-color: rgba(99, 102, 241, 0.8);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-/* ============================================
-   VIDEO IPHONE MOCKUP STYLES
-   ============================================ */
-
-.video-screen {
-    min-width: 100%;
-    height: 100%;
-    position: relative;
-    overflow: hidden;
-    padding: 0 !important;
-}
-
-.iphone-video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 35px;
-    transition: opacity 0.3s ease;
-}
-
-.video-loader {
-    transition: opacity 0.3s ease;
-}
-
-.video-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
-    padding: 60px 20px 20px;
-    pointer-events: none;
-    z-index: 5;
-}
-
-.video-info {
-    text-align: center;
-}
-
-.video-play-btn {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 60px;
-    height: 60px;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    color: white;
-    font-size: 20px;
-    z-index: 10;
-}
-
-.video-play-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: translate(-50%, -50%) scale(1.1);
-    box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
-}
-
-.video-play-btn i {
-    margin-left: 3px;
-}
-
-/* Video error fallback */
-.video-error-fallback {
-    z-index: 4;
-}
-
-/* ============================================
-   PROJECT CARD IMAGE STYLES
-   ============================================ */
-
-.project-card {
-    position: relative;
-    overflow: hidden;
-}
 
 .project-image {
     transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.3s ease;
@@ -685,31 +698,13 @@ html {
     transform: scale(1.1);
 }
 
-/* Image loading state */
-.image-loader {
-    z-index: 5;
-    transition: opacity 0.3s ease;
-}
-
-.image-fallback {
-    z-index: 3;
-}
-
-/* Image placeholder shimmer */
 .project-card .h-56 {
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
 }
 
-@keyframes shimmer {
-    0% {
-        background-position: -200% 0;
-    }
-    100% {
-        background-position: 200% 0;
-    }
-}
-
 .image-loader {
+    z-index: 5;
+    transition: opacity 0.3s ease;
     background: linear-gradient(
         90deg,
         rgba(255, 255, 255, 0.03) 25%,
@@ -720,34 +715,17 @@ html {
     animation: shimmer 1.5s infinite;
 }
 
-/* ============================================
-   ENHANCED PROJECT CARD HOVER EFFECTS
-   ============================================ */
-
-.project-card::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-        135deg,
-        rgba(99, 102, 241, 0.1) 0%,
-        rgba(168, 85, 247, 0.1) 50%,
-        rgba(236, 72, 153, 0.1) 100%
-    );
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-    z-index: 1;
+.image-fallback {
+    z-index: 3;
 }
 
-.project-card:hover::after {
-    opacity: 1;
-}
-
-/* Ensure content is above the overlay */
-.project-card > * {
-    position: relative;
-    z-index: 2;
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
 }
 
 /* ============================================
@@ -774,28 +752,6 @@ html {
 }
 
 /* ============================================
-   RESPONSIVE VIDEO STYLES
-   ============================================ */
-
-@media (max-width: 768px) {
-    .video-play-btn {
-        width: 50px;
-        height: 50px;
-        font-size: 16px;
-    }
-    
-    .video-overlay {
-        padding: 40px 15px 15px;
-    }
-    
-    .loading-spinner {
-        width: 30px;
-        height: 30px;
-        border-width: 2px;
-    }
-}
-
-/* ============================================
    LAZY LOADING SUPPORT
    ============================================ */
 
@@ -808,3 +764,320 @@ img[loading="lazy"].loaded,
 img[loading="lazy"]:not([src=""]) {
     opacity: 1;
 }
+
+/* ============================================
+   FORM INPUTS
+   ============================================ */
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #6366f1;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: rgba(156, 163, 175, 0.6);
+}
+
+select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239CA3AF'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.5em 1.5em;
+    padding-right: 3rem;
+}
+
+/* ============================================
+   SCROLLBAR STYLING
+   ============================================ */
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #0a0a0f;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #4f46e5, #9333ea);
+}
+
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #6366f1 #0a0a0f;
+}
+
+/* ============================================
+   SELECTION STYLING
+   ============================================ */
+
+::selection {
+    background: rgba(99, 102, 241, 0.3);
+    color: white;
+}
+
+::-moz-selection {
+    background: rgba(99, 102, 241, 0.3);
+    color: white;
+}
+
+/* ============================================
+   RESPONSIVE STYLES - TABLET
+   ============================================ */
+
+@media (max-width: 1024px) {
+    .iphone-mockup {
+        width: 260px;
+        height: 520px;
+        padding: 11px;
+        border-radius: 42px;
+    }
+    
+    .iphone-screen {
+        border-radius: 32px;
+    }
+    
+    .iphone-video,
+    .video-loader,
+    .video-error-fallback {
+        border-radius: 32px;
+    }
+    
+    .video-overlay {
+        border-radius: 0 0 32px 32px;
+        padding: 70px 18px 45px;
+    }
+}
+
+/* ============================================
+   RESPONSIVE STYLES - MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .iphone-mockup {
+        width: 240px;
+        height: 480px;
+        padding: 10px;
+        border-radius: 40px;
+    }
+    
+    .iphone-screen {
+        border-radius: 30px;
+    }
+    
+    .iphone-video,
+    .video-loader,
+    .video-error-fallback {
+        border-radius: 30px;
+    }
+    
+    .video-overlay {
+        padding: 60px 15px 40px;
+        border-radius: 0 0 30px 30px;
+    }
+    
+    .iphone-notch {
+        width: 100px;
+        height: 25px;
+    }
+    
+    .iphone-notch::before {
+        width: 50px;
+        height: 6px;
+        top: 8px;
+    }
+    
+    .video-play-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 16px;
+    }
+    
+    .carousel-dots-container {
+        bottom: 12px;
+        padding: 6px 10px;
+        gap: 6px;
+    }
+    
+    .carousel-dot {
+        width: 6px;
+        height: 6px;
+    }
+    
+    .loading-spinner {
+        width: 30px;
+        height: 30px;
+        border-width: 2px;
+    }
+    
+    .floating-tag {
+        display: none;
+    }
+    
+    .video-info h3 {
+        font-size: 12px;
+    }
+    
+    .video-info p {
+        font-size: 10px;
+    }
+}
+
+/* ============================================
+   RESPONSIVE STYLES - SMALL MOBILE
+   ============================================ */
+
+@media (max-width: 640px) {
+    .iphone-mockup {
+        width: 220px;
+        height: 440px;
+        padding: 8px;
+        border-radius: 35px;
+    }
+    
+    .iphone-screen {
+        border-radius: 28px;
+    }
+    
+    .iphone-video,
+    .video-loader,
+    .video-error-fallback {
+        border-radius: 28px;
+    }
+    
+    .video-overlay {
+        padding: 50px 12px 35px;
+        border-radius: 0 0 28px 28px;
+    }
+    
+    .iphone-notch {
+        width: 90px;
+        height: 22px;
+        border-radius: 0 0 15px 15px;
+    }
+    
+    .iphone-notch::before {
+        width: 45px;
+        height: 5px;
+        top: 7px;
+    }
+    
+    .video-play-btn {
+        width: 45px;
+        height: 45px;
+        font-size: 14px;
+    }
+    
+    .carousel-dots-container {
+        bottom: 10px;
+        padding: 5px 8px;
+        gap: 5px;
+    }
+    
+    .carousel-dot {
+        width: 5px;
+        height: 5px;
+    }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+*:focus-visible {
+    outline: 2px solid #6366f1;
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    
+    .orb,
+    .marquee-content {
+        animation: none;
+    }
+    
+    .typing-effect {
+        animation: none;
+        border-right: none;
+    }
+    
+    .loading-spinner {
+        animation: none;
+        border: 3px solid rgba(99, 102, 241, 0.8);
+    }
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+    .cursor,
+    .cursor-dot,
+    .spotlight,
+    .noise-overlay,
+    #networkCanvas,
+    .orb,
+    .scroll-progress,
+    nav,
+    #mobileMenu,
+    .video-play-btn,
+    .carousel-dots-container {
+        display: none !important;
+    }
+    
+    body {
+        background: white;
+        color: black;
+    }
+    
+    .gradient-text {
+        -webkit-text-fill-color: #6366f1;
+    }
+    
+    .glass-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+    }
+}
+
+/* ============================================
+   Z-INDEX REFERENCE
+   ============================================ */
+
+/*
+    z-index layers:
+    - Network Canvas: 0
+    - Spotlight: 1
+    - Video element: 1
+    - Video loader: 2
+    - Video error fallback: 3
+    - Video overlay: 10
+    - Video play button: 15
+    - iPhone notch: 20
+    - Carousel dots: 25
+    - Navigation: 50 (from Tailwind)
+    - Mobile menu: 40 (from Tailwind)
+    - Noise overlay: 100
+    - Cursor: 9999
+    - Scroll progress: 9999
+*/

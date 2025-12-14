@@ -534,161 +534,171 @@
         }
     }
 
-    // UPDATED: renderIphoneScreens with local/URL video support
-    function renderIphoneScreens(data) {
-        const appCarousel = document.getElementById('appCarousel');
-        const carouselDotsContainer = document.getElementById('carouselDots');
+    // UPDATED: renderIphoneScreens with full-screen video support
+function renderIphoneScreens(data) {
+    const appCarousel = document.getElementById('appCarousel');
+    const carouselDotsContainer = document.getElementById('carouselDots');
+    
+    if (appCarousel && data.iphoneScreens) {
+        const screenCount = data.iphoneScreens.length;
+        console.log('Rendering iPhone screens with videos:', screenCount);
         
-        if (appCarousel && data.iphoneScreens) {
-            const screenCount = data.iphoneScreens.length;
-            console.log('Rendering iPhone screens with videos:', screenCount);
-            
-            // Render video screens
-            appCarousel.innerHTML = data.iphoneScreens.map((screen, index) => {
-                if (screen.type === 'video') {
-                    // Get video and poster sources (local takes priority)
-                    const videoSrc = getVideoSource(screen);
-                    const posterSrc = getPosterSource(screen);
-                    const hasVideo = isValidSource(videoSrc);
-                    
-                    if (!hasVideo) {
-                        // No video available, show poster or gradient fallback
-                        return `
-                            <div class="app-screen video-screen" data-index="${index}">
-                                ${posterSrc ? `
-                                    <img 
-                                        src="${posterSrc}" 
-                                        alt="${screen.title}"
-                                        class="w-full h-full object-cover rounded-[35px]"
-                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-                                    />
-                                ` : ''}
-                                <div class="absolute inset-0 bg-gradient-to-br from-indigo-900 to-purple-900 flex flex-col items-center justify-center rounded-[35px] ${posterSrc ? 'hidden' : ''}">
-                                    <i class="fas fa-video-slash text-4xl text-white/30 mb-4"></i>
-                                    <p class="text-white/50 text-sm">Video not available</p>
-                                </div>
-                                <div class="video-overlay">
-                                    <div class="video-info">
-                                        <h3 class="text-sm font-bold text-white">${screen.title}</h3>
-                                        <p class="text-xs text-white/70">${screen.subtitle}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    }
-                    
+        // Render video screens - FULL SCREEN
+        appCarousel.innerHTML = data.iphoneScreens.map((screen, index) => {
+            if (screen.type === 'video') {
+                // Get video and poster sources (local takes priority)
+                const videoSrc = getVideoSource(screen);
+                const posterSrc = getPosterSource(screen);
+                const hasVideo = isValidSource(videoSrc);
+                
+                if (!hasVideo) {
+                    // No video available, show poster or gradient fallback
                     return `
                         <div class="app-screen video-screen" data-index="${index}">
-                            <!-- Video Loading Indicator -->
-                            <div class="video-loader absolute inset-0 bg-gradient-to-br from-indigo-900 to-purple-900 flex items-center justify-center rounded-[35px] z-5">
-                                <div class="loading-spinner"></div>
+                            ${posterSrc ? `
+                                <img 
+                                    src="${posterSrc}" 
+                                    alt="${screen.title}"
+                                    class="absolute inset-0 w-full h-full object-cover"
+                                    style="border-radius: 35px;"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                                />
+                            ` : ''}
+                            <div class="absolute inset-0 bg-gradient-to-br from-indigo-900 to-purple-900 flex flex-col items-center justify-center ${posterSrc ? 'hidden' : ''}" style="border-radius: 35px;">
+                                <i class="fas fa-video-slash text-4xl text-white/30 mb-4"></i>
+                                <p class="text-white/50 text-sm">Video not available</p>
                             </div>
-                            
-                            <video 
-                                class="iphone-video"
-                                src="${videoSrc}"
-                                poster="${posterSrc}"
-                                loop
-                                playsinline
-                                preload="metadata"
-                                onerror="handleVideoError(this, ${index})"
-                                onloadeddata="handleVideoLoaded(this)"
-                            ></video>
-                            
-                            <!-- Video Error Fallback -->
-                            <div class="video-error-fallback absolute inset-0 bg-gradient-to-br from-indigo-900 to-purple-900 hidden flex-col items-center justify-center rounded-[35px]">
-                                ${posterSrc ? `
-                                    <img 
-                                        src="${posterSrc}" 
-                                        alt="${screen.title}"
-                                        class="w-full h-full object-cover rounded-[35px] absolute inset-0"
-                                    />
-                                    <div class="absolute inset-0 bg-black/50 rounded-[35px]"></div>
-                                ` : ''}
-                                <i class="fas fa-exclamation-triangle text-3xl text-yellow-500 mb-2 relative z-10"></i>
-                                <p class="text-white/70 text-xs relative z-10">Video unavailable</p>
-                            </div>
-                            
                             <div class="video-overlay">
                                 <div class="video-info">
-                                    <h3 class="text-sm font-bold text-white">${screen.title}</h3>
-                                    <p class="text-xs text-white/70">${screen.subtitle}</p>
+                                    <h3>${screen.title}</h3>
+                                    <p>${screen.subtitle}</p>
                                 </div>
-                            </div>
-                            <button class="video-play-btn" aria-label="Play video">
-                                <i class="fas fa-play"></i>
-                            </button>
-                        </div>
-                    `;
-                } else {
-                    // Fallback for non-video screens (legacy support)
-                    return `
-                        <div class="app-screen bg-gradient-to-br ${screen.gradient || 'from-indigo-900 to-purple-900'}" data-index="${index}">
-                            <div class="text-center pt-10">
-                                <i class="${screen.icon} text-5xl ${screen.iconColor} mb-4"></i>
-                                <h3 class="text-lg font-bold mb-2">${screen.title}</h3>
-                                <p class="text-xs text-gray-300 mb-4">${screen.subtitle}</p>
-                                ${screen.content || ''}
                             </div>
                         </div>
                     `;
                 }
-            }).join('');
-            
-            // Render dots dynamically
-            if (carouselDotsContainer) {
-                carouselDotsContainer.innerHTML = data.iphoneScreens.map((_, index) => `
-                    <button class="carousel-dot w-2 h-2 rounded-full ${index === 0 ? 'bg-white' : 'bg-white/30'} transition-all" data-index="${index}"></button>
-                `).join('');
+                
+                return `
+                    <div class="app-screen video-screen" data-index="${index}">
+                        <!-- Video Loading Indicator -->
+                        <div class="video-loader bg-gradient-to-br from-indigo-900 to-purple-900">
+                            <div class="loading-spinner"></div>
+                        </div>
+                        
+                        <!-- Video Element - Full Screen -->
+                        <video 
+                            class="iphone-video"
+                            src="${videoSrc}"
+                            poster="${posterSrc}"
+                            loop
+                            playsinline
+                            preload="metadata"
+                            onerror="handleVideoError(this, ${index})"
+                            onloadeddata="handleVideoLoaded(this)"
+                            oncanplay="handleVideoLoaded(this)"
+                        ></video>
+                        
+                        <!-- Video Error Fallback -->
+                        <div class="video-error-fallback bg-gradient-to-br from-indigo-900 to-purple-900 hidden flex-col items-center justify-center">
+                            ${posterSrc ? `
+                                <img 
+                                    src="${posterSrc}" 
+                                    alt="${screen.title}"
+                                    class="absolute inset-0 w-full h-full object-cover"
+                                    style="border-radius: 35px;"
+                                />
+                                <div class="absolute inset-0 bg-black/50" style="border-radius: 35px;"></div>
+                            ` : ''}
+                            <i class="fas fa-exclamation-triangle text-3xl text-yellow-500 mb-2 relative z-10"></i>
+                            <p class="text-white/70 text-xs relative z-10">Video unavailable</p>
+                        </div>
+                        
+                        <!-- Overlay with title -->
+                        <div class="video-overlay">
+                            <div class="video-info">
+                                <h3>${screen.title}</h3>
+                                <p>${screen.subtitle}</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Play/Pause Button -->
+                        <button class="video-play-btn" aria-label="Play video">
+                            <i class="fas fa-play"></i>
+                        </button>
+                    </div>
+                `;
+            } else {
+                // Fallback for non-video screens (legacy support)
+                return `
+                    <div class="app-screen" data-index="${index}" style="background: linear-gradient(to bottom right, ${screen.gradientFrom || '#4338ca'}, ${screen.gradientTo || '#7c3aed'});">
+                        <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
+                            <i class="${screen.icon} text-5xl ${screen.iconColor || 'text-white/80'} mb-4"></i>
+                            <h3 class="text-lg font-bold text-white mb-2">${screen.title}</h3>
+                            <p class="text-xs text-white/70">${screen.subtitle}</p>
+                            ${screen.content || ''}
+                        </div>
+                    </div>
+                `;
             }
-            
-            // Store screen count for carousel logic
-            window.carouselScreenCount = screenCount;
-            
-            console.log('iPhone screens rendered');
-        }
-    }
-
-    // Global video error handler
-    window.handleVideoError = function(video, index) {
-        console.warn(`Video failed to load at index ${index}: ${video.src}`);
+        }).join('');
         
-        const screen = video.closest('.video-screen');
-        if (screen) {
-            // Hide video
-            video.style.display = 'none';
-            
-            // Hide loader
-            const loader = screen.querySelector('.video-loader');
-            if (loader) loader.style.display = 'none';
-            
-            // Show error fallback
-            const fallback = screen.querySelector('.video-error-fallback');
-            if (fallback) {
-                fallback.classList.remove('hidden');
-                fallback.classList.add('flex');
-            }
-            
-            // Hide play button
-            const playBtn = screen.querySelector('.video-play-btn');
-            if (playBtn) playBtn.style.display = 'none';
+        // Render dots dynamically
+        if (carouselDotsContainer) {
+            carouselDotsContainer.innerHTML = data.iphoneScreens.map((_, index) => `
+                <button class="carousel-dot ${index === 0 ? 'bg-white' : 'bg-white/30'}" data-index="${index}" aria-label="Go to slide ${index + 1}"></button>
+            `).join('');
         }
-    };
+        
+        // Store screen count for carousel logic
+        window.carouselScreenCount = screenCount;
+        
+        console.log('iPhone screens rendered with full-screen videos');
+    }
+}
 
-    // Global video loaded handler
-    window.handleVideoLoaded = function(video) {
-        const screen = video.closest('.video-screen');
-        if (screen) {
-            // Hide loader
-            const loader = screen.querySelector('.video-loader');
-            if (loader) {
-                loader.style.opacity = '0';
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                }, 300);
-            }
+// Global video error handler
+window.handleVideoError = function(video, index) {
+    console.warn(`Video failed to load at index ${index}: ${video.src}`);
+    
+    const screen = video.closest('.video-screen');
+    if (screen) {
+        // Hide video
+        video.style.display = 'none';
+        
+        // Hide loader
+        const loader = screen.querySelector('.video-loader');
+        if (loader) loader.style.display = 'none';
+        
+        // Show error fallback
+        const fallback = screen.querySelector('.video-error-fallback');
+        if (fallback) {
+            fallback.classList.remove('hidden');
+            fallback.style.display = 'flex';
         }
-    };
+        
+        // Hide play button
+        const playBtn = screen.querySelector('.video-play-btn');
+        if (playBtn) playBtn.style.display = 'none';
+    }
+};
+
+// Global video loaded handler
+window.handleVideoLoaded = function(video) {
+    const screen = video.closest('.video-screen');
+    if (screen) {
+        // Hide loader with fade effect
+        const loader = screen.querySelector('.video-loader');
+        if (loader) {
+            loader.style.opacity = '0';
+            setTimeout(() => {
+                loader.style.display = 'none';
+            }, 300);
+        }
+        
+        // Ensure video is visible
+        video.style.opacity = '1';
+    }
+};
 
     // ============================================
     // HELPER FUNCTIONS
