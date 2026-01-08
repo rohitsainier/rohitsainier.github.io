@@ -490,37 +490,37 @@ const siteData = {
             type: "video",
             // Video source options - priority: videoLocal > videoUrl
             videoUrl: "https://www.youtube.com/shorts/WwilmdQh6qA",
-            videoLocal: null, // e.g., "./assets/videos/screen1-video.mp4"
+            videoLocal: "./assets/videos/anchor.mp4", // e.g., "./assets/videos/screen1-video.mp4"
             // Poster/thumbnail options - priority: posterLocal > posterUrl
-            posterUrl: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=280&h=500&fit=crop",
-            posterLocal: null, // e.g., "./assets/images/posters/screen1-poster.jpg"
+            posterUrl: null,
+            posterLocal: "./assets/images/posters/anchor.png", // e.g., "./assets/images/posters/screen1-poster.jpg"
             title: "Virtual AI Anchor",
             subtitle: "India Today Group"
         },
         {
             type: "video",
             videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-hands-using-a-smartphone-at-night-40805-large.mp4",
-            videoLocal: null,
+            videoLocal: "./assets/videos/carrefour.mov",
             posterUrl: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=280&h=500&fit=crop",
-            posterLocal: null,
+            posterLocal: "./assets/images/posters/carrefour.png",
             title: "Carrefour UAE",
             subtitle: "10M+ Users Retail App"
         },
         {
             type: "video",
             videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-editing-photos-on-a-computer-4598-large.mp4",
-            videoLocal: null,
+            videoLocal: "./assets/videos/editra.mov",
             posterUrl: "https://images.unsplash.com/photo-1536240478700-b869070f9279?w=280&h=500&fit=crop",
-            posterLocal: null,
-            title: "AI Subtitle Clipper",
-            subtitle: "Whisper AI Powered"
+            posterLocal: "./assets/images/posters/editra.png",
+            title: "Editra",
+            subtitle: "AI Powered Video Editor"
         },
         {
             type: "video",
             videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-futuristic-devices-99786-large.mp4",
-            videoLocal: null,
+            videoLocal: "./assets/videos/animify.mp4",
             posterUrl: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=280&h=500&fit=crop",
-            posterLocal: null,
+            posterLocal: "./assets/images/posters/animify.png",
             title: "Ghibli Generator",
             subtitle: "Stable Diffusion + ComfyUI"
         }

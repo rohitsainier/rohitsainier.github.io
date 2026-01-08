@@ -340,18 +340,62 @@ function initTextScramble() {
 
 
 function initCarousel() {
+    console.log('🎬 === CAROUSEL INITIALIZATION STARTED ===');
+    
     const carousel = document.getElementById('appCarousel');
     const dotsContainer = document.getElementById('carouselDots');
 
-    if (!carousel || !dotsContainer) return;
+    if (!carousel || !dotsContainer) {
+        console.error('❌ Carousel or dots container not found!');
+        return;
+    }
 
-    const dots = dotsContainer.querySelectorAll('.carousel-dot');
-    const screenCount = window.carouselScreenCount || dots.length;
-    const videos = carousel.querySelectorAll('.iphone-video');
-    const playBtns = carousel.querySelectorAll('.video-play-btn');
+    // Wait a bit to ensure DOM is fully rendered
+    setTimeout(() => {
+        initCarouselLogic();
+    }, 100);
+}
+
+function initCarouselLogic() {
+    const carousel = document.getElementById('appCarousel');
+    const dotsContainer = document.getElementById('carouselDots');
+    
+    const dots = Array.from(dotsContainer.querySelectorAll('.carousel-dot'));
+    const screens = Array.from(carousel.querySelectorAll('.app-screen'));
+    const videos = Array.from(carousel.querySelectorAll('.iphone-video'));
+    const playBtns = Array.from(carousel.querySelectorAll('.video-play-btn'));
+    
+    const screenCount = dots.length;
+    
+    console.log('📊 Carousel elements found:', {
+        screenCount,
+        dotsFound: dots.length,
+        screensFound: screens.length,
+        videosFound: videos.length,
+        playButtonsFound: playBtns.length
+    });
+
+    if (screenCount === 0) {
+        console.error('❌ No dots found!');
+        return;
+    }
     
     let currentSlide = 0;
-    let carouselInterval;
+    let isAutoPlaying = true;
+
+    // Test dot clickability
+    console.log('🖱️ Testing dot setup...');
+    dots.forEach((dot, i) => {
+        const rect = dot.getBoundingClientRect();
+        const styles = window.getComputedStyle(dot);
+        console.log(`Dot ${i}:`, {
+            visible: rect.width > 0 && rect.height > 0,
+            position: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
+            pointerEvents: styles.pointerEvents,
+            zIndex: styles.zIndex,
+            cursor: styles.cursor
+        });
+    });
 
     function pauseAllVideos() {
         videos.forEach((video, i) => {
@@ -369,44 +413,127 @@ function initCarousel() {
         const currentVideo = videos[currentSlide];
         const currentPlayBtn = playBtns[currentSlide];
         
-        if (currentVideo && !currentVideo.error && currentVideo.readyState >= 2) {
-            currentVideo.play().then(() => {
-                if (currentPlayBtn) {
-                    currentPlayBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                }
-            }).catch((err) => {
-                console.log('Autoplay blocked or video error:', err.message);
-            });
+        console.log(`▶️ Playing video ${currentSlide}`);
+        
+        if (currentVideo && !currentVideo.error) {
+            if (currentVideo.readyState >= 2) {
+                currentVideo.play().then(() => {
+                    if (currentPlayBtn) {
+                        currentPlayBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                    }
+                    console.log(`✅ Video ${currentSlide} playing (${currentVideo.duration.toFixed(2)}s)`);
+                }).catch((err) => {
+                    console.error(`❌ Play failed for video ${currentSlide}:`, err.message);
+                });
+            } else {
+                console.warn(`⚠️ Video ${currentSlide} not ready, retrying...`);
+                setTimeout(() => playCurrentVideo(), 500);
+            }
         }
     }
 
-    function goToSlide(index) {
+    function goToSlide(index, userInitiated = false) {
+        console.log(`🎯 goToSlide(${index}, userInitiated=${userInitiated})`);
+        
+        if (index < 0 || index >= screenCount) {
+            console.warn(`⚠️ Invalid index: ${index}`);
+            return;
+        }
+        
         currentSlide = index;
         carousel.style.transform = `translateX(-${index * 100}%)`;
+        
+        // Update dots - SIMPLIFIED
         dots.forEach((dot, i) => {
-            dot.classList.toggle('bg-white', i === index);
-            dot.classList.toggle('bg-white/30', i !== index);
+            dot.classList.remove('bg-white', 'bg-white/30');
+            if (i === index) {
+                dot.classList.add('bg-white');
+                dot.style.backgroundColor = 'white'; // Force inline style
+                console.log(`✅ Activated dot ${i}`);
+            } else {
+                dot.classList.add('bg-white/30');
+                dot.style.backgroundColor = 'rgba(255, 255, 255, 0.3)'; // Force inline style
+            }
         });
         
-        // Handle video playback with delay for smooth transition
-        setTimeout(() => {
-            playCurrentVideo();
-        }, 300);
+        if (userInitiated) {
+            isAutoPlaying = false;
+            console.log('🛑 Auto-play DISABLED');
+        }
+        
+        setTimeout(() => playCurrentVideo(), 300);
     }
 
-    // Add click handlers to dots
+    function goToNextSlide() {
+        const nextIndex = (currentSlide + 1) % screenCount;
+        console.log(`⏭️ Auto-advancing: ${currentSlide} → ${nextIndex}`);
+        goToSlide(nextIndex, false);
+    }
+
+    // === CRITICAL FIX: Multiple click handler strategies ===
+    
+    // Strategy 1: Event delegation on container
+    console.log('🔘 Strategy 1: Container event delegation');
+    dotsContainer.addEventListener('click', function(e) {
+        console.log('📍 Container clicked', e.target);
+        const clickedDot = e.target.closest('.carousel-dot');
+        if (clickedDot) {
+            const index = parseInt(clickedDot.getAttribute('data-index'));
+            console.log(`✨ DOT ${index} CLICKED (via delegation)!`);
+            goToSlide(index, true);
+        }
+    }, true); // Use capture phase
+
+    // Strategy 2: Direct listeners on each dot
+    console.log('🔘 Strategy 2: Direct dot listeners');
     dots.forEach((dot, i) => {
-        dot.addEventListener('click', () => {
-            goToSlide(i);
-            clearInterval(carouselInterval);
-            startAutoRotate();
+        // Remove existing listeners by cloning
+        const newDot = dot.cloneNode(true);
+        dot.parentNode.replaceChild(newDot, dot);
+        dots[i] = newDot;
+        
+        // Add fresh listener
+        newDot.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log(`✨ DOT ${i} CLICKED (direct)!`);
+            goToSlide(i, true);
+        }, true);
+        
+        // Visual feedback on hover
+        newDot.addEventListener('mouseenter', function() {
+            console.log(`👆 Hovering dot ${i}`);
+            this.style.transform = 'scale(1.4)';
         });
+        
+        newDot.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+        });
+        
+        // Ensure proper styling
+        newDot.style.cursor = 'pointer';
+        newDot.style.pointerEvents = 'auto';
+        
+        console.log(`✅ Dot ${i} handler attached`);
     });
 
-    // Handle play button clicks
+    // Strategy 3: Touch events for mobile
+    console.log('🔘 Strategy 3: Touch events');
+    dots.forEach((dot, i) => {
+        dot.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            console.log(`✨ DOT ${i} TOUCHED!`);
+            goToSlide(i, true);
+        }, { passive: false });
+    });
+
+    // === PLAY BUTTON HANDLERS ===
     playBtns.forEach((btn, index) => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
+            e.preventDefault();
+            console.log(`🎮 Play button ${index} clicked`);
+            
             const video = videos[index];
             if (video && !video.error) {
                 if (video.paused) {
@@ -414,82 +541,77 @@ function initCarousel() {
                     video.play().then(() => {
                         btn.innerHTML = '<i class="fas fa-pause"></i>';
                     }).catch(() => {});
-                    // Pause auto-rotation when manually playing
-                    clearInterval(carouselInterval);
+                    isAutoPlaying = false;
                 } else {
                     video.pause();
                     btn.innerHTML = '<i class="fas fa-play"></i>';
-                    // Resume auto-rotation
-                    startAutoRotate();
                 }
             }
         });
     });
 
-    // Swipe support for mobile
+    // === VIDEO ENDED HANDLERS ===
+    videos.forEach((video, index) => {
+        if (video && !video.error) {
+            video.addEventListener('ended', function() {
+                console.log(`🏁 Video ${index} ended`);
+                if (index === currentSlide && isAutoPlaying) {
+                    setTimeout(() => goToNextSlide(), 500);
+                }
+            });
+        }
+    });
+
+    // === SWIPE SUPPORT ===
     let touchStartX = 0;
-    let touchEndX = 0;
-    
     carousel.addEventListener('touchstart', (e) => {
         touchStartX = e.changedTouches[0].screenX;
     }, { passive: true });
     
     carousel.addEventListener('touchend', (e) => {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-    }, { passive: true });
-    
-    function handleSwipe() {
-        const swipeThreshold = 50;
+        const touchEndX = e.changedTouches[0].screenX;
         const diff = touchStartX - touchEndX;
         
-        if (Math.abs(diff) > swipeThreshold) {
+        if (Math.abs(diff) > 50) {
             if (diff > 0 && currentSlide < screenCount - 1) {
-                // Swipe left - next slide
-                goToSlide(currentSlide + 1);
+                goToSlide(currentSlide + 1, true);
             } else if (diff < 0 && currentSlide > 0) {
-                // Swipe right - previous slide
-                goToSlide(currentSlide - 1);
+                goToSlide(currentSlide - 1, true);
             }
-            clearInterval(carouselInterval);
-            startAutoRotate();
         }
-    }
+    }, { passive: true });
 
-    function startAutoRotate() {
-        carouselInterval = setInterval(() => {
-            currentSlide = (currentSlide + 1) % screenCount;
-            goToSlide(currentSlide);
-        }, 6000); // 6 seconds per slide for videos
-    }
+    // === KEYBOARD SUPPORT (BONUS) ===
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft' && currentSlide > 0) {
+            goToSlide(currentSlide - 1, true);
+        } else if (e.key === 'ArrowRight' && currentSlide < screenCount - 1) {
+            goToSlide(currentSlide + 1, true);
+        }
+    });
 
-    // Start auto-rotation and play first video
-    startAutoRotate();
-    
-    // Wait a bit for videos to load before playing
-    setTimeout(() => {
-        playCurrentVideo();
-    }, 1000);
-
-    // Pause videos when not in viewport
+    // === INTERSECTION OBSERVER ===
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (!entry.isIntersecting) {
                 pauseAllVideos();
-                clearInterval(carouselInterval);
             } else {
-                playCurrentVideo();
-                startAutoRotate();
+                setTimeout(() => playCurrentVideo(), 100);
             }
         });
     }, { threshold: 0.3 });
 
     const mockup = document.getElementById('iphoneMockup');
-    if (mockup) {
-        observer.observe(mockup);
-    }
+    if (mockup) observer.observe(mockup);
 
-    console.log('Carousel initialized with', screenCount, 'screens');
+    // === START ===
+    console.log('🚀 Starting carousel...');
+    setTimeout(() => {
+        playCurrentVideo();
+    }, 500);
+
+    console.log('✅ === CAROUSEL READY ===');
+    console.log('Try clicking dots now - watch for "DOT X CLICKED" messages');
 }
 
 function initCounters() {

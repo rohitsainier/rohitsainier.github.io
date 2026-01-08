@@ -536,8 +536,13 @@
 
     // UPDATED: renderIphoneScreens with full-screen video support
 function renderIphoneScreens(data) {
-    const appCarousel = document.getElementById('appCarousel');
+     const appCarousel = document.getElementById('appCarousel');
     const carouselDotsContainer = document.getElementById('carouselDots');
+    
+    if (!carouselDotsContainer) {
+        console.error('❌ Dots container not found! Check HTML structure.');
+        return;
+    }
     
     if (appCarousel && data.iphoneScreens) {
         const screenCount = data.iphoneScreens.length;
@@ -590,9 +595,9 @@ function renderIphoneScreens(data) {
                             class="iphone-video"
                             src="${videoSrc}"
                             poster="${posterSrc}"
-                            loop
                             playsinline
-                            preload="metadata"
+                            muted
+                            preload="auto"
                             onerror="handleVideoError(this, ${index})"
                             onloadeddata="handleVideoLoaded(this)"
                             oncanplay="handleVideoLoaded(this)"

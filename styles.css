@@ -4,7 +4,6 @@
 
 * {
     font-family: 'Space Grotesk', sans-serif;
-    cursor: none;
 }
 
 html {
@@ -1061,23 +1060,179 @@ select {
 }
 
 /* ============================================
-   Z-INDEX REFERENCE
+   CAROUSEL DOTS - MAXIMUM CLICKABILITY FIX
    ============================================ */
 
-/*
-    z-index layers:
-    - Network Canvas: 0
-    - Spotlight: 1
-    - Video element: 1
-    - Video loader: 2
-    - Video error fallback: 3
-    - Video overlay: 10
-    - Video play button: 15
-    - iPhone notch: 20
-    - Carousel dots: 25
-    - Navigation: 50 (from Tailwind)
-    - Mobile menu: 40 (from Tailwind)
-    - Noise overlay: 100
-    - Cursor: 9999
-    - Scroll progress: 9999
-*/
+.carousel-dots-container {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px; /* Increased gap */
+    z-index: 9999 !important; /* Force high z-index */
+    padding: 10px 16px; /* Increased padding */
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    pointer-events: auto !important;
+}
+
+.carousel-dot {
+    width: 12px !important; /* Larger dots */
+    height: 12px !important;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    cursor: pointer !important;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    padding: 0;
+    pointer-events: auto !important;
+    position: relative;
+    z-index: 10000 !important;
+    background: rgba(255, 255, 255, 0.3) !important;
+}
+
+.carousel-dot:hover {
+    transform: scale(1.4);
+    border-color: rgba(255, 255, 255, 0.8);
+}
+
+.carousel-dot.bg-white {
+    background: white !important;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+    border-color: white !important;
+}
+
+.carousel-dot.bg-white\/30 {
+    background: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Ensure video overlay doesn't block dots */
+.video-overlay {
+    pointer-events: none !important;
+}
+
+.video-play-btn {
+    pointer-events: auto !important;
+}
+
+.iphone-screen {
+    pointer-events: auto;
+}
+
+.app-carousel {
+    pointer-events: none; /* Don't block clicks */
+}
+
+.app-screen {
+    pointer-events: auto;
+}
+
+/* ============================================
+   CAROUSEL DOTS - OVERLAY POSITIONING
+   ============================================ */
+
+.carousel-dots-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 80px; /* Enough space for dots */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000 !important; /* Above iPhone mockup */
+    pointer-events: none; /* Don't block clicks on parent */
+}
+
+.carousel-dots-container {
+    position: relative !important; /* Changed from absolute */
+    bottom: auto !important;
+    left: auto !important;
+    transform: none !important; /* Remove transform */
+    display: flex !important;
+    gap: 12px !important;
+    z-index: 1001 !important;
+    padding: 12px 20px !important;
+    background: rgba(0, 0, 0, 0.7) !important;
+    backdrop-filter: blur(10px) !important;
+    border-radius: 25px !important;
+    pointer-events: auto !important; /* Enable clicks on container */
+    border: 2px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.carousel-dot {
+    width: 14px !important;
+    height: 14px !important;
+    border-radius: 50% !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    border: 2px solid rgba(255, 255, 255, 0.5) !important;
+    padding: 0 !important;
+    pointer-events: auto !important; /* Enable clicks */
+    position: relative !important;
+    z-index: 1002 !important;
+    background: rgba(255, 255, 255, 0.3) !important;
+}
+
+.carousel-dot:hover {
+    transform: scale(1.5) !important;
+    border-color: white !important;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.6) !important;
+}
+
+.carousel-dot:active {
+    transform: scale(1.2) !important;
+}
+
+/* Ensure iPhone mockup doesn't block dots */
+.iphone-mockup {
+    position: relative;
+    z-index: 1; /* Lower than dots overlay */
+}
+
+/* Keep 3D transform but don't let it create stacking issues */
+.tilt-card {
+    transform-style: preserve-3d;
+    transition: transform 0.1s;
+    isolation: auto; /* Don't create isolated stacking context */
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .carousel-dots-overlay {
+        height: 70px;
+    }
+}
+
+@media (max-width: 768px) {
+    .carousel-dots-overlay {
+        height: 60px;
+    }
+    
+    .carousel-dots-container {
+        padding: 10px 16px !important;
+        gap: 10px !important;
+    }
+    
+    .carousel-dot {
+        width: 12px !important;
+        height: 12px !important;
+    }
+}
+
+@media (max-width: 640px) {
+    .carousel-dots-overlay {
+        height: 50px;
+    }
+    
+    .carousel-dots-container {
+        padding: 8px 12px !important;
+        gap: 8px !important;
+    }
+    
+    .carousel-dot {
+        width: 10px !important;
+        height: 10px !important;
+    }
+}

@@ -103,6 +103,8 @@
 <div class="flex justify-center reveal-section">
     <div class="relative">
         <div class="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full blur-3xl opacity-20 scale-150"></div>
+        
+        <!-- iPhone Mockup -->
         <div class="iphone-mockup tilt-card hover-target" id="iphoneMockup">
             <div class="iphone-screen">
                 <div class="iphone-notch"></div>
@@ -110,12 +112,16 @@
                 <div class="app-carousel" id="appCarousel">
                     <!-- Populated by JS -->
                 </div>
-                <!-- Dots overlaid on top -->
-                <div class="carousel-dots-container" id="carouselDots">
-                    <!-- Populated by JS -->
-                </div>
             </div>
         </div>
+        
+        <!-- Dots MOVED HERE - Outside the tilt-card -->
+        <div class="carousel-dots-overlay" id="carouselDotsOverlay">
+            <div class="carousel-dots-container" id="carouselDots">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+        
         <!-- Floating Elements -->
         <div class="floating-tag absolute -top-8 -right-8 px-4 py-2 glass-card rounded-full animate-bounce">
             <i class="fab fa-swift text-orange-500 mr-2"></i>Swift
