@@ -161,6 +161,7 @@ html {
 .tilt-card {
     transform-style: preserve-3d;
     transition: transform 0.1s;
+    isolation: auto; /* Don't create isolated stacking context */
 }
 
 .tilt-card-inner {
@@ -227,6 +228,7 @@ html {
         0 0 0 6px #1a1a2e,
         0 25px 50px rgba(0, 0, 0, 0.5),
         inset 0 0 20px rgba(255, 255, 255, 0.05);
+    z-index: 1; /* Lower than overlays */
 }
 
 .iphone-screen {
@@ -271,6 +273,7 @@ html {
     width: 100%;
     height: 100%;
     transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    pointer-events: none; /* Don't block overlay clicks */
 }
 
 .app-screen {
@@ -279,6 +282,7 @@ html {
     height: 100%;
     position: relative;
     overflow: hidden;
+    pointer-events: auto;
 }
 
 /* ============================================
@@ -328,7 +332,7 @@ html {
     right: 0;
     background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.5) 50%, transparent 100%);
     padding: 80px 20px 50px;
-    pointer-events: none;
+    pointer-events: none !important; /* Don't block clicks */
     z-index: 10;
     border-radius: 0 0 35px 35px;
 }
@@ -349,35 +353,9 @@ html {
     color: rgba(255, 255, 255, 0.7);
 }
 
+/* OLD PLAY BUTTONS - HIDDEN (Using global one now) */
 .video-play-btn {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 60px;
-    height: 60px;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    color: white;
-    font-size: 20px;
-    z-index: 15;
-}
-
-.video-play-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: translate(-50%, -50%) scale(1.1);
-    box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
-}
-
-.video-play-btn i {
-    margin-left: 3px;
+    display: none !important;
 }
 
 .video-error-fallback {
@@ -391,44 +369,128 @@ html {
 }
 
 /* ============================================
-   CAROUSEL DOTS - OVERLAID ON VIDEO
+   PLAY BUTTON OVERLAY - OUTSIDE IPHONE MOCKUP
    ============================================ */
 
-.carousel-dots-container {
+.play-button-overlay {
     position: absolute;
-    bottom: 16px;
-    left: 50%;
-    transform: translateX(-50%);
+    top: 12px; /* Account for iPhone mockup padding */
+    left: 12px;
+    right: 12px;
+    bottom: 80px; /* Leave space for dots */
     display: flex;
-    gap: 8px;
-    z-index: 25;
-    padding: 8px 12px;
-    background: rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
+    align-items: center;
+    justify-content: center;
+    z-index: 999 !important; /* Below dots but above iPhone */
+    pointer-events: none; /* Don't block other interactions */
+    border-radius: 35px; /* Match iPhone screen radius */
+}
+
+.video-play-btn-global {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(15px);
+    border: 3px solid rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: white;
+    font-size: 24px;
+    z-index: 1000 !important;
+    pointer-events: auto !important; /* Enable clicks */
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    opacity: 0.5;
+}
+
+.video-play-btn-global:hover {
+    background: rgba(255, 255, 255, 0.35);
+    transform: scale(1.15);
+    box-shadow: 0 0 40px rgba(255, 255, 255, 0.4);
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+.video-play-btn-global:active {
+    transform: scale(1.05);
+}
+
+.video-play-btn-global i {
+    margin-left: 4px; /* Offset play icon to look centered */
+    transition: margin 0.2s ease;
+}
+
+.video-play-btn-global i.fa-pause {
+    margin-left: 0; /* Pause icon is naturally centered */
+}
+
+/* ============================================
+   CAROUSEL DOTS - OVERLAY POSITIONING
+   ============================================ */
+
+.carousel-dots-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 80px; /* Enough space for dots */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000 !important; /* Same level as play button */
+    pointer-events: none; /* Don't block clicks on parent */
+}
+
+.carousel-dots-container {
+    position: relative !important; /* Not absolute */
+    bottom: auto !important;
+    left: auto !important;
+    transform: none !important; /* No transform needed */
+    display: flex !important;
+    gap: 12px !important;
+    z-index: 1001 !important;
+    padding: 12px 20px !important;
+    background: rgba(0, 0, 0, 0.7) !important;
+    backdrop-filter: blur(10px) !important;
+    border-radius: 25px !important;
+    pointer-events: auto !important; /* Enable clicks on container */
+    border: 2px solid rgba(255, 255, 255, 0.2) !important;
 }
 
 .carousel-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    border: none;
-    padding: 0;
+    width: 14px !important;
+    height: 14px !important;
+    border-radius: 50% !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    border: 2px solid rgba(255, 255, 255, 0.5) !important;
+    padding: 0 !important;
+    pointer-events: auto !important; /* Enable clicks */
+    position: relative !important;
+    z-index: 1002 !important;
+    background: rgba(255, 255, 255, 0.3) !important;
 }
 
 .carousel-dot:hover {
-    transform: scale(1.2);
+    transform: scale(1.5) !important;
+    border-color: white !important;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.6) !important;
+}
+
+.carousel-dot:active {
+    transform: scale(1.2) !important;
 }
 
 .carousel-dot.bg-white {
-    background: white;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    background: white !important;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+    border-color: white !important;
 }
 
 .carousel-dot.bg-white\/30 {
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.3) !important;
 }
 
 /* ============================================
@@ -832,7 +894,7 @@ select {
 }
 
 /* ============================================
-   RESPONSIVE STYLES - TABLET
+   RESPONSIVE STYLES - TABLET (1024px)
    ============================================ */
 
 @media (max-width: 1024px) {
@@ -857,10 +919,30 @@ select {
         border-radius: 0 0 32px 32px;
         padding: 70px 18px 45px;
     }
+    
+    /* Play button overlay */
+    .play-button-overlay {
+        top: 11px;
+        left: 11px;
+        right: 11px;
+        bottom: 70px;
+        border-radius: 32px;
+    }
+    
+    .video-play-btn-global {
+        width: 45px;
+        height: 45px;
+        font-size: 22px;
+    }
+    
+    /* Dots overlay */
+    .carousel-dots-overlay {
+        height: 70px;
+    }
 }
 
 /* ============================================
-   RESPONSIVE STYLES - MOBILE
+   RESPONSIVE STYLES - MOBILE (768px)
    ============================================ */
 
 @media (max-width: 768px) {
@@ -897,21 +979,35 @@ select {
         top: 8px;
     }
     
-    .video-play-btn {
-        width: 50px;
-        height: 50px;
-        font-size: 16px;
+    /* Play button overlay */
+    .play-button-overlay {
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        bottom: 60px;
+        border-radius: 30px;
+    }
+    
+    .video-play-btn-global {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+        border-width: 2px;
+    }
+    
+    /* Dots overlay */
+    .carousel-dots-overlay {
+        height: 60px;
     }
     
     .carousel-dots-container {
-        bottom: 12px;
-        padding: 6px 10px;
-        gap: 6px;
+        padding: 10px 16px !important;
+        gap: 10px !important;
     }
     
     .carousel-dot {
-        width: 6px;
-        height: 6px;
+        width: 12px !important;
+        height: 12px !important;
     }
     
     .loading-spinner {
@@ -934,7 +1030,7 @@ select {
 }
 
 /* ============================================
-   RESPONSIVE STYLES - SMALL MOBILE
+   RESPONSIVE STYLES - SMALL MOBILE (640px)
    ============================================ */
 
 @media (max-width: 640px) {
@@ -972,21 +1068,34 @@ select {
         top: 7px;
     }
     
-    .video-play-btn {
-        width: 45px;
-        height: 45px;
-        font-size: 14px;
+    /* Play button overlay */
+    .play-button-overlay {
+        top: 8px;
+        left: 8px;
+        right: 8px;
+        bottom: 50px;
+        border-radius: 28px;
+    }
+    
+    .video-play-btn-global {
+        width: 55px;
+        height: 55px;
+        font-size: 18px;
+    }
+    
+    /* Dots overlay */
+    .carousel-dots-overlay {
+        height: 50px;
     }
     
     .carousel-dots-container {
-        bottom: 10px;
-        padding: 5px 8px;
-        gap: 5px;
+        padding: 8px 12px !important;
+        gap: 8px !important;
     }
     
     .carousel-dot {
-        width: 5px;
-        height: 5px;
+        width: 10px !important;
+        height: 10px !important;
     }
 }
 
@@ -1039,8 +1148,10 @@ select {
     .scroll-progress,
     nav,
     #mobileMenu,
-    .video-play-btn,
-    .carousel-dots-container {
+    .video-play-btn-global,
+    .play-button-overlay,
+    .carousel-dots-container,
+    .carousel-dots-overlay {
         display: none !important;
     }
     
@@ -1056,183 +1167,5 @@ select {
     .glass-card {
         background: white;
         border: 1px solid #e5e7eb;
-    }
-}
-
-/* ============================================
-   CAROUSEL DOTS - MAXIMUM CLICKABILITY FIX
-   ============================================ */
-
-.carousel-dots-container {
-    position: absolute;
-    bottom: 16px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 12px; /* Increased gap */
-    z-index: 9999 !important; /* Force high z-index */
-    padding: 10px 16px; /* Increased padding */
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
-    pointer-events: auto !important;
-}
-
-.carousel-dot {
-    width: 12px !important; /* Larger dots */
-    height: 12px !important;
-    border-radius: 50%;
-    transition: all 0.3s ease;
-    cursor: pointer !important;
-    border: 2px solid rgba(255, 255, 255, 0.5);
-    padding: 0;
-    pointer-events: auto !important;
-    position: relative;
-    z-index: 10000 !important;
-    background: rgba(255, 255, 255, 0.3) !important;
-}
-
-.carousel-dot:hover {
-    transform: scale(1.4);
-    border-color: rgba(255, 255, 255, 0.8);
-}
-
-.carousel-dot.bg-white {
-    background: white !important;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
-    border-color: white !important;
-}
-
-.carousel-dot.bg-white\/30 {
-    background: rgba(255, 255, 255, 0.3) !important;
-}
-
-/* Ensure video overlay doesn't block dots */
-.video-overlay {
-    pointer-events: none !important;
-}
-
-.video-play-btn {
-    pointer-events: auto !important;
-}
-
-.iphone-screen {
-    pointer-events: auto;
-}
-
-.app-carousel {
-    pointer-events: none; /* Don't block clicks */
-}
-
-.app-screen {
-    pointer-events: auto;
-}
-
-/* ============================================
-   CAROUSEL DOTS - OVERLAY POSITIONING
-   ============================================ */
-
-.carousel-dots-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 80px; /* Enough space for dots */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000 !important; /* Above iPhone mockup */
-    pointer-events: none; /* Don't block clicks on parent */
-}
-
-.carousel-dots-container {
-    position: relative !important; /* Changed from absolute */
-    bottom: auto !important;
-    left: auto !important;
-    transform: none !important; /* Remove transform */
-    display: flex !important;
-    gap: 12px !important;
-    z-index: 1001 !important;
-    padding: 12px 20px !important;
-    background: rgba(0, 0, 0, 0.7) !important;
-    backdrop-filter: blur(10px) !important;
-    border-radius: 25px !important;
-    pointer-events: auto !important; /* Enable clicks on container */
-    border: 2px solid rgba(255, 255, 255, 0.2) !important;
-}
-
-.carousel-dot {
-    width: 14px !important;
-    height: 14px !important;
-    border-radius: 50% !important;
-    transition: all 0.3s ease !important;
-    cursor: pointer !important;
-    border: 2px solid rgba(255, 255, 255, 0.5) !important;
-    padding: 0 !important;
-    pointer-events: auto !important; /* Enable clicks */
-    position: relative !important;
-    z-index: 1002 !important;
-    background: rgba(255, 255, 255, 0.3) !important;
-}
-
-.carousel-dot:hover {
-    transform: scale(1.5) !important;
-    border-color: white !important;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.6) !important;
-}
-
-.carousel-dot:active {
-    transform: scale(1.2) !important;
-}
-
-/* Ensure iPhone mockup doesn't block dots */
-.iphone-mockup {
-    position: relative;
-    z-index: 1; /* Lower than dots overlay */
-}
-
-/* Keep 3D transform but don't let it create stacking issues */
-.tilt-card {
-    transform-style: preserve-3d;
-    transition: transform 0.1s;
-    isolation: auto; /* Don't create isolated stacking context */
-}
-
-/* Responsive adjustments */
-@media (max-width: 1024px) {
-    .carousel-dots-overlay {
-        height: 70px;
-    }
-}
-
-@media (max-width: 768px) {
-    .carousel-dots-overlay {
-        height: 60px;
-    }
-    
-    .carousel-dots-container {
-        padding: 10px 16px !important;
-        gap: 10px !important;
-    }
-    
-    .carousel-dot {
-        width: 12px !important;
-        height: 12px !important;
-    }
-}
-
-@media (max-width: 640px) {
-    .carousel-dots-overlay {
-        height: 50px;
-    }
-    
-    .carousel-dots-container {
-        padding: 8px 12px !important;
-        gap: 8px !important;
-    }
-    
-    .carousel-dot {
-        width: 10px !important;
-        height: 10px !important;
     }
 }

@@ -359,11 +359,11 @@ function initCarousel() {
 function initCarouselLogic() {
     const carousel = document.getElementById('appCarousel');
     const dotsContainer = document.getElementById('carouselDots');
+    const globalPlayBtn = document.getElementById('globalPlayBtn'); // NEW
     
     const dots = Array.from(dotsContainer.querySelectorAll('.carousel-dot'));
     const screens = Array.from(carousel.querySelectorAll('.app-screen'));
     const videos = Array.from(carousel.querySelectorAll('.iphone-video'));
-    const playBtns = Array.from(carousel.querySelectorAll('.video-play-btn'));
     
     const screenCount = dots.length;
     
@@ -372,7 +372,7 @@ function initCarouselLogic() {
         dotsFound: dots.length,
         screensFound: screens.length,
         videosFound: videos.length,
-        playButtonsFound: playBtns.length
+        globalPlayBtn: !!globalPlayBtn
     });
 
     if (screenCount === 0) {
@@ -383,43 +383,28 @@ function initCarouselLogic() {
     let currentSlide = 0;
     let isAutoPlaying = true;
 
-    // Test dot clickability
-    console.log('🖱️ Testing dot setup...');
-    dots.forEach((dot, i) => {
-        const rect = dot.getBoundingClientRect();
-        const styles = window.getComputedStyle(dot);
-        console.log(`Dot ${i}:`, {
-            visible: rect.width > 0 && rect.height > 0,
-            position: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
-            pointerEvents: styles.pointerEvents,
-            zIndex: styles.zIndex,
-            cursor: styles.cursor
-        });
-    });
-
     function pauseAllVideos() {
-        videos.forEach((video, i) => {
+        videos.forEach((video) => {
             if (video && !video.error) {
                 video.pause();
             }
-            if (playBtns[i]) {
-                playBtns[i].innerHTML = '<i class="fas fa-play"></i>';
-            }
         });
+        if (globalPlayBtn) {
+            globalPlayBtn.innerHTML = '<i class="fas fa-play"></i>';
+        }
     }
 
     function playCurrentVideo() {
         pauseAllVideos();
         const currentVideo = videos[currentSlide];
-        const currentPlayBtn = playBtns[currentSlide];
         
         console.log(`▶️ Playing video ${currentSlide}`);
         
         if (currentVideo && !currentVideo.error) {
             if (currentVideo.readyState >= 2) {
                 currentVideo.play().then(() => {
-                    if (currentPlayBtn) {
-                        currentPlayBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                    if (globalPlayBtn) {
+                        globalPlayBtn.innerHTML = '<i class="fas fa-pause"></i>';
                     }
                     console.log(`✅ Video ${currentSlide} playing (${currentVideo.duration.toFixed(2)}s)`);
                 }).catch((err) => {
@@ -443,16 +428,15 @@ function initCarouselLogic() {
         currentSlide = index;
         carousel.style.transform = `translateX(-${index * 100}%)`;
         
-        // Update dots - SIMPLIFIED
+        // Update dots
         dots.forEach((dot, i) => {
             dot.classList.remove('bg-white', 'bg-white/30');
             if (i === index) {
                 dot.classList.add('bg-white');
-                dot.style.backgroundColor = 'white'; // Force inline style
-                console.log(`✅ Activated dot ${i}`);
+                dot.style.backgroundColor = 'white';
             } else {
                 dot.classList.add('bg-white/30');
-                dot.style.backgroundColor = 'rgba(255, 255, 255, 0.3)'; // Force inline style
+                dot.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
             }
         });
         
@@ -470,29 +454,57 @@ function initCarouselLogic() {
         goToSlide(nextIndex, false);
     }
 
-    // === CRITICAL FIX: Multiple click handler strategies ===
+    // === GLOBAL PLAY BUTTON HANDLER ===
+    if (globalPlayBtn) {
+        console.log('🎮 Setting up global play button');
+        
+        globalPlayBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            console.log(`🎮 Global play button clicked (slide ${currentSlide})`);
+            
+            const video = videos[currentSlide];
+            if (video && !video.error) {
+                if (video.paused) {
+                    pauseAllVideos();
+                    video.play().then(() => {
+                        globalPlayBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                        console.log(`▶️ Manually playing video ${currentSlide}`);
+                    }).catch((err) => {
+                        console.error('Play error:', err);
+                    });
+                    isAutoPlaying = false;
+                } else {
+                    video.pause();
+                    globalPlayBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    console.log(`⏸️ Manually paused video ${currentSlide}`);
+                }
+            }
+        });
+        
+        // Visual feedback
+        globalPlayBtn.addEventListener('mouseenter', () => {
+            console.log('👆 Hovering global play button');
+        });
+    }
+
+    // === DOT CLICK HANDLERS ===
+    console.log('🔘 Setting up dot click handlers...');
     
-    // Strategy 1: Event delegation on container
-    console.log('🔘 Strategy 1: Container event delegation');
     dotsContainer.addEventListener('click', function(e) {
-        console.log('📍 Container clicked', e.target);
         const clickedDot = e.target.closest('.carousel-dot');
         if (clickedDot) {
             const index = parseInt(clickedDot.getAttribute('data-index'));
             console.log(`✨ DOT ${index} CLICKED (via delegation)!`);
             goToSlide(index, true);
         }
-    }, true); // Use capture phase
+    }, true);
 
-    // Strategy 2: Direct listeners on each dot
-    console.log('🔘 Strategy 2: Direct dot listeners');
     dots.forEach((dot, i) => {
-        // Remove existing listeners by cloning
         const newDot = dot.cloneNode(true);
         dot.parentNode.replaceChild(newDot, dot);
         dots[i] = newDot;
         
-        // Add fresh listener
         newDot.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
@@ -500,9 +512,7 @@ function initCarouselLogic() {
             goToSlide(i, true);
         }, true);
         
-        // Visual feedback on hover
         newDot.addEventListener('mouseenter', function() {
-            console.log(`👆 Hovering dot ${i}`);
             this.style.transform = 'scale(1.4)';
         });
         
@@ -510,44 +520,16 @@ function initCarouselLogic() {
             this.style.transform = 'scale(1)';
         });
         
-        // Ensure proper styling
         newDot.style.cursor = 'pointer';
         newDot.style.pointerEvents = 'auto';
-        
-        console.log(`✅ Dot ${i} handler attached`);
     });
 
-    // Strategy 3: Touch events for mobile
-    console.log('🔘 Strategy 3: Touch events');
     dots.forEach((dot, i) => {
         dot.addEventListener('touchstart', function(e) {
             e.preventDefault();
             console.log(`✨ DOT ${i} TOUCHED!`);
             goToSlide(i, true);
         }, { passive: false });
-    });
-
-    // === PLAY BUTTON HANDLERS ===
-    playBtns.forEach((btn, index) => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            console.log(`🎮 Play button ${index} clicked`);
-            
-            const video = videos[index];
-            if (video && !video.error) {
-                if (video.paused) {
-                    pauseAllVideos();
-                    video.play().then(() => {
-                        btn.innerHTML = '<i class="fas fa-pause"></i>';
-                    }).catch(() => {});
-                    isAutoPlaying = false;
-                } else {
-                    video.pause();
-                    btn.innerHTML = '<i class="fas fa-play"></i>';
-                }
-            }
-        });
     });
 
     // === VIDEO ENDED HANDLERS ===
@@ -581,12 +563,15 @@ function initCarouselLogic() {
         }
     }, { passive: true });
 
-    // === KEYBOARD SUPPORT (BONUS) ===
+    // === KEYBOARD SUPPORT ===
     document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowLeft' && currentSlide > 0) {
             goToSlide(currentSlide - 1, true);
         } else if (e.key === 'ArrowRight' && currentSlide < screenCount - 1) {
             goToSlide(currentSlide + 1, true);
+        } else if (e.key === ' ') { // Spacebar
+            e.preventDefault();
+            globalPlayBtn?.click();
         }
     });
 
@@ -611,7 +596,6 @@ function initCarouselLogic() {
     }, 500);
 
     console.log('✅ === CAROUSEL READY ===');
-    console.log('Try clicking dots now - watch for "DOT X CLICKED" messages');
 }
 
 function initCounters() {
