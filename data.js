@@ -16,7 +16,7 @@ const siteData = {
         name: "Rohit Saini",
         initials: "RS.",
         title: "Principal AI Engineer",
-        tagline: "Principal AI Engineer | ComfyUI & N8N Expert",
+        tagline: "Principal AI Engineer | MCP & RL",
         location: "India",
         yearsExperience: "8+",
         email: "rohitsainier@gmail.com",
