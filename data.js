@@ -119,7 +119,6 @@ const siteData = {
                 location: "Noida, India",
                 achievements: [
                     `Architected and deployed <span class="text-white font-semibold">Virtual AI Anchor</span> system capable of presenting news autonomously, reducing anchor dependency by <span class="text-white font-semibold">60%</span> for routine bulletins`,
-                    `Built <span class="text-white font-semibold">Newspaper & Magazine Builder</span> that analyzes existing templates using AI/ML, automating layout generation and reducing manual design effort by <span class="text-white font-semibold">70%</span>`,
                     `Developed <span class="text-white font-semibold">H2V (Horizontal to Vertical)</span> video conversion system with intelligent speaker focus tracking, supporting multiple templates and reducing video repurposing time by <span class="text-white font-semibold">80%</span>`,
                     `Enabled content team to produce <span class="text-white font-semibold">3x more</span> social media-ready vertical videos per day through automated H2V pipeline`,
                     `Integrated TTS and lip-sync technologies achieving <span class="text-white font-semibold">95%+</span> natural speech accuracy for AI-generated news presentations`
@@ -183,9 +182,9 @@ const siteData = {
                 icon: "fas fa-user-tie",
                 // Image options - use ONE of these:
                 // Option 1: URL
-                imageUrl: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=600&fit=crop",
+                imageUrl: null,
                 // Option 2: Local file (relative to index.html)
-                imageLocal: null, // e.g., "./assets/images/projects/virtual-ai-anchor.jpg"
+                imageLocal: "./assets/images/projects/virtual_anchor.png", // e.g., "./assets/images/projects/virtual-ai-anchor.jpg"
                 tags: ["AI/ML", "TTS", "Lip-Sync"],
                 metric: { icon: "fas fa-microphone-alt", text: "60% less anchor dependency", color: "text-red-400" },
                 link: "#",
@@ -193,23 +192,6 @@ const siteData = {
                 linkColor: "text-red-400",
                 linkBg: "bg-red-500/20",
                 linkHover: "hover:bg-red-500/40"
-            },
-            {
-                id: "newspaper-builder",
-                title: "Newspaper Builder",
-                subtitle: "AI Template Analysis & Generation",
-                description: "Automated newspaper and magazine layout system that analyzes existing templates using AI/ML to generate new layouts automatically.",
-                gradient: "from-amber-600 to-yellow-700",
-                icon: "fas fa-newspaper",
-                imageUrl: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&h=600&fit=crop",
-                imageLocal: null,
-                tags: ["AI/ML", "Automation"],
-                metric: { icon: "fas fa-clock", text: "70% effort reduction", color: "text-amber-400" },
-                link: "#",
-                linkIcon: "fas fa-arrow-right",
-                linkColor: "text-amber-400",
-                linkBg: "bg-amber-500/20",
-                linkHover: "hover:bg-amber-500/40"
             },
             {
                 id: "h2v-converter",
@@ -230,20 +212,20 @@ const siteData = {
             },
             {
                 id: "ai-subtitle-clipper",
-                title: "AI Subtitle Clipper",
+                title: "Editra",
                 subtitle: "MacOS Video Editing Tool",
                 description: "Built using Python + macOS native APIs, integrating Whisper AI for highly accurate subtitle transcription. Saves 2-3 hours per video.",
                 gradient: "from-purple-600 to-pink-700",
                 icon: "fas fa-closed-captioning",
-                imageUrl: "https://images.unsplash.com/photo-1536240478700-b869070f9279?w=800&h=600&fit=crop",
-                imageLocal: null,
+                imageUrl: null,
+                imageLocal: "./assets/images/projects/editra.png",
                 tags: ["Whisper", "macOS"],
                 metric: { icon: "fas fa-clock", text: "2-3 hrs saved/video", color: "text-purple-400" },
-                link: "https://www.youtube.com/watch?v=sFUcKSDLl0s",
-                linkIcon: "fas fa-play",
-                linkColor: "text-purple-400",
-                linkBg: "bg-purple-500/20",
-                linkHover: "hover:bg-purple-500/40"
+                link: "https://apps.apple.com/in/app/editra/id6758232532?mt=12Editra",
+                linkIcon: "fab fa-app-store",
+                linkColor: "text-blue-400",
+                linkBg: "bg-blue-500/20",
+                linkHover: "hover:bg-blue-500/40"
             },
             {
                 id: "ghibli-generator",
@@ -295,23 +277,6 @@ const siteData = {
                 linkColor: "text-orange-400",
                 linkBg: "bg-orange-500/20",
                 linkHover: "hover:bg-orange-500/40"
-            },
-            {
-                id: "text-to-video",
-                title: "Text-to-Video Workflows",
-                subtitle: "AI Content Automation",
-                description: "Automated content pipelines using N8N and ComfyUI for text-to-video generation with TTS (f5) integration.",
-                gradient: "from-violet-600 to-purple-700",
-                icon: "fas fa-video",
-                imageUrl: "https://images.unsplash.com/photo-1626379953822-baec19c3accd?w=800&h=600&fit=crop",
-                imageLocal: null,
-                tags: ["N8N", "TTS"],
-                metric: { icon: "fas fa-robot", text: "Full Automation", color: "text-violet-400" },
-                link: "#",
-                linkIcon: "fas fa-arrow-right",
-                linkColor: "text-violet-400",
-                linkBg: "bg-violet-500/20",
-                linkHover: "hover:bg-violet-500/40"
             },
             {
                 id: "more-projects",
