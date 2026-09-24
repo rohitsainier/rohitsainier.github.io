@@ -367,7 +367,7 @@ function initHero(hero: HTMLElement) {
 
   // entrance after the intro title card
   const enter = () => {
-    if (reduceMotion) return;
+    if (reduceMotion || window.__rsLate) return;
     const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
     tl.from('[data-hero-title] .hl > span', { yPercent: 110, duration: 1.3, stagger: 0.08 }, 0)
       .from('.hero__eyebrow', { opacity: 0, y: 10, duration: 0.8 }, 0.1)

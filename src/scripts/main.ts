@@ -1,11 +1,18 @@
 import { gsap, ScrollTrigger, SplitText, initScroll, scrollToTarget, lockScroll, reduceMotion, finePointer } from './core';
 
 declare global {
-  interface Window { __rsFailsafe?: number; __introDone?: boolean }
+  interface Window { __rsFailsafe?: number; __introDone?: boolean; __rsLate?: boolean }
 }
 
 const root = document.documentElement;
 clearTimeout(window.__rsFailsafe);
+// Slow network: the no-JS failsafe may already have switched the page to its static fallback.
+// Converge back to motion mode without re-hiding anything the visitor has already seen.
+if (!reduceMotion && !root.classList.contains('motion')) {
+  document.querySelectorAll('[data-reveal]').forEach((el) => el.classList.add('is-in'));
+  root.classList.add('motion');
+  window.__rsLate = true; // content is already on screen: skip entrance animations
+}
 
 initScroll();
 initNav();

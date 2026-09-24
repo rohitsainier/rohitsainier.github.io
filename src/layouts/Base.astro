@@ -56,7 +56,7 @@ const og = new URL(url('og.jpg'), Astro.site);
       window.__rsFailsafe = setTimeout(function () {
         d.classList.remove('motion');
         d.classList.add('no-intro');
-      }, 3000);
+      }, 4000);
     </script>
     <script type="application/ld+json" set:html={JSON.stringify({
       '@context': 'https://schema.org',
@@ -112,7 +112,7 @@ const og = new URL(url('og.jpg'), Astro.site);
     display: grid; place-items: center;
     background: var(--bg);
     clip-path: inset(0 0 0 0);
-    animation: intro-failsafe 0.01s 4s forwards;
+    animation: intro-failsafe 0.01s 5s forwards;
   }
   html.no-intro .intro { display: none; }
   @keyframes intro-failsafe { to { visibility: hidden; opacity: 0; } }
