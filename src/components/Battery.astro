@@ -1,0 +1,281 @@
+---
+import { url } from '../data/site';
+import { SIMULATOR } from '../data/projects';
+interface Props { compact?: boolean; id?: string }
+const { compact = false, id = 'battery' } = Astro.props;
+
+// Pack drawing: 8 modules (2 × 4) × 12 series groups (3 × 4) = 96S; each circle is one 35P group.
+const M = { w: 128, h: 104, gx: 16, gy: 18, x0: 34, y0: 40 };
+const modules = Array.from({ length: 8 }, (_, m) => {
+  const row = Math.floor(m / 4), col = row === 0 ? m % 4 : 3 - (m % 4);
+  return { m, x: M.x0 + col * (M.w + M.gx), y: M.y0 + row * (M.h + M.gy) };
+});
+const cells = modules.flatMap((mod) =>
+  Array.from({ length: 12 }, (_, i) => ({ cx: mod.x + 22 + (i % 4) * 28, cy: mod.y + 24 + Math.floor(i / 4) * 28 })),
+);
+const midY1 = M.y0 + M.h / 2, midY2 = M.y0 + M.h + M.gy + M.h / 2;
+const right = M.x0 + 4 * M.w + 3 * M.gx;
+const path = `M 14 ${midY1} H ${right + 10} Q ${right + 22} ${midY1} ${right + 22} ${midY1 + 14} V ${midY2 - 14} Q ${right + 22} ${midY2} ${right + 10} ${midY2} H 14`;
+const readouts = [
+  { k: 'soc', dt: 'State of charge', unit: '%', v: '80.0' },
+  { k: 'soh', dt: 'State of health', unit: '%', v: '100.0' },
+  { k: 'temp', dt: 'Pack temperature', unit: '°C', v: '25.0' },
+  { k: 'cur', dt: 'Current', unit: 'A', v: '0' },
+  { k: 'res', dt: 'Internal resistance', unit: 'mΩ', v: '82.3' },
+  { k: 'range', dt: 'Range (model)', unit: 'km', v: '391' },
+  { k: 'speed', dt: 'Speed', unit: 'km/h', v: '0' },
+  { k: 'power', dt: 'Pack power', unit: 'kW', v: '0' },
+];
+---
+
+<section class:list={['lab', { 'lab--compact': compact }]} id={id} aria-labelledby={`${id}-title`} data-battery>
+  <div class="wrap">
+    {!compact && (
+      <header class="lab__head">
+        <p class="micro"><span class="lab__accent">(03)</span> Featured · 04 — Simulation × Energy</p>
+        <p class="micro">Lab notebook · model rev. 07.2026</p>
+      </header>
+    )}
+
+    <div class="lab__intro">
+      <div>
+        <h2 id={`${id}-title`} class="lab__title">EV Battery <span class="serif">Simulator</span></h2>
+        <p class="lab__sub">Turning battery behavior into something you can explore.</p>
+      </div>
+      <div class="lab__spec">
+        <p class="lab__desc">
+          A physically grounded pack model: a WLTP-class drive cycle becomes power demand, an equivalent circuit turns
+          it into current, current into heat, and cycles into fade. <strong>Drag the pack’s age</strong> — everything
+          downstream is recomputed live, in your browser.
+        </p>
+        <dl class="spec">
+          <div><dt>Vehicle</dt><dd>1,650 kg · Cd 0.28 · 2.30 m²</dd></div>
+          <div><dt>Pack</dt><dd>96S35P NMC · 60.5 kWh · 346 V</dd></div>
+          <div><dt>Cell</dt><dd>5.0 Ah · 30 mΩ (new)</dd></div>
+          <div><dt>Cycle</dt><dd>WLTP-class · 1,604 s · 24.3 km</dd></div>
+        </dl>
+        {!compact && (
+          <div class="lab__ctas">
+            <a class="btn btn--solid" href={SIMULATOR} target="_blank" rel="noopener" data-cursor="explore" data-magnetic>
+              Explore simulation <span class="arrow" aria-hidden="true">↗</span>
+            </a>
+            <a class="lab__case micro link-u" href={url('work/ev-battery-simulator')} data-cursor="view">Case study</a>
+          </div>
+        )}
+      </div>
+    </div>
+
+    <div class="lab__grid">
+      <figure class="panel panel--pack" data-cursor="explore">
+        <figcaption class="panel__cap">
+          <span class="micro">Fig. 1 — Pack · 96 series groups × 35 cells</span>
+          <span class="micro mode" data-b="mode">Discharging</span>
+        </figcaption>
+        <svg class="pack" viewBox="0 0 600 300" role="img" aria-label="Top view of the battery pack; cell colour shows pack temperature, the line shows current flow">
+          <defs>
+            <pattern id={`${id}-hatch`} width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <line x1="0" y1="0" x2="0" y2="6" stroke="currentColor" stroke-width="0.6" opacity="0.18" />
+            </pattern>
+          </defs>
+          <rect x="22" y="28" width={right - 10} height={2 * M.h + M.gy + 24} rx="10" class="pack__case" />
+          <rect x="22" y="28" width={right - 10} height={2 * M.h + M.gy + 24} rx="10" fill={`url(#${id}-hatch)`} />
+          {modules.map((mod) => (
+            <g class="pack__mod">
+              <rect x={mod.x} y={mod.y} width={M.w} height={M.h} rx="6" />
+              <text x={mod.x + 6} y={mod.y - 5}>M{mod.m + 1}</text>
+            </g>
+          ))}
+          <path d={path} class="pack__bus" />
+          <path d={path} class="pack__flow" data-b="flow" />
+          {cells.map((c) => <circle cx={c.cx} cy={c.cy} r="10.5" class="pack__cell" />)}
+          <g class="pack__term"><circle cx="14" cy={midY1} r="9" /><text x="14" y={midY1 + 3.5}>+</text></g>
+          <g class="pack__term"><circle cx="14" cy={midY2} r="9" /><text x="14" y={midY2 + 3.5}>−</text></g>
+          <text class="pack__dim" x={M.x0} y="292">←  96 series groups · 346 V nominal  →</text>
+        </svg>
+        <div class="pack__scale" aria-hidden="true">
+          <span class="micro" data-b="tmin">25 °C</span><i></i><span class="micro" data-b="tmax">40 °C</span>
+        </div>
+      </figure>
+
+      <dl class="panel panel--ro" aria-live="off">
+        {readouts.map((r) => (
+          <div class={`ro ro--${r.k}`}>
+            <dt class="micro">{r.dt}</dt>
+            <dd><b data-b={r.k}>{r.v}</b><small>{r.unit}</small></dd>
+            {r.k === 'soc' && <span class="ro__bar"><i data-b="socbar"></i></span>}
+            {r.k === 'res' && <span class="ro__x micro" data-b="resx">×1.00 vs new</span>}
+            {r.k === 'soh' && <span class="ro__x micro" data-b="sohx">new pack</span>}
+            {r.k === 'cur' && <span class="ro__x micro" data-b="curx">discharge</span>}
+          </div>
+        ))}
+      </dl>
+
+      <div class="panel panel--ctl">
+        <div class="ctl__age">
+          <label class="micro" for={`${id}-age`}>Battery age — <b data-b="efc">0</b> equivalent full cycles</label>
+          <input id={`${id}-age`} class="range" type="range" min="0" max="2000" step="10" value="0" data-b="age" />
+          <div class="ctl__ticks micro" aria-hidden="true"><span>0</span><span>500</span><span>1,000</span><span>1,500</span><span>2,000</span></div>
+          <p class="micro ctl__km">≈ <b data-b="km">0</b> km of driving · 80% capacity at <b data-b="eol">1,271</b> cycles</p>
+        </div>
+        <fieldset class="ctl__seg">
+          <legend class="micro">Cooling</legend>
+          {['air', 'liquid', 'immersion'].map((c, i) => (
+            <label><input type="radio" name={`${id}-cool`} value={c} checked={i === 0} data-b="cool" /><span>{c[0].toUpperCase() + c.slice(1)}</span></label>
+          ))}
+        </fieldset>
+        <button class="ctl__play micro" type="button" data-b="play" aria-pressed="true">
+          <span class="ctl__pp" aria-hidden="true"></span><span data-b="playlabel">Driving · ×100</span>
+        </button>
+      </div>
+
+      <figure class="panel panel--chart">
+        <figcaption class="panel__cap"><span class="micro">Fig. 2 — Drive cycle · speed</span><span class="micro dim" data-b="phase">Low</span></figcaption>
+        <canvas data-chart="speed" aria-label="WLTP-class drive cycle speed trace" role="img"></canvas>
+      </figure>
+      <figure class="panel panel--chart">
+        <figcaption class="panel__cap"><span class="micro">Fig. 3 — Pack current · aged vs new</span><span class="micro dim">A</span></figcaption>
+        <canvas data-chart="current" aria-label="Pack current over the drive cycle" role="img"></canvas>
+      </figure>
+      <figure class="panel panel--chart">
+        <figcaption class="panel__cap"><span class="micro">Fig. 4 — Temperature · 8 cycles back-to-back</span><span class="micro dim">°C</span></figcaption>
+        <canvas data-chart="temp" aria-label="Pack temperature across eight consecutive drive cycles" role="img"></canvas>
+      </figure>
+      <figure class="panel panel--chart">
+        <figcaption class="panel__cap"><span class="micro">Fig. 5 — Capacity & resistance vs age</span><span class="micro dim">drag to age</span></figcaption>
+        <canvas data-chart="aging" data-cursor="drag" aria-label="State of health and resistance growth against equivalent full cycles; drag to change the pack age" role="img"></canvas>
+      </figure>
+    </div>
+    <p class="lab__foot micro">Model: longitudinal dynamics → R-int equivalent circuit → lumped thermal (C·dT/dt = I²R − UA·ΔT) → √EFC aging. Ported from Python; same equations.</p>
+  </div>
+</section>
+
+<style>
+  .lab {
+    --paper: #0c0d0d; --ink: #ece8e1; --ink-2: #928f88; --rule: rgb(236 232 225 / 0.06); --rule-2: rgb(236 232 225 / 0.13); --ink-accent: #ff5b22;
+    --panel: rgb(18 19 19 / 0.86);
+    position: relative;
+    background:
+      linear-gradient(var(--rule) 1px, transparent 1px) 0 0 / 100% 48px,
+      linear-gradient(90deg, var(--rule) 1px, transparent 1px) 0 0 / 48px 100%,
+      var(--paper);
+    background-blend-mode: normal;
+    color: var(--ink);
+    padding-block: clamp(90px, 11vw, 170px);
+  }
+  .lab::before { content: ''; position: absolute; inset: 0; background: radial-gradient(70% 55% at 22% 18%, rgb(255 91 34 / 0.07), transparent 60%), radial-gradient(90% 70% at 50% 45%, transparent, rgb(10 10 11 / 0.92)); pointer-events: none; }
+  /* compact: embedded in the case study, which already carries the title */
+  .lab--compact { padding-block: clamp(48px, 6vw, 90px); }
+  .lab--compact .lab__intro { grid-template-columns: 1fr; margin-bottom: 28px; }
+  .lab--compact .lab__intro > div:first-child { display: none; }
+  .lab--compact .lab__spec { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(24px, 4vw, 64px); align-items: start; }
+  .lab--compact .spec { margin: 0; }
+  .lab > .wrap { position: relative; }
+  .lab .micro { color: var(--ink-2); }
+  .lab__accent, .lab .serif { color: var(--ink-accent); }
+  .lab__head { display: flex; justify-content: space-between; gap: 20px; padding-bottom: 18px; border-bottom: 1px solid var(--rule-2); margin-bottom: clamp(40px, 6vw, 80px); }
+  .lab__intro { display: grid; grid-template-columns: 1.2fr 1fr; gap: clamp(28px, 5vw, 90px); align-items: end; margin-bottom: clamp(36px, 5vw, 64px); }
+  .lab__title { font-size: clamp(3rem, 8vw, 8.4rem); line-height: 0.86; letter-spacing: -0.06em; font-weight: 500; }
+  .lab__title .serif { font-size: 1.04em; letter-spacing: -0.035em; }
+  .lab__sub { margin-top: 20px; font-family: var(--serif); font-style: italic; font-size: clamp(1.3rem, 2vw, 1.8rem); line-height: 1.2; }
+  .lab__desc { color: var(--ink-2); max-width: 48ch; }
+  .lab__desc strong { color: var(--ink); font-weight: 600; }
+  .spec { margin: 22px 0 28px; display: grid; gap: 0; border-top: 1px solid var(--rule-2); }
+  .spec div { display: grid; grid-template-columns: 90px 1fr; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--rule); }
+  .spec dt { font: 500 0.6875rem/1.4 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-2); }
+  .spec dd { margin: 0; font: 450 0.8125rem/1.4 var(--mono); }
+  .lab__ctas { display: flex; align-items: center; flex-wrap: wrap; gap: 22px; }
+  .lab__case { color: var(--ink-2); padding: 6px 0; }
+  .lab__case:hover { color: var(--ink); }
+
+  .lab__grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 12px; }
+  .panel {
+    margin: 0;
+    background: var(--panel);
+    border: 1px solid var(--rule-2);
+    border-radius: 10px;
+    padding: 14px 16px 16px;
+    backdrop-filter: blur(2px);
+  }
+  .panel__cap { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+  .panel__cap .micro { font-size: 0.625rem; }
+  .panel--pack { grid-column: span 7; }
+  .panel--ro { grid-column: span 5; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0; padding: 0; overflow: hidden; }
+  .panel--ctl { grid-column: span 12; display: grid; grid-template-columns: 1fr auto auto; gap: clamp(20px, 3vw, 48px); align-items: center; }
+  .panel--chart { grid-column: span 6; }
+  .panel--chart canvas { width: 100%; height: clamp(150px, 15vw, 210px); display: block; }
+
+  .pack { width: 100%; height: auto; color: var(--ink); }
+  .pack__case { fill: rgb(255 255 255 / 0.015); stroke: rgb(236 232 225 / 0.42); stroke-width: 1.2; }
+  .pack__mod rect { fill: rgb(255 255 255 / 0.03); stroke: rgb(236 232 225 / 0.3); stroke-width: 0.9; }
+  .pack__mod text, .pack__dim { font: 500 8px var(--mono); letter-spacing: 0.1em; fill: var(--ink-2); }
+  .pack__bus { fill: none; stroke: var(--ink); stroke-width: 3; opacity: 0.12; stroke-linecap: round; }
+  .pack__flow { fill: none; stroke: var(--ink-accent); stroke-width: 2; stroke-dasharray: 5 9; stroke-linecap: round; }
+  .pack__flow.is-regen { stroke: var(--ink); }
+  .pack__cell { fill: var(--cell, #2a2622); stroke: rgb(236 232 225 / 0.34); stroke-width: 0.8; transition: fill 0.4s; }
+  .pack__term circle { fill: var(--ink); }
+  .pack__term text { font: 700 11px var(--mono); fill: var(--paper); text-anchor: middle; }
+  .pack__scale { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+  .pack__scale i { flex: 1; height: 6px; border-radius: 3px; background: linear-gradient(90deg, #2a2622, #7a3a1f, #ff5b22, #ffc4a3); border: 1px solid var(--rule-2); }
+  .mode { color: var(--ink) !important; font-weight: 600; }
+  .mode.is-regen { color: var(--ink-accent) !important; }
+
+  .ro { position: relative; padding: 14px 16px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); min-width: 0; }
+  .ro:nth-child(2n) { border-right: 0; }
+  .ro:nth-last-child(-n + 2) { border-bottom: 0; }
+  .ro dt { font-size: 0.5625rem; }
+  .ro dd { margin: 6px 0 0; display: flex; align-items: baseline; gap: 5px; }
+  .ro b { font: 500 clamp(1.5rem, 2.3vw, 2.25rem)/1 var(--sans); letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+  .ro small { font: 450 0.75rem/1 var(--mono); color: var(--ink-2); }
+  .ro__x { display: block; margin-top: 6px; font-size: 0.5625rem; }
+  .ro__bar { display: block; height: 3px; margin-top: 8px; background: var(--rule); border-radius: 2px; overflow: hidden; }
+  .ro__bar i { display: block; height: 100%; width: 80%; background: var(--ink); }
+  .ro--temp b, .ro--range b { color: var(--ink-accent); }
+
+  .ctl__age { display: grid; gap: 10px; }
+  .ctl__age label b, .ctl__km b { color: var(--ink); }
+  .range { -webkit-appearance: none; appearance: none; width: 100%; height: 28px; background: transparent; cursor: ew-resize; }
+  .range::-webkit-slider-runnable-track { height: 2px; background: linear-gradient(90deg, var(--ink) var(--p, 0%), var(--rule-2) var(--p, 0%)); }
+  .range::-moz-range-track { height: 2px; background: var(--rule-2); }
+  .range::-moz-range-progress { height: 2px; background: var(--ink); }
+  .range::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; margin-top: -10px; border-radius: 50%; background: var(--ink-accent); border: 4px solid var(--paper); box-shadow: 0 0 0 1px var(--ink); }
+  .range::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--ink-accent); border: 4px solid var(--paper); box-shadow: 0 0 0 1px var(--ink); }
+  .range:focus-visible { outline: 2px solid var(--ink-accent); outline-offset: 4px; }
+  .ctl__ticks { display: flex; justify-content: space-between; font-size: 0.5625rem; }
+  .ctl__km { font-size: 0.625rem; }
+  .ctl__seg { display: flex; gap: 0; border: 1px solid var(--rule-2); border-radius: 999px; padding: 3px; margin: 0; position: relative; }
+  .ctl__seg legend { position: absolute; top: -22px; left: 4px; padding: 0; font-size: 0.5625rem; }
+  .ctl__seg label { position: relative; }
+  .ctl__seg input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+  .ctl__seg span { display: block; padding: 9px 16px; border-radius: 999px; font: 500 0.75rem/1 var(--mono); letter-spacing: 0.06em; transition: background 0.3s, color 0.3s; }
+  .ctl__seg input:checked + span { background: var(--ink); color: var(--paper); }
+  .ctl__seg input:focus-visible + span { outline: 2px solid var(--ink-accent); outline-offset: 2px; }
+  .ctl__play { display: inline-flex; align-items: center; gap: 10px; height: 40px; padding: 0 16px; border: 1px solid var(--rule-2); border-radius: 999px; color: var(--ink) !important; transition: border-color 0.3s; }
+  .ctl__play:hover { border-color: var(--ink-accent); }
+  .ctl__pp { width: 10px; height: 10px; background: linear-gradient(90deg, currentColor 0 35%, transparent 35% 65%, currentColor 65%); }
+  .ctl__play[aria-pressed='false'] .ctl__pp { background: currentColor; clip-path: polygon(0 0, 100% 50%, 0 100%); }
+  .lab__foot { margin-top: 18px; font-size: 0.5625rem; max-width: 90ch; }
+
+  @media (max-width: 1100px) {
+    .panel--pack, .panel--ro { grid-column: span 12; }
+    .panel--ro { grid-template-columns: repeat(4, 1fr); }
+    .ro:nth-child(2n) { border-right: 1px solid var(--rule); }
+    .ro:nth-child(4n) { border-right: 0; }
+    .ro:nth-last-child(-n + 4) { border-bottom: 0; }
+  }
+  @media (max-width: 860px) {
+    .lab__intro { grid-template-columns: 1fr; }
+    .lab--compact .lab__spec { grid-template-columns: 1fr; }
+    .panel--ctl { grid-template-columns: 1fr; }
+    .ctl__seg { justify-self: start; margin-top: 18px; }
+    .panel--chart { grid-column: span 12; }
+    .panel--ro { grid-template-columns: 1fr 1fr; }
+    .ro:nth-child(2n) { border-right: 0; }
+    .ro:nth-child(4n) { border-right: 0; }
+    .ro:nth-last-child(-n + 4) { border-bottom: 1px solid var(--rule); }
+    .ro:nth-last-child(-n + 2) { border-bottom: 0; }
+  }
+</style>
+
+<script>
+  import '../scripts/battery';
+</script>

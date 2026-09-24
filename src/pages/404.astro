@@ -1,0 +1,22 @@
+---
+import Base from '../layouts/Base.astro';
+import { url } from '../data/site';
+---
+
+<Base title="404 — Lost frame · Rohit Saini" description="This frame isn’t in the reel.">
+  <section class="nf">
+    <div class="wrap">
+      <p class="micro"><span class="accent">●</span> 00:00:04:04 · Frame not found</p>
+      <h1 class="nf__t">Lost <span class="serif">frame.</span></h1>
+      <p class="lede">This page didn’t make the final cut. Everything that did is one click away.</p>
+      <a class="btn btn--solid" href={url('/')} data-magnetic>Back to the first frame <span class="arrow" aria-hidden="true">→</span></a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf { min-height: 90svh; display: grid; align-items: center; padding-top: var(--nav-h); }
+  .nf__t { margin: 24px 0; font-size: var(--t-mega); line-height: 0.86; letter-spacing: -0.065em; }
+  .nf__t .serif { color: var(--accent); }
+  .nf .btn { margin-top: 32px; }
+</style>

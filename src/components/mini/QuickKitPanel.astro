@@ -1,0 +1,219 @@
+---
+const tools = [
+  ['{ }', 'JSON Formatter'], ['🔑', 'JWT Decoder'], ['⌗', 'Base64'], ['#', 'Hash · SHA-256'],
+  ['◎', 'UUID'], ['⏱', 'Epoch'], ['🎨', 'Color Picker'], ['🔒', 'Password'],
+];
+---
+
+<div class="qk" data-mini="quickkit">
+  <div class="qk__desk" aria-hidden="true">
+    <div class="qk__menubar">
+      <span class="qk__apple"></span><b>Finder</b><span>File</span><span>Edit</span><span>View</span>
+      <span class="qk__spacer"></span>
+      <span class="qk__bolt is-on">⚡</span><span class="qk__bat"><i></i></span><span>Fri 9:41</span>
+    </div>
+
+    <div class="qk__panel" data-panel>
+      <div class="qk__search"><span class="qk__glass"></span><span data-q class="qk__q"></span><span class="qk__ph" data-ph>Search 25+ tools</span><kbd>⌘K</kbd></div>
+
+      <div class="qk__view qk__view--list" data-view="list">
+        <p class="qk__label">Favorites</p>
+        <div class="qk__favs"><span>JSON</span><span>Colors</span><span>UUID</span><span>JWT</span></div>
+        <p class="qk__label">Developer</p>
+        <ul class="qk__grid">
+          {tools.map(([i, n]) => <li data-tool={n}><span class="qk__ico">{i}</span>{n}</li>)}
+        </ul>
+      </div>
+
+      <div class="qk__view qk__view--tool" data-view="json">
+        <p class="qk__back">‹ JSON Formatter <span class="qk__ok" data-ok>✓ Valid</span></p>
+        <pre class="qk__in" data-in></pre>
+        <pre class="qk__out" data-out></pre>
+      </div>
+
+      <div class="qk__view qk__view--tool" data-view="color">
+        <p class="qk__back">‹ Color Picker <span class="qk__ok">eyedropper ⌥⌘C</span></p>
+        <div class="qk__sw" data-sw></div>
+        <dl class="qk__vals">
+          <div><dt>HEX</dt><dd data-hex>#FF5B22</dd></div>
+          <div><dt>RGB</dt><dd data-rgb>255, 91, 34</dd></div>
+          <div><dt>HSL</dt><dd data-hsl>15°, 100%, 57%</dd></div>
+        </dl>
+        <div class="qk__pal" data-pal></div>
+      </div>
+
+      <div class="qk__view qk__view--tool" data-view="uuid">
+        <p class="qk__back">‹ UUID <span class="qk__ok">v4 · offline</span></p>
+        <ul class="qk__uuids" data-uuids></ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .qk { position: relative; width: 100%; height: 100%; overflow: hidden; background: linear-gradient(160deg, #1b1a24 0%, #0f1016 55%, #17130f 100%); color: #e9e9ef; font-family: -apple-system, 'SF Pro Text', var(--sans); }
+  .qk__desk { position: absolute; inset: 0; }
+  .qk__menubar { display: flex; align-items: center; gap: 16px; height: 26px; padding: 0 14px; background: rgb(28 28 34 / 0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); font-size: 12px; color: #f4f4f7; }
+  .qk__menubar b { font-weight: 600; }
+  .qk__apple { width: 11px; height: 13px; border-radius: 45% 45% 50% 50%; background: #f4f4f7; }
+  .qk__spacer { flex: 1; }
+  .qk__bolt { padding: 1px 6px; border-radius: 4px; }
+  .qk__bolt.is-on { background: rgb(255 255 255 / 0.18); }
+  .qk__bat { width: 22px; height: 11px; border: 1px solid #f4f4f7; border-radius: 3px; padding: 1px; }
+  .qk__bat i { display: block; height: 100%; width: 80%; background: #f4f4f7; border-radius: 1px; }
+  .qk__panel {
+    position: absolute; right: clamp(40px, 14%, 140px); top: 34px;
+    width: min(340px, 76%); height: calc(100% - 50px); max-height: 420px;
+    display: grid; grid-template-rows: auto 1fr;
+    border-radius: 12px; overflow: hidden;
+    background: rgb(30 30 38 / 0.92); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    box-shadow: 0 0 0 0.5px rgb(255 255 255 / 0.18), 0 30px 80px -20px rgb(0 0 0 / 0.8);
+    font-size: 12.5px;
+  }
+  .qk__search { display: flex; align-items: center; gap: 8px; height: 38px; margin: 10px; padding: 0 10px; border-radius: 8px; background: rgb(255 255 255 / 0.07); }
+  .qk__glass { width: 11px; height: 11px; border: 1.5px solid #9d9daa; border-radius: 50%; position: relative; }
+  .qk__glass::after { content: ''; position: absolute; width: 5px; height: 1.5px; background: #9d9daa; right: -4px; bottom: -2px; transform: rotate(45deg); }
+  .qk__q { color: #fff; }
+  .qk__q:empty + .qk__ph { display: inline; }
+  .qk__ph { display: none; color: #8a8a98; }
+  .qk__search kbd { margin-left: auto; font: 500 10px/1 var(--mono); color: #8a8a98; border: 1px solid rgb(255 255 255 / 0.12); border-radius: 4px; padding: 3px 5px; }
+  .qk__view { grid-area: 2 / 1; padding: 0 12px 12px; overflow: hidden; }
+  .qk__view--tool { opacity: 0; visibility: hidden; }
+  .qk__label { margin: 6px 2px 6px; font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #8a8a98; }
+  .qk__favs { display: flex; gap: 6px; flex-wrap: wrap; }
+  .qk__favs span { padding: 4px 9px; border-radius: 999px; background: rgb(129 140 248 / 0.16); color: #c7cbff; font-size: 11px; }
+  .qk__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .qk__grid li { display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: 8px; background: rgb(255 255 255 / 0.04); transition: background 0.25s, box-shadow 0.25s; white-space: nowrap; }
+  .qk__grid li.is-hit { background: rgb(129 140 248 / 0.28); box-shadow: 0 0 0 1px rgb(129 140 248 / 0.6); }
+  .qk__grid li.is-dim { opacity: 0.3; }
+  .qk__ico { width: 22px; height: 22px; display: grid; place-items: center; border-radius: 6px; background: rgb(255 255 255 / 0.08); font: 600 10px/1 var(--mono); }
+  .qk__back { display: flex; justify-content: space-between; margin: 2px 2px 10px; font-weight: 600; }
+  .qk__ok { font-weight: 500; font-size: 11px; color: #4ade80; }
+  .qk__in, .qk__out { margin: 0; padding: 10px; border-radius: 8px; font: 11px/1.55 var(--mono); white-space: pre-wrap; word-break: break-all; }
+  .qk__in { background: rgb(0 0 0 / 0.3); color: #9d9daa; max-height: 64px; overflow: hidden; }
+  .qk__out { margin-top: 8px; background: rgb(0 0 0 / 0.45); color: #e9e9ef; min-height: 150px; }
+  .qk__out :global(.k) { color: #a5b4fc; }
+  .qk__out :global(.s) { color: #86efac; }
+  .qk__out :global(.n) { color: #fca5a5; }
+  .qk__out :global(.b) { color: #fcd34d; }
+  .qk__sw { height: 96px; border-radius: 10px; background: #ff5b22; transition: background 0.6s; }
+  .qk__vals { margin: 10px 0; display: grid; gap: 4px; }
+  .qk__vals div { display: flex; justify-content: space-between; padding: 6px 8px; border-radius: 6px; background: rgb(255 255 255 / 0.05); font: 11px/1.2 var(--mono); }
+  .qk__vals dt { color: #8a8a98; }
+  .qk__vals dd { margin: 0; }
+  .qk__pal { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; }
+  .qk__pal :global(i) { height: 26px; border-radius: 6px; }
+  .qk__uuids { display: grid; gap: 6px; font: 11px/1.3 var(--mono); }
+  .qk__uuids :global(li) { padding: 8px; border-radius: 6px; background: rgb(255 255 255 / 0.05); display: flex; justify-content: space-between; }
+  .qk__uuids :global(li span) { color: #8a8a98; }
+</style>
+
+<script>
+  import { gsap } from '../../scripts/core';
+  import { mini, loop, sleep } from '../../scripts/mini';
+
+  const RAW = '{"app":"QuickKit","tools":25,"offline":true,"deps":[],"price":0}';
+  const pretty = () => {
+    const o = JSON.parse(RAW);
+    const lines = Object.entries(o).map(([k, v]) => {
+      const val = typeof v === 'string' ? `<span class="s">"${v}"</span>` : typeof v === 'number' ? `<span class="n">${v}</span>` : typeof v === 'boolean' ? `<span class="b">${v}</span>` : '[]';
+      return `  <span class="k">"${k}"</span>: ${val}`;
+    });
+    return `{\n${lines.join(',\n')}\n}`;
+  };
+  const uuid = () => 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => { const r = (Math.random() * 16) | 0; return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16); });
+
+  document.querySelectorAll<HTMLElement>('[data-mini="quickkit"]').forEach((root) => {
+    const q = <T extends Element = HTMLElement>(s: string) => root.querySelector<T>(s)!;
+    const views = { list: q('[data-view="list"]'), json: q('[data-view="json"]'), color: q('[data-view="color"]'), uuid: q('[data-view="uuid"]') };
+    const qEl = q('[data-q]');
+    const tools = [...root.querySelectorAll<HTMLElement>('[data-tool]')];
+    const show = (v: keyof typeof views) => {
+      Object.entries(views).forEach(([k, el]) => {
+        if (k === v) gsap.fromTo(el, { autoAlpha: 0, x: k === 'list' ? -14 : 14 }, { autoAlpha: 1, x: 0, duration: 0.45, ease: 'power3.out' });
+        else gsap.set(el, { autoAlpha: 0 });
+      });
+    };
+    const filter = (term: string) => tools.forEach((t) => {
+      const hit = !!term && t.dataset.tool!.toLowerCase().includes(term);
+      t.classList.toggle('is-hit', hit);
+      t.classList.toggle('is-dim', !!term && !hit);
+    });
+    const search = async (term: string, alive: () => boolean) => {
+      qEl.textContent = '';
+      filter('');
+      for (let i = 1; i <= term.length; i++) {
+        if (!alive()) return false;
+        qEl.textContent = term.slice(0, i);
+        filter(term.slice(0, i));
+        await sleep(140);
+      }
+      await sleep(500);
+      return alive();
+    };
+
+    const L = loop(async (alive) => {
+      show('list');
+      await sleep(900);
+      if (!(await search('json', alive))) return;
+      show('json');
+      q('[data-in]').textContent = RAW;
+      q('[data-out]').innerHTML = '';
+      await sleep(500);
+      const out = q('[data-out]');
+      const lines = pretty().split('\n');
+      for (let i = 1; i <= lines.length; i++) {
+        if (!alive()) return;
+        out.innerHTML = lines.slice(0, i).join('\n');
+        await sleep(110);
+      }
+      await sleep(1800); if (!alive()) return;
+
+      show('list');
+      if (!(await search('color', alive))) return;
+      show('color');
+      const pal = q('[data-pal]');
+      pal.innerHTML = '';
+      const cols = ['#ff5b22', '#f59e0b', '#22d3ee', '#818cf8', '#34d399', '#ece8e1'];
+      for (const c of cols) {
+        if (!alive()) return;
+        const i = document.createElement('i'); i.style.background = c; pal.appendChild(i);
+        gsap.from(i, { scale: 0.4, opacity: 0, duration: 0.4, ease: 'back.out(2)' });
+        q('[data-sw]').style.background = c;
+        q('[data-hex]').textContent = c.toUpperCase();
+        const n = parseInt(c.slice(1), 16);
+        const [r, g, b] = [n >> 16, (n >> 8) & 255, n & 255];
+        q('[data-rgb]').textContent = `${r}, ${g}, ${b}`;
+        const mx = Math.max(r, g, b) / 255, mn = Math.min(r, g, b) / 255, l = (mx + mn) / 2, d = mx - mn;
+        const sat = d === 0 ? 0 : d / (1 - Math.abs(2 * l - 1));
+        const R = r / 255, G = g / 255, B = b / 255;
+        let h = d === 0 ? 0 : mx === R ? ((G - B) / d) % 6 : mx === G ? (B - R) / d + 2 : (R - G) / d + 4;
+        h = Math.round(h * 60 + 360) % 360;
+        q('[data-hsl]').textContent = `${h}°, ${Math.round(sat * 100)}%, ${Math.round(l * 100)}%`;
+        await sleep(520);
+      }
+      await sleep(900); if (!alive()) return;
+
+      show('list');
+      if (!(await search('uuid', alive))) return;
+      show('uuid');
+      const ul = q('[data-uuids]'); ul.innerHTML = '';
+      for (let i = 0; i < 5; i++) {
+        if (!alive()) return;
+        const li = document.createElement('li');
+        li.innerHTML = `${uuid()} <span>copy</span>`;
+        ul.appendChild(li);
+        gsap.from(li, { y: 8, opacity: 0, duration: 0.35 });
+        await sleep(260);
+      }
+      await sleep(1600);
+      qEl.textContent = ''; filter('');
+    });
+
+    mini(root, {
+      start: L.start,
+      stop: L.stop,
+      still: () => { show('json'); q('[data-in]').textContent = RAW; q('[data-out]').innerHTML = pretty(); },
+    });
+  });
+</script>

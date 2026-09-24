@@ -1,0 +1,33 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import DubDemo from '../components/DubDemo.astro';
+import Statement from '../components/Statement.astro';
+import Featured from '../components/Featured.astro';
+import Battery from '../components/Battery.astro';
+import Selected from '../components/Selected.astro';
+import CreativeLab from '../components/CreativeLab.astro';
+import Experiments from '../components/Experiments.astro';
+import Process from '../components/Process.astro';
+import Constellation from '../components/Constellation.astro';
+import About from '../components/About.astro';
+import { url } from '../data/site';
+---
+
+<Base home intro preload={[{ href: url('media/hero/poster.webp'), as: 'image', type: 'image/webp' }]}>
+  <Hero />
+  <Statement />
+  <Featured />
+  <Battery />
+  <Selected />
+  <CreativeLab />
+  <Experiments />
+  <Process />
+  <Constellation />
+  <About />
+  <DubDemo />
+</Base>
+
+<script>
+  import '../scripts/hero';
+</script>

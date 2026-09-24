@@ -1,0 +1,493 @@
+---
+const targets = [
+  { id: 'blender', name: 'Blender', meta: 'MCP · 80 tools' },
+  { id: 'freecad', name: 'FreeCAD', meta: 'MCP · 15 tools' },
+  { id: 'figma', name: 'Figma', meta: 'MCP · 22 tools' },
+  { id: 'video', name: 'Video', meta: 'FrameForge · 80+ actions' },
+  { id: 'mathviz', name: 'MathViz', meta: 'MCP · 10 tools' },
+];
+const stages = ['Prompt', 'AI', 'MCP', 'Creative software', 'Generated result'];
+---
+
+<section class="clab section" id="lab" aria-labelledby="clab-title" data-clab>
+  <div class="wrap">
+    <header class="section-head">
+      <p class="micro"><span class="accent">(05)</span> AI Creative Lab</p>
+      <p class="micro">Models that hold the mouse</p>
+    </header>
+
+    <div class="clab__intro">
+      <h2 id="clab-title" class="clab__title" data-split="words">I give models the keys to <span class="serif">creative software.</span></h2>
+      <p class="lede" data-reveal>
+        I write MCP servers that let a model drive Blender, FreeCAD and Figma through their real APIs — meshes, sketches,
+        frames — and an editor that turns plain English into video edits. The prompt is the only interface.
+      </p>
+    </div>
+
+    <div class="clab__tabs" role="tablist" aria-label="Creative software">
+      {targets.map((t, i) => (
+        <button role="tab" type="button" class="clab__tab" id={`tab-${t.id}`} aria-selected={i === 0 ? 'true' : 'false'} aria-controls="clab-stage" data-target={t.id} data-magnetic="0.15">
+          <span class="clab__tabname">{t.name}</span><span class="micro">{t.meta}</span>
+        </button>
+      ))}
+    </div>
+
+    <ol class="clab__pipe" aria-label="Pipeline">
+      {stages.map((s, i) => (
+        <li class="clab__node" data-node={i}><span class="micro">0{i + 1}</span><b>{s}</b></li>
+      ))}
+    </ol>
+
+    <div class="clab__stage" id="clab-stage" role="tabpanel" aria-live="polite" data-stage>
+      <div class="clab__console">
+        <p class="clab__prompt"><span class="clab__pr">❯</span> <span data-prompt></span><span class="clab__caret" aria-hidden="true"></span></p>
+        <p class="clab__plan micro" data-plan></p>
+        <ol class="clab__calls" data-calls></ol>
+      </div>
+      <div class="clab__result" aria-hidden="true">
+        <p class="clab__rlabel micro"><span data-rtarget>Blender</span><span data-rstatus>waiting</span></p>
+        <!-- Blender: low-poly desk lamp -->
+        <svg class="clab__svg" data-art="blender" viewBox="0 0 400 300">
+          <defs>
+            <linearGradient id="cl-desk" x1="0" x2="1"><stop offset="0" stop-color="#2b2019" /><stop offset="1" stop-color="#15100c" /></linearGradient>
+            <radialGradient id="cl-pool" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#ffb070" stop-opacity="0.55" /><stop offset="1" stop-color="#ffb070" stop-opacity="0" /></radialGradient>
+            <linearGradient id="cl-beam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffcf9e" stop-opacity="0.5" /><stop offset="1" stop-color="#ffcf9e" stop-opacity="0" /></linearGradient>
+            <linearGradient id="cl-shade" x1="0" x2="1"><stop offset="0" stop-color="#ff8a5c" /><stop offset="1" stop-color="#c2410c" /></linearGradient>
+          </defs>
+          <polygon class="b-desk" points="20,250 200,196 380,250 200,304" fill="url(#cl-desk)" />
+          <ellipse class="b-pool" cx="196" cy="246" rx="110" ry="30" fill="url(#cl-pool)" />
+          <polygon class="b-beam" points="238,112 290,120 250,248 140,240" fill="url(#cl-beam)" />
+          <g class="b-base"><ellipse cx="150" cy="232" rx="44" ry="13" fill="#3a3a3e" /><rect x="106" y="220" width="88" height="12" fill="#2a2a2e" /><ellipse cx="150" cy="220" rx="44" ry="13" fill="#4a4a50" stroke="#7a7a82" stroke-width="0.8" /></g>
+          <line class="b-arm1" x1="150" y1="218" x2="126" y2="132" stroke="#c9c9ce" stroke-width="7" stroke-linecap="round" />
+          <circle class="b-joint" cx="126" cy="132" r="7" fill="#e5e5ea" />
+          <line class="b-arm2" x1="126" y1="132" x2="236" y2="98" stroke="#c9c9ce" stroke-width="6" stroke-linecap="round" />
+          <polygon class="b-shade" points="222,86 262,94 294,128 234,120" fill="#8a8a92" />
+          <polygon class="b-shade-in" points="234,120 294,128 288,132 240,125" fill="#ffe6c8" />
+          <g class="b-cam" fill="none" stroke="#ff5b22" stroke-width="1.5">
+            <path d="M 30 24 h 22 M 30 24 v 22" /><path d="M 370 24 h -22 M 370 24 v 22" /><path d="M 30 290 h 22 M 30 290 v -22" /><path d="M 370 290 h -22 M 370 290 v -22" />
+          </g>
+          <rect class="b-scan" x="0" y="0" width="400" height="3" fill="#ff5b22" opacity="0" />
+        </svg>
+
+        <!-- FreeCAD: L-bracket drawing -->
+        <svg class="clab__svg clab__svg--draft" data-art="freecad" viewBox="0 0 400 300">
+          <g class="f-grid" stroke="rgb(236 232 225 / 0.06)">
+            {Array.from({ length: 21 }, (_, i) => <line x1={i * 20} y1="0" x2={i * 20} y2="300" />)}
+            {Array.from({ length: 16 }, (_, i) => <line x1="0" y1={i * 20} x2="400" y2={i * 20} />)}
+          </g>
+          <path class="f-a draw" d="M 90 210 H 300 V 228 H 90 Z" />
+          <path class="f-b draw" d="M 90 80 H 108 V 228 H 90 Z" />
+          <path class="f-fused draw" d="M 90 80 H 108 V 196 Q 108 210 122 210 H 300 V 228 H 90 Z" />
+          <circle class="f-h1 draw" cx="99" cy="120" r="5.5" />
+          <circle class="f-h2 draw" cx="260" cy="219" r="5.5" />
+          <g class="f-dim">
+            <path d="M 90 250 V 262 M 300 250 V 262 M 90 256 H 300" /><text x="195" y="272">40.00</text>
+            <path d="M 70 80 H 58 M 70 228 H 58 M 64 80 V 228" /><text x="44" y="158" transform="rotate(-90 44 158)">25.00</text>
+            <path d="M 122 196 L 150 170" /><text x="152" y="166">R3</text>
+            <path d="M 263 214 L 300 178" /><text x="302" y="174">Ø5.5 ×2</text>
+            <text x="312" y="224">t = 3</text>
+          </g>
+          <text class="f-file" x="300" y="40">bracket.step</text>
+        </svg>
+
+        <!-- Figma: pricing layout -->
+        <svg class="clab__svg" data-art="figma" viewBox="0 0 400 300">
+          <rect class="g-frame" x="20" y="30" width="360" height="240" rx="6" />
+          <text class="g-flabel" x="20" y="22">Pricing · 1200×640</text>
+          {[0, 1, 2].map((i) => (
+            <g class={`g-card g-card${i}`}>
+              <rect x={44 + i * 110} y="70" width="92" height="170" rx="8" class={i === 1 ? 'g-pro' : ''} />
+              <rect x={56 + i * 110} y="86" width="40" height="7" rx="3" class="g-t1" />
+              <text x={56 + i * 110} y="122" class="g-price">{['$0', '$9', '$29'][i]}</text>
+              <rect x={56 + i * 110} y="136" width="64" height="5" rx="2.5" class="g-t2" />
+              <rect x={56 + i * 110} y="148" width="54" height="5" rx="2.5" class="g-t2" />
+              <rect x={56 + i * 110} y="160" width="60" height="5" rx="2.5" class="g-t2" />
+              <rect x={56 + i * 110} y="206" width="68" height="20" rx="10" class="g-btn" />
+            </g>
+          ))}
+          <g class="g-gap"><rect x="136" y="150" width="18" height="8" /><text x="145" y="147">24</text><rect x="246" y="150" width="18" height="8" /><text x="255" y="147">24</text></g>
+          <g class="g-badge"><rect x="160" y="60" width="60" height="16" rx="8" /><text x="190" y="71">Most popular</text></g>
+        </svg>
+
+        <!-- Video: FrameForge timeline -->
+        <svg class="clab__svg" data-art="video" viewBox="0 0 400 300">
+          <rect class="v-screen" x="110" y="24" width="180" height="104" rx="6" />
+          <rect class="v-letter" x="110" y="24" width="180" height="14" /><rect class="v-letter" x="110" y="114" width="180" height="14" />
+          <text class="v-title" x="200" y="82">Record once.</text>
+          <text class="v-sub" x="200" y="108">…and publish everywhere</text>
+          <g class="v-tl">
+            <text x="24" y="170">V1</text><text x="24" y="206">T1</text><text x="24" y="242">A1</text>
+            <rect class="v-cut" x="50" y="158" width="60" height="20" rx="3" />
+            <rect class="v-clip" x="50" y="158" width="300" height="20" rx="3" />
+            <rect class="v-card" x="50" y="194" width="50" height="20" rx="3" />
+            <g class="v-caps">{[0, 1, 2, 3, 4].map((i) => <rect x={110 + i * 48} y="196" width="40" height="16" rx="3" />)}</g>
+            <path class="v-wave" d={`M 50 242 ${Array.from({ length: 60 }, (_, i) => `L ${50 + i * 5} ${242 + Math.sin(i * 1.3) * (4 + (i % 5))}`).join(' ')}`} />
+            <rect class="v-head" x="50" y="150" width="1.5" height="104" />
+          </g>
+          <rect class="v-exp" x="50" y="274" width="300" height="3" rx="1.5" />
+        </svg>
+
+        <!-- MathViz: fractal computed live -->
+        <canvas class="clab__canvas" data-art="mathviz" width="400" height="300"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .clab__intro { display: grid; grid-template-columns: 1.3fr 1fr; gap: clamp(28px, 5vw, 90px); align-items: end; margin-bottom: clamp(48px, 6vw, 90px); }
+  .clab__title { font-size: clamp(2.4rem, 5.4vw, 5.8rem); line-height: 0.95; letter-spacing: -0.052em; }
+  .clab__title .serif { color: var(--accent); }
+  .clab__tabs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 18px; }
+  .clab__tab {
+    display: grid; gap: 6px; text-align: left; padding: 14px 16px;
+    border: 1px solid var(--line); border-radius: 12px;
+    transition: border-color 0.4s, background 0.4s;
+  }
+  .clab__tab:hover { border-color: var(--line-3); }
+  .clab__tab[aria-selected='true'] { border-color: var(--accent); background: var(--accent-soft); }
+  .clab__tabname { font-size: 1.15rem; letter-spacing: -0.02em; }
+  .clab__tab .micro { font-size: 0.5625rem; }
+  .clab__pipe { display: grid; grid-template-columns: repeat(5, 1fr); margin-bottom: 18px; counter-reset: n; }
+  .clab__node {
+    position: relative; display: grid; gap: 4px; padding: 12px 16px 12px 0;
+    border-top: 1px solid var(--line-2); color: var(--fg-3);
+    transition: color 0.4s;
+  }
+  .clab__node::before { content: ''; position: absolute; left: 0; top: -1px; height: 1px; width: 0; background: var(--accent); transition: width 0.8s var(--ease-out); }
+  .clab__node::after { content: '→'; position: absolute; right: 12px; top: 12px; color: var(--fg-3); }
+  .clab__node:last-child::after { content: ''; }
+  .clab__node b { font-weight: 500; font-size: 0.95rem; }
+  .clab__node.is-on { color: var(--fg); }
+  .clab__node.is-on::before { width: 100%; }
+  .clab__node.is-on .micro { color: var(--accent); }
+
+  .clab__stage {
+    display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 12px;
+    min-height: clamp(380px, 38vw, 520px);
+  }
+  .clab__console, .clab__result { border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--bg-2); overflow: hidden; }
+  .clab__console { padding: 22px; font: 400 0.8125rem/1.6 var(--mono); display: flex; flex-direction: column; }
+  .clab__prompt { color: var(--fg); font-family: var(--sans); font-size: clamp(1rem, 1.3vw, 1.2rem); line-height: 1.45; min-height: 3em; }
+  .clab__pr { color: var(--accent); }
+  .clab__caret { display: inline-block; width: 8px; height: 1.1em; vertical-align: -0.2em; background: var(--accent); animation: ccaret 1s steps(2) infinite; }
+  @keyframes ccaret { 50% { opacity: 0; } }
+  .clab__plan { margin: 14px 0 12px; color: var(--accent); min-height: 1em; }
+  .clab__calls { display: grid; gap: 2px; }
+  .clab__calls :global(li) { display: grid; grid-template-columns: 14px 1fr auto; gap: 10px; align-items: baseline; padding: 6px 10px; border-radius: 6px; color: var(--fg-2); }
+  .clab__calls :global(li.is-run) { background: var(--accent-soft); color: var(--fg); }
+  .clab__calls :global(li .st) { color: var(--fg-3); }
+  .clab__calls :global(li.is-done .st) { color: #7bd88f; }
+  .clab__calls :global(li.is-run .st) { color: var(--accent); }
+  .clab__calls :global(li .fn) { color: var(--fg); }
+  .clab__calls :global(li .ar) { color: var(--fg-3); }
+  .clab__calls :global(li .ms) { color: var(--fg-3); font-size: 0.6875rem; }
+
+  .clab__result { position: relative; display: grid; place-items: center; background: radial-gradient(90% 90% at 50% 45%, #16140f, #0b0b0c); }
+  .clab__rlabel { position: absolute; left: 18px; right: 18px; top: 16px; display: flex; justify-content: space-between; z-index: 2; }
+  .clab__rlabel span:last-child { color: var(--accent); }
+  .clab__svg, .clab__canvas { grid-area: 1 / 1; width: 88%; height: auto; max-height: 90%; opacity: 0; visibility: hidden; }
+  .clab__canvas { border-radius: 10px; image-rendering: auto; }
+  .clab__svg.is-shown, .clab__canvas.is-shown { opacity: 1; visibility: visible; }
+
+  /* freecad drafting */
+  .clab__svg--draft :global(.draw) { fill: none; stroke: #ece8e1; stroke-width: 1.4; }
+  .f-fused { stroke: #ff8a5c !important; stroke-width: 1.8 !important; fill: rgb(255 91 34 / 0.08) !important; }
+  .f-dim path { fill: none; stroke: #8fb3ff; stroke-width: 0.8; }
+  .f-dim text, .f-file { fill: #8fb3ff; font: 500 9px var(--mono); text-anchor: middle; }
+  .f-file { fill: #ff8a5c; }
+  /* figma */
+  .g-frame { fill: rgb(255 255 255 / 0.03); stroke: #7aa2ff; stroke-width: 1; }
+  .g-flabel { fill: #7aa2ff; font: 500 9px var(--mono); }
+  .g-card rect:first-child { fill: #1c1c21; stroke: rgb(255 255 255 / 0.12); }
+  .g-card .g-pro { fill: #ff5b22 !important; stroke: none !important; }
+  .g-t1 { fill: rgb(255 255 255 / 0.5); }
+  .g-t2 { fill: rgb(255 255 255 / 0.18); }
+  .g-price { fill: #ece8e1; font: 600 20px var(--sans); }
+  .g-btn { fill: rgb(255 255 255 / 0.12); }
+  .g-card1 .g-t1, .g-card1 .g-t2, .g-card1 .g-btn { fill: rgb(28 9 1 / 0.35); }
+  .g-card1 .g-price { fill: #1c0901; }
+  .g-gap rect { fill: rgb(255 77 166 / 0.35); }
+  .g-gap text { fill: #ff4da6; font: 600 8px var(--mono); text-anchor: middle; }
+  .g-badge rect { fill: #ece8e1; }
+  .g-badge text { fill: #0a0a0b; font: 600 7.5px var(--sans); text-anchor: middle; }
+  /* video */
+  .v-screen { fill: #20242a; }
+  .v-letter { fill: #000; opacity: 0; }
+  .v-title { fill: #fff; font: 600 18px var(--sans); text-anchor: middle; opacity: 0; }
+  .v-sub { fill: #ffe08a; font: 500 9px var(--sans); text-anchor: middle; opacity: 0; }
+  .v-tl text { fill: var(--fg-3); font: 500 9px var(--mono); }
+  .v-cut { fill: rgb(255 255 255 / 0.12); stroke: rgb(255 255 255 / 0.3); stroke-dasharray: 3 3; }
+  .v-clip { fill: #3b82f6; }
+  .v-card { fill: #a78bfa; opacity: 0; }
+  .v-caps rect { fill: #ffe08a; opacity: 0; }
+  .v-wave { fill: none; stroke: #7bd88f; stroke-width: 1; }
+  .v-head { fill: #ff5b22; }
+  .v-exp { fill: #ff5b22; transform-origin: 50px 275px; transform: scaleX(0); }
+
+  @media (max-width: 960px) {
+    .clab__intro { grid-template-columns: 1fr; }
+    .clab__tabs { grid-template-columns: repeat(5, minmax(150px, 1fr)); overflow-x: auto; scrollbar-width: none; }
+    .clab__pipe { display: none; }
+    .clab__stage { grid-template-columns: 1fr; }
+    .clab__result { aspect-ratio: 4 / 3; }
+    .clab__console { min-height: 320px; }
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, reduceMotion } from '../scripts/core';
+
+  type Call = { fn: string; args: string; ms: number };
+  const PLAYS: Record<string, { prompt: string; plan: string; calls: Call[] }> = {
+    blender: {
+      prompt: 'Model a low-poly desk lamp on a walnut desk, give it a warm key light and render a product shot.',
+      plan: '✦ plan · 7 tool calls · blender',
+      calls: [
+        { fn: 'create_object', args: 'CYLINDER, name="base", vertices=8', ms: 38 },
+        { fn: 'create_object', args: 'CYLINDER, name="arm_lower"', ms: 22 },
+        { fn: 'create_object', args: 'CYLINDER, name="arm_upper"', ms: 21 },
+        { fn: 'create_object', args: 'CONE, name="shade", vertices=10', ms: 30 },
+        { fn: 'set_material', args: 'shade, "#FF5B22", roughness=0.35', ms: 44 },
+        { fn: 'create_light', args: 'AREA, energy=800, color="warm"', ms: 19 },
+        { fn: 'render_image', args: '1920×1080, samples=128', ms: 4200 },
+      ],
+    },
+    freecad: {
+      prompt: 'Design a 40 mm L-bracket, 3 mm thick, with two M5 holes and a 3 mm inner fillet. Export STEP.',
+      plan: '✦ plan · 7 tool calls · freecad',
+      calls: [
+        { fn: 'new_document', args: '"bracket"', ms: 12 },
+        { fn: 'create_object', args: 'Box 40 × 25 × 3', ms: 25 },
+        { fn: 'create_object', args: 'Box 3 × 25 × 25', ms: 24 },
+        { fn: 'boolean_operation', args: 'fuse(base, wall)', ms: 61 },
+        { fn: 'boolean_operation', args: 'cut(Ø5.5 × 2)', ms: 58 },
+        { fn: 'fillet_edges', args: 'inner, r=3', ms: 73 },
+        { fn: 'export_model', args: '"bracket.step"', ms: 40 },
+      ],
+    },
+    figma: {
+      prompt: 'Lay out a pricing section: three tiers, auto-layout on an 8-pt grid, and make Pro the hero.',
+      plan: '✦ plan · 6 tool calls · figma plugin',
+      calls: [
+        { fn: 'create_frame', args: '"Pricing", 1200 × 640', ms: 31 },
+        { fn: 'set_auto_layout', args: 'HORIZONTAL, gap=24, padding=48', ms: 18 },
+        { fn: 'create_component', args: '"Tier card"', ms: 42 },
+        { fn: 'clone_node', args: '"Tier card" × 2', ms: 27 },
+        { fn: 'set_text_content', args: '$0 · $9 · $29', ms: 22 },
+        { fn: 'set_fill_color', args: 'Pro, "#FF5B22"', ms: 15 },
+      ],
+    },
+    video: {
+      prompt: 'Trim the first ten seconds, make it cinematic, add subtitles and a three-second title card that says “Record once.”',
+      plan: '✦ parsed by a local LLM (Ollama) · 4 actions · FrameForge',
+      calls: [
+        { fn: 'trim', args: 'start=10', ms: 210 },
+        { fn: 'cinematic', args: 'bar_height=0.1, color_grade=True', ms: 880 },
+        { fn: 'add_subtitle', args: 'subtitles=[…]', ms: 640 },
+        { fn: 'title_card', args: 'text="Record once.", duration=3', ms: 320 },
+      ],
+    },
+    mathviz: {
+      prompt: 'Render the Mandelbrot set zoomed into Seahorse Valley, with a warm palette.',
+      plan: '✦ plan · 2 tool calls · mathviz',
+      calls: [
+        { fn: 'list_palettes', args: '', ms: 8 },
+        { fn: 'render_fractal_tool', args: 'mandelbrot, center=(−0.745, 0.113), zoom=160', ms: 1900 },
+      ],
+    },
+  };
+
+  document.querySelectorAll<HTMLElement>('[data-clab]').forEach((root) => {
+    const q = <T extends Element = HTMLElement>(s: string) => root.querySelector<T>(s)!;
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-target]')];
+    const nodes = [...root.querySelectorAll<HTMLElement>('[data-node]')];
+    const promptEl = q('[data-prompt]'), planEl = q('[data-plan]'), callsEl = q('[data-calls]');
+    const rTarget = q('[data-rtarget]'), rStatus = q('[data-rstatus]');
+    const arts = Object.fromEntries([...root.querySelectorAll<SVGElement | HTMLCanvasElement>('[data-art]')].map((a) => [a.dataset.art!, a]));
+    let token = 0, auto = true, visible = false, current = 'blender';
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    const node = (i: number) => nodes.forEach((n, j) => n.classList.toggle('is-on', j <= i));
+
+    /* result builders: one visual step per tool call */
+    const build: Record<string, (step: number, art: any) => void> = {
+      blender(step, art) {
+        const s = (sel: string) => art.querySelector(sel);
+        if (step === -1) {
+          gsap.set(art.querySelectorAll('*'), { clearProps: 'all' });
+          gsap.set([s('.b-base'), s('.b-joint'), s('.b-shade'), s('.b-shade-in')], { opacity: 0, scale: 0.6, transformOrigin: '50% 100%' });
+          gsap.set([s('.b-arm1'), s('.b-arm2')], { strokeDasharray: 120, strokeDashoffset: 120 });
+          gsap.set([s('.b-pool'), s('.b-beam'), s('.b-cam')], { opacity: 0 });
+          gsap.set(s('.b-shade'), { fill: '#8a8a92' });
+        }
+        if (step === 0) gsap.to(s('.b-base'), { opacity: 1, scale: 1, duration: 0.6, ease: 'back.out(1.7)' });
+        if (step === 1) gsap.to(s('.b-arm1'), { strokeDashoffset: 0, duration: 0.5 });
+        if (step === 2) { gsap.to(s('.b-joint'), { opacity: 1, scale: 1, duration: 0.3 }); gsap.to(s('.b-arm2'), { strokeDashoffset: 0, duration: 0.5 }); }
+        if (step === 3) gsap.to([s('.b-shade'), s('.b-shade-in')], { opacity: 1, scale: 1, duration: 0.6, ease: 'back.out(1.7)' });
+        if (step === 4) gsap.to(s('.b-shade'), { fill: 'url(#cl-shade)', duration: 0.1 });
+        if (step === 5) gsap.to([s('.b-pool'), s('.b-beam')], { opacity: 1, duration: 1.2 });
+        if (step === 6) { gsap.to(s('.b-cam'), { opacity: 1, duration: 0.3 }); gsap.fromTo(s('.b-scan'), { y: 0, opacity: 1 }, { y: 300, opacity: 0, duration: 1.6, ease: 'power1.inOut' }); }
+      },
+      freecad(step, art) {
+        const s = (sel: string) => art.querySelector(sel);
+        const draw = (el: SVGGeometryElement, d = 0.7) => { const L = el.getTotalLength(); gsap.fromTo(el, { strokeDasharray: L, strokeDashoffset: L, opacity: 1 }, { strokeDashoffset: 0, duration: d, ease: 'power2.inOut' }); };
+        if (step === -1) { gsap.set(art.querySelectorAll('.draw, .f-dim, .f-file'), { opacity: 0 }); }
+        if (step === 1) draw(s('.f-a'));
+        if (step === 2) draw(s('.f-b'));
+        if (step === 3) { gsap.to([s('.f-a'), s('.f-b')], { opacity: 0.25, duration: 0.4 }); draw(s('.f-fused'), 1); }
+        if (step === 4) { draw(s('.f-h1'), 0.5); draw(s('.f-h2'), 0.5); }
+        if (step === 5) { gsap.to([s('.f-a'), s('.f-b')], { opacity: 0, duration: 0.4 }); gsap.to(s('.f-dim'), { opacity: 1, duration: 0.8 }); }
+        if (step === 6) gsap.fromTo(s('.f-file'), { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.5 });
+      },
+      figma(step, art) {
+        const s = (sel: string) => art.querySelector(sel);
+        const cards = art.querySelectorAll('.g-card');
+        if (step === -1) { gsap.set([s('.g-frame'), s('.g-flabel'), ...cards, s('.g-gap'), s('.g-badge')], { opacity: 0 }); gsap.set(art.querySelectorAll('.g-price'), { opacity: 0 }); gsap.set(s('.g-pro'), { fill: '#1c1c21' }); }
+        if (step === 0) gsap.to([s('.g-frame'), s('.g-flabel')], { opacity: 1, duration: 0.5 });
+        if (step === 1) gsap.fromTo(s('.g-gap'), { opacity: 0 }, { opacity: 1, duration: 0.4 });
+        if (step === 2) gsap.fromTo(cards[0], { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.5 });
+        if (step === 3) gsap.fromTo([cards[1], cards[2]], { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.15 });
+        if (step === 4) gsap.to(art.querySelectorAll('.g-price'), { opacity: 1, duration: 0.4, stagger: 0.1 });
+        if (step === 5) { gsap.to(s('.g-pro'), { fill: '#ff5b22', duration: 0.5 }); gsap.fromTo(s('.g-badge'), { opacity: 0, y: 4 }, { opacity: 1, y: 0, duration: 0.4, delay: 0.2 }); gsap.to(s('.g-gap'), { opacity: 0, duration: 0.4 }); }
+      },
+      video(step, art) {
+        const s = (sel: string) => art.querySelector(sel);
+        if (step === -1) {
+          gsap.set([...art.querySelectorAll('.v-letter'), s('.v-title'), s('.v-sub'), s('.v-card'), ...art.querySelectorAll('.v-caps rect')], { opacity: 0 });
+          gsap.set(s('.v-clip'), { attr: { x: 50, width: 300 }, fill: '#3b82f6' });
+          gsap.set(s('.v-cut'), { opacity: 1 }); gsap.set(s('.v-screen'), { fill: '#20242a' }); gsap.set(s('.v-exp'), { scaleX: 0 });
+          gsap.set(s('.v-head'), { x: 0 });
+        }
+        if (step === 0) { gsap.to(s('.v-clip'), { attr: { x: 110, width: 240 }, duration: 0.6 }); gsap.to(s('.v-cut'), { opacity: 0, duration: 0.6 }); }
+        if (step === 1) { gsap.to(art.querySelectorAll('.v-letter'), { opacity: 1, duration: 0.5 }); gsap.to(s('.v-screen'), { fill: '#2d3b3a', duration: 0.8 }); gsap.to(s('.v-clip'), { fill: '#f59e0b', duration: 0.8 }); }
+        if (step === 2) { gsap.to(art.querySelectorAll('.v-caps rect'), { opacity: 1, duration: 0.3, stagger: 0.12 }); gsap.to(s('.v-sub'), { opacity: 1, duration: 0.4 }); }
+        if (step === 3) {
+          gsap.to(s('.v-card'), { opacity: 1, duration: 0.4 }); gsap.to(s('.v-title'), { opacity: 1, duration: 0.6 });
+          gsap.to(s('.v-exp'), { scaleX: 1, duration: 2.4, ease: 'none', delay: 0.4 }); gsap.to(s('.v-head'), { x: 298, duration: 2.4, ease: 'none', delay: 0.4 });
+        }
+      },
+      mathviz(step, art) {
+        const c = art as HTMLCanvasElement, ctx = c.getContext('2d')!;
+        if (step === -1) { ctx.fillStyle = '#0b0b0c'; ctx.fillRect(0, 0, c.width, c.height); }
+        if (step === 1) mandel(ctx, c.width, c.height);
+      },
+    };
+
+    let mandelToken = 0;
+    function mandel(ctx: CanvasRenderingContext2D, w: number, h: number) {
+      const id = ++mandelToken;
+      const cx = -0.745, cy = 0.113, scale = 3 / 160 * 1.6, maxIt = 220;
+      const img = ctx.createImageData(w, 1);
+      let y = 0;
+      const pal = (t: number) => {
+        const r = Math.min(255, 9 * (1 - t) * t * t * t * 255 * 1.6 + 30 * t);
+        const g = Math.min(255, 15 * (1 - t) * (1 - t) * t * t * 255 * 0.7);
+        const b = Math.min(255, 8.5 * (1 - t) * (1 - t) * (1 - t) * t * 255 * 0.5);
+        return [r, g, b];
+      };
+      const row = () => {
+        if (id !== mandelToken) return;
+        for (let k = 0; k < 6 && y < h; k++, y++) {
+          for (let x = 0; x < w; x++) {
+            const x0 = cx + (x - w / 2) * scale / w * 4 / 3 * 0.75, y0 = cy + (y - h / 2) * scale / h;
+            let zx = 0, zy = 0, i = 0;
+            while (zx * zx + zy * zy < 4 && i < maxIt) { const t = zx * zx - zy * zy + x0; zy = 2 * zx * zy + y0; zx = t; i++; }
+            const sm = i < maxIt ? i + 1 - Math.log2(Math.log2(zx * zx + zy * zy) / 2) : maxIt;
+            const [r, g, b] = i >= maxIt ? [8, 6, 5] : pal(Math.min(1, sm / 60));
+            img.data.set([r, g, b, 255], x * 4);
+          }
+          ctx.putImageData(img, 0, y);
+        }
+        if (y < h) requestAnimationFrame(row);
+      };
+      row();
+    }
+
+    const show = (t: string) => Object.entries(arts).forEach(([k, a]) => a.classList.toggle('is-shown', k === t));
+
+    async function play(t: string) {
+      const id = ++token;
+      const alive = () => id === token && visible;
+      current = t;
+      const P = PLAYS[t];
+      tabs.forEach((b) => b.setAttribute('aria-selected', String(b.dataset.target === t)));
+      rTarget.textContent = tabs.find((b) => b.dataset.target === t)?.querySelector('.clab__tabname')?.textContent || t;
+      rStatus.textContent = 'waiting for prompt';
+      show(t); build[t](-1, arts[t]);
+      promptEl.textContent = ''; planEl.textContent = ''; callsEl.innerHTML = '';
+      node(0);
+      for (let i = 0; i <= P.prompt.length; i++) {
+        if (!alive()) return;
+        promptEl.textContent = P.prompt.slice(0, i);
+        await sleep(16 + Math.random() * 22);
+      }
+      node(1); rStatus.textContent = 'model planning…';
+      await sleep(700); if (!alive()) return;
+      planEl.textContent = P.plan;
+      const lis = P.calls.map((c) => {
+        const li = document.createElement('li');
+        li.innerHTML = `<span class="st">○</span><span><span class="ar">→ </span><span class="fn">${c.fn}</span><span class="ar">(${c.args})</span></span><span class="ms"></span>`;
+        callsEl.appendChild(li);
+        return li;
+      });
+      gsap.from(lis, { opacity: 0, x: -10, stagger: 0.06, duration: 0.4 });
+      node(2); await sleep(500);
+      node(3); rStatus.textContent = 'executing';
+      for (let i = 0; i < P.calls.length; i++) {
+        if (!alive()) return;
+        const li = lis[i];
+        li.classList.add('is-run'); li.querySelector('.st')!.textContent = '●';
+        build[t](i, arts[t]);
+        await sleep(Math.min(1200, 420 + P.calls[i].ms / 4));
+        if (!alive()) return;
+        li.classList.remove('is-run'); li.classList.add('is-done');
+        li.querySelector('.st')!.textContent = '✓';
+        li.querySelector('.ms')!.textContent = P.calls[i].ms >= 1000 ? `${(P.calls[i].ms / 1000).toFixed(1)} s` : `${P.calls[i].ms} ms`;
+      }
+      node(4); rStatus.textContent = 'done ✓';
+      await sleep(2600);
+      if (alive() && auto) {
+        const i = tabs.findIndex((b) => b.dataset.target === t);
+        play(tabs[(i + 1) % tabs.length].dataset.target!);
+      }
+    }
+
+    tabs.forEach((b) => b.addEventListener('click', () => { auto = false; visible = true; play(b.dataset.target!); }));
+    // arrow keys between tabs
+    root.querySelector('[role="tablist"]')!.addEventListener('keydown', (e) => {
+      const ev = e as KeyboardEvent;
+      const i = tabs.findIndex((b) => b === document.activeElement);
+      if (i < 0 || !['ArrowLeft', 'ArrowRight'].includes(ev.key)) return;
+      const n = tabs[(i + (ev.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+      n.focus(); n.click();
+    });
+
+    if (reduceMotion) {
+      // static: finished Blender scene + its call log
+      visible = true;
+      show('blender');
+      const P = PLAYS.blender;
+      promptEl.textContent = P.prompt; planEl.textContent = P.plan;
+      callsEl.innerHTML = P.calls.map((c) => `<li class="is-done"><span class="st">✓</span><span><span class="fn">${c.fn}</span><span class="ar">(${c.args})</span></span><span class="ms">${c.ms} ms</span></li>`).join('');
+      node(4); rStatus.textContent = 'done ✓';
+      tabs.forEach((b) => b.addEventListener('click', () => {
+        const t = b.dataset.target!; const P2 = PLAYS[t];
+        tabs.forEach((x) => x.setAttribute('aria-selected', String(x === b)));
+        show(t); build[t](-1, arts[t]); P2.calls.forEach((_, i) => build[t](i, arts[t]));
+        promptEl.textContent = P2.prompt; planEl.textContent = P2.plan;
+        callsEl.innerHTML = P2.calls.map((c) => `<li class="is-done"><span class="st">✓</span><span><span class="fn">${c.fn}</span><span class="ar">(${c.args})</span></span><span class="ms">${c.ms} ms</span></li>`).join('');
+      }));
+      build.blender(-1, arts.blender); PLAYS.blender.calls.forEach((_, i) => build.blender(i, arts.blender));
+      return;
+    }
+    ScrollTrigger.create({
+      trigger: root.querySelector('[data-stage]'),
+      start: 'top 85%',
+      end: 'bottom 10%',
+      onToggle: (s) => {
+        visible = s.isActive;
+        if (visible) play(current); else token++;
+      },
+    });
+  });
+</script>

@@ -1,0 +1,253 @@
+---
+const themes = [
+  { id: 'tron', name: 'Tron' },
+  { id: 'cyberpunk', name: 'Cyberpunk' },
+  { id: 'hacker', name: 'Hacker Green' },
+  { id: 'matrix', name: 'Matrix' },
+  { id: 'ghost', name: 'Ghost Protocol' },
+  { id: 'midnight', name: 'Midnight' },
+];
+---
+
+<div class="flux" data-flux data-theme="tron">
+  <div class="flux__bar">
+    <span class="flux__lights" aria-hidden="true"><i></i><i></i><i></i></span>
+    <div class="flux__tabs" aria-hidden="true">
+      <span class="is-on">zsh</span><span>NETOPS</span><span>BharatLink</span>
+    </div>
+    <span class="flux__title" aria-hidden="true">flux-terminal</span>
+  </div>
+  <div class="flux__body" data-flux-body aria-hidden="true"></div>
+  <div class="flux__foot">
+    <span class="flux__keys" aria-hidden="true"><kbd>⌘K</kbd> AI <kbd>⌘P</kbd> palette <kbd>⌘⇧N</kbd> NETOPS</span>
+    <div class="flux__themes" role="radiogroup" aria-label="Terminal theme">
+      {themes.map((t, i) => (
+        <button type="button" role="radio" aria-checked={i === 0 ? 'true' : 'false'} data-theme-btn={t.id} title={t.name} class={`sw sw--${t.id}`}>
+          <span class="sr-only">{t.name}</span>
+        </button>
+      ))}
+    </div>
+  </div>
+  <span class="flux__crt" aria-hidden="true"></span>
+  <p class="sr-only">
+    Animated demo of Flux Terminal: a plain-English request becomes a find command, a file is sent over BharatLink,
+    and a destructive command is blocked by the danger check.
+  </p>
+</div>
+
+<style>
+  .flux {
+    --t-bg: #05050f; --t-fg: #b9d9e6; --t-dim: #4d6a78; --t-ai: #df740c; --t-req: #6fc3df; --t-flag: #df740c; --t-ok: #6fc3df; --t-prompt: #6fc3df; --t-glow: rgb(111 195 223 / 0.35);
+    position: relative; isolation: isolate;
+    display: grid; grid-template-rows: auto 1fr auto;
+    width: 100%; height: 100%;
+    border-radius: 14px; overflow: hidden;
+    background: var(--t-bg);
+    color: var(--t-fg);
+    font: 400 clamp(11px, 0.92vw, 13.5px)/1.65 var(--mono);
+    box-shadow: 0 0 0 1px rgb(255 255 255 / 0.08), 0 40px 100px -40px var(--t-glow);
+    transition: background 0.6s, box-shadow 0.6s;
+  }
+  .flux[data-theme='cyberpunk'] { --t-bg: #0d0221; --t-fg: #e7d6f5; --t-dim: #6a4f86; --t-ai: #ff2a6d; --t-req: #05d9e8; --t-flag: #ff2a6d; --t-ok: #05d9e8; --t-prompt: #05d9e8; --t-glow: rgb(255 42 109 / 0.35); }
+  .flux[data-theme='hacker'] { --t-bg: #0a0a0a; --t-fg: #b8ffc9; --t-dim: #2f6b3d; --t-ai: #00ff41; --t-req: #00ff41; --t-flag: #d4ff00; --t-ok: #00ff41; --t-prompt: #00ff41; --t-glow: rgb(0 255 65 / 0.25); }
+  .flux[data-theme='matrix'] { --t-bg: #000; --t-fg: #7dffa0; --t-dim: #003b00; --t-ai: #00ff41; --t-req: #008f11; --t-flag: #00ff41; --t-ok: #00ff41; --t-prompt: #008f11; --t-glow: rgb(0 143 17 / 0.35); }
+  .flux[data-theme='ghost'] { --t-bg: #0a0e14; --t-fg: #c9dcea; --t-dim: #4a5a6a; --t-ai: #7eb8da; --t-req: #e6edf3; --t-flag: #7eb8da; --t-ok: #7eb8da; --t-prompt: #7eb8da; --t-glow: rgb(126 184 218 / 0.25); }
+  .flux[data-theme='midnight'] { --t-bg: #1a1b2e; --t-fg: #d9d6f5; --t-dim: #5c5a86; --t-ai: #a78bfa; --t-req: #c4b5fd; --t-flag: #f0abfc; --t-ok: #a78bfa; --t-prompt: #6366f1; --t-glow: rgb(167 139 250 / 0.3); }
+
+  .flux__bar { display: flex; align-items: center; gap: 14px; padding: 10px 14px; border-bottom: 1px solid rgb(255 255 255 / 0.06); background: rgb(255 255 255 / 0.02); }
+  .flux__lights { display: flex; gap: 6px; }
+  .flux__lights i { width: 10px; height: 10px; border-radius: 50%; background: #f87171; }
+  .flux__lights i:nth-child(2) { background: #fbbf24; }
+  .flux__lights i:nth-child(3) { background: #4ade80; }
+  .flux__tabs { display: flex; gap: 4px; font-size: 0.72em; letter-spacing: 0.06em; text-transform: uppercase; }
+  .flux__tabs span { padding: 3px 9px; border-radius: 5px; color: var(--t-dim); }
+  .flux__tabs .is-on { background: rgb(255 255 255 / 0.07); color: var(--t-req); }
+  .flux__title { margin-left: auto; font-size: 0.72em; color: var(--t-dim); }
+
+  .flux__body {
+    position: relative; overflow: hidden;
+    padding: 14px 16px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    text-shadow: 0 0 10px var(--t-glow);
+  }
+  .flux__body :global(.ln) { white-space: pre-wrap; word-break: break-word; min-height: 1.65em; }
+  .flux__body :global(.c) { color: var(--t-dim); font-style: italic; }
+  .flux__body :global(.pr) { color: var(--t-prompt); }
+  .flux__body :global(.ai) { color: var(--t-bg); background: var(--t-ai); padding: 0 5px; border-radius: 3px; font-weight: 600; margin-right: 6px; text-shadow: none; }
+  .flux__body :global(.rq) { color: var(--t-req); }
+  .flux__body :global(.f) { color: var(--t-flag); }
+  .flux__body :global(.ok) { color: var(--t-ok); }
+  .flux__body :global(.dim) { color: var(--t-dim); }
+  .flux__body :global(.danger) { color: #ff5b5b; }
+  .flux__body :global(.danger b) { background: #ff5b5b; color: #1a0000; padding: 0 5px; border-radius: 3px; text-shadow: none; }
+  .flux__body :global(.bar) { color: var(--t-ok); }
+  .flux__body :global(.caret) { display: inline-block; width: 0.6em; height: 1.1em; margin-left: 1px; vertical-align: -0.18em; background: var(--t-req); animation: caret 1s steps(2) infinite; }
+  .flux__body :global(.spark) { position: absolute; width: 3px; height: 3px; border-radius: 50%; background: var(--t-req); pointer-events: none; animation: spark 0.6s ease-out forwards; }
+  @keyframes caret { 50% { opacity: 0; } }
+  @keyframes spark { to { transform: translate(var(--dx), var(--dy)) scale(0.2); opacity: 0; } }
+
+  .flux__foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 14px; border-top: 1px solid rgb(255 255 255 / 0.06); font-size: 0.72em; color: var(--t-dim); }
+  .flux__keys kbd { font: inherit; padding: 1px 5px; border: 1px solid rgb(255 255 255 / 0.12); border-radius: 4px; color: var(--t-fg); margin-left: 6px; }
+  .flux__keys kbd:first-child { margin-left: 0; }
+  .flux__themes { display: flex; gap: 6px; }
+  .sw { width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgb(255 255 255 / 0.25); transition: transform 0.3s var(--ease-out); }
+  .sw:hover { transform: scale(1.2); }
+  .sw[aria-checked='true'] { outline: 1.5px solid #fff; outline-offset: 2px; }
+  .sw--tron { background: conic-gradient(#6fc3df 0 50%, #df740c 0); }
+  .sw--cyberpunk { background: conic-gradient(#ff2a6d 0 50%, #05d9e8 0); }
+  .sw--hacker { background: #00ff41; }
+  .sw--matrix { background: conic-gradient(#003b00 0 50%, #00ff41 0); }
+  .sw--ghost { background: #7eb8da; }
+  .sw--midnight { background: conic-gradient(#6366f1 0 50%, #a78bfa 0); }
+
+  .flux__crt {
+    position: absolute; inset: 0; z-index: 2; pointer-events: none;
+    background:
+      repeating-linear-gradient(0deg, rgb(0 0 0 / 0.22) 0 1px, transparent 1px 3px),
+      radial-gradient(120% 90% at 50% 50%, transparent 60%, rgb(0 0 0 / 0.45));
+    mix-blend-mode: multiply;
+    animation: flicker 5s infinite;
+  }
+  @keyframes flicker { 0%, 100% { opacity: 1; } 47% { opacity: 0.92; } 48% { opacity: 1; } 49% { opacity: 0.95; } }
+  @media (max-width: 600px) { .flux__keys { display: none; } }
+</style>
+
+<script>
+  import { ScrollTrigger, reduceMotion } from '../scripts/core';
+
+  type Step =
+    | { t: 'comment' | 'out' | 'ok' | 'status' | 'ai-say'; text: string; wait?: number }
+    | { t: 'prompt'; text: string; ai?: boolean }
+    | { t: 'cmd' | 'danger'; html: string }
+    | { t: 'progress'; label: string; size: string }
+    | { t: 'gap' | 'clear' };
+
+  const SCRIPT: Step[] = [
+    { t: 'comment', text: '# say what you want — flux writes the command' },
+    { t: 'prompt', ai: true, text: 'find all large files over 100MB and list by size' },
+    { t: 'status', text: 'translating…', wait: 750 },
+    { t: 'cmd', html: 'find . -type f <span class="f">-size</span> +100M <span class="f">-exec</span> ls <span class="f">-lhS</span> {} +' },
+    { t: 'ok', text: '✓ Execute? [y/n/explain]  y' },
+    { t: 'out', text: '2.1G  renders/launch_4k.mov' },
+    { t: 'out', text: '812M  models/latentsync_unet.safetensors' },
+    { t: 'out', text: '164M  target/release/flux-terminal' },
+    { t: 'gap' },
+    { t: 'prompt', text: 'bharatlink send file a1b2c3 ./report.pdf' },
+    { t: 'out', text: 'Connecting to alice-macbook…' },
+    { t: 'ok', text: '✔ Connected (QUIC, encrypted)' },
+    { t: 'progress', label: 'report.pdf', size: '2.4 MB' },
+    { t: 'gap' },
+    { t: 'prompt', ai: true, text: 'free up space, delete everything in root' },
+    { t: 'status', text: 'checking…', wait: 600 },
+    { t: 'danger', html: '<b>BLOCKED</b> sudo rm -rf / — destructive, needs a human' },
+    { t: 'ai-say', text: '→ try: flux ai "clear caches older than 30 days"' },
+    { t: 'gap' },
+    { t: 'clear' },
+  ];
+
+  document.querySelectorAll<HTMLElement>('[data-flux]').forEach((root) => {
+    const body = root.querySelector<HTMLElement>('[data-flux-body]')!;
+    const btns = [...root.querySelectorAll<HTMLButtonElement>('[data-theme-btn]')];
+    btns.forEach((b) => b.addEventListener('click', () => {
+      root.dataset.theme = b.dataset.themeBtn;
+      btns.forEach((x) => x.setAttribute('aria-checked', String(x === b)));
+    }));
+
+    let running = false;
+    let token = 0;
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    const line = (html = '') => {
+      const el = document.createElement('div');
+      el.className = 'ln';
+      el.innerHTML = html;
+      body.appendChild(el);
+      while (body.children.length > 16) body.firstElementChild?.remove();
+      return el;
+    };
+    const spark = (el: HTMLElement) => {
+      const caret = el.querySelector<HTMLElement>('.caret');
+      if (!caret || Math.random() > 0.35) return;
+      const r = caret.getBoundingClientRect(), b = body.getBoundingClientRect();
+      const s = document.createElement('i');
+      s.className = 'spark';
+      s.style.left = `${r.left - b.left}px`;
+      s.style.top = `${r.top - b.top + 6}px`;
+      s.style.setProperty('--dx', `${(Math.random() - 0.5) * 30}px`);
+      s.style.setProperty('--dy', `${-10 - Math.random() * 20}px`);
+      body.appendChild(s);
+      setTimeout(() => s.remove(), 650);
+    };
+    const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+
+    async function run(id: number) {
+      body.innerHTML = '';
+      while (running && id === token) {
+        for (const st of SCRIPT) {
+          if (!running || id !== token) return;
+          switch (st.t) {
+            case 'comment': line(`<span class="c">${esc(st.text)}</span>`); await sleep(500); break;
+            case 'prompt': {
+              const el = line();
+              const pre = `<span class="pr">~/lab ❯</span> ${st.ai ? '<span class="ai">AI</span>' : ''}`;
+              for (let i = 0; i <= st.text.length; i++) {
+                if (!running || id !== token) return;
+                el.innerHTML = `${pre}<span class="rq">${esc(st.text.slice(0, i))}</span><span class="caret"></span>`;
+                spark(el);
+                await sleep(24 + Math.random() * 38);
+              }
+              await sleep(260);
+              el.querySelector('.caret')?.remove();
+              break;
+            }
+            case 'status': {
+              const el = line(`<span class="dim">⠋ ${st.text}</span>`);
+              const frames = '⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏';
+              const n = Math.round((st.wait || 600) / 80);
+              for (let i = 0; i < n; i++) { el.innerHTML = `<span class="dim">${frames[i % 10]} ${st.text}</span>`; await sleep(80); }
+              el.remove();
+              break;
+            }
+            case 'cmd': line(`<span class="dim">$</span> ${st.html}`); await sleep(420); break;
+            case 'danger': line(`<span class="danger">${st.html}</span>`); await sleep(500); break;
+            case 'ok': line(`<span class="ok">${esc(st.text)}</span>`); await sleep(360); break;
+            case 'ai-say': line(`<span class="rq">${esc(st.text)}</span>`); await sleep(900); break;
+            case 'out': line(esc(st.text)); await sleep(110); break;
+            case 'progress': {
+              const el = line();
+              for (let p = 0; p <= 100; p += 4) {
+                if (!running || id !== token) return;
+                const w = Math.round(p / 5);
+                el.innerHTML = `<span class="bar">${'█'.repeat(w)}${'░'.repeat(20 - w)}</span> ${p}% <span class="dim">${st.label}</span>`;
+                await sleep(38);
+              }
+              line(`<span class="ok">✔ ${st.size} sent · verified (BLAKE3)</span>`);
+              await sleep(500);
+              break;
+            }
+            case 'gap': line(''); await sleep(900); break;
+            case 'clear': await sleep(1200); body.innerHTML = ''; break;
+          }
+        }
+      }
+    }
+
+    if (reduceMotion) {
+      body.innerHTML = [
+        '<div class="ln"><span class="c"># say what you want — flux writes the command</span></div>',
+        '<div class="ln"><span class="pr">~/lab ❯</span> <span class="ai">AI</span><span class="rq">find all large files over 100MB and list by size</span></div>',
+        '<div class="ln"><span class="dim">$</span> find . -type f <span class="f">-size</span> +100M <span class="f">-exec</span> ls <span class="f">-lhS</span> {} +</div>',
+        '<div class="ln"><span class="ok">✓ Execute? [y/n/explain]  y</span></div>',
+      ].join('');
+      return;
+    }
+    ScrollTrigger.create({
+      trigger: root,
+      start: 'top bottom',
+      end: 'bottom top',
+      onToggle: (st) => {
+        running = st.isActive;
+        if (running) run(++token);
+      },
+    });
+  });
+</script>

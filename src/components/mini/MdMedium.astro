@@ -1,0 +1,130 @@
+---
+---
+
+<div class="md" data-mini="mdtomedium" aria-hidden="true">
+  <header class="md__bar">
+    <span class="md__logo">M</span>
+    <span class="md__seg"><b>MD</b><span>HTML</span></span>
+    <span class="md__pill">Rich-text copy</span>
+    <span class="md__meta" data-meta>0 words · 0 min read</span>
+  </header>
+  <div class="md__panes">
+    <pre class="md__src" data-src></pre>
+    <div class="md__prev">
+      <p class="md__plabel">Medium preview · <i>live</i></p>
+      <article class="md__art" data-art></article>
+    </div>
+  </div>
+  <footer class="md__foot">
+    <span class="md__saved" data-saved>● Saved</span>
+    <kbd>⌘⇧C</kbd>
+    <span class="md__copy" data-copy>Copy for Medium</span>
+  </footer>
+</div>
+
+<style>
+  .md { width: 100%; height: 100%; display: grid; grid-template-rows: auto 1fr auto; background: #0f0f10; color: #e7e7e4; font-family: var(--sans); font-size: 12px; overflow: hidden; }
+  .md__bar { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid rgb(255 255 255 / 0.07); }
+  .md__logo { width: 24px; height: 24px; border-radius: 6px; background: #f5f5f5; color: #0a0a0a; display: grid; place-items: center; font: italic 400 17px/1 var(--serif); }
+  .md__seg { display: flex; border: 1px solid rgb(255 255 255 / 0.12); border-radius: 6px; overflow: hidden; font: 500 10px/1 var(--mono); }
+  .md__seg b, .md__seg span { padding: 5px 8px; }
+  .md__seg b { background: rgb(255 255 255 / 0.1); font-weight: 500; }
+  .md__seg span { color: #8a8a86; }
+  .md__pill { padding: 4px 8px; border-radius: 999px; background: rgb(74 222 128 / 0.14); color: #4ade80; font-size: 10.5px; }
+  .md__meta { margin-left: auto; font: 10.5px/1 var(--mono); color: #8a8a86; }
+  .md__panes { display: grid; grid-template-columns: 1fr 1.15fr; min-height: 0; }
+  .md__src { margin: 0; padding: 14px; border-right: 1px solid rgb(255 255 255 / 0.07); font: 11.5px/1.65 var(--mono); color: #c9c9c4; white-space: pre-wrap; overflow: hidden; background: #121213; }
+  .md__src :global(.h) { color: #4ade80; }
+  .md__src :global(.e) { color: #fbbf24; }
+  .md__src :global(.q) { color: #93c5fd; }
+  .md__src :global(.cur) { display: inline-block; width: 7px; height: 13px; vertical-align: -2px; background: #4ade80; animation: mdc 1s steps(2) infinite; }
+  @keyframes mdc { 50% { opacity: 0; } }
+  .md__prev { background: #fff; color: #242424; padding: 14px 20px; overflow: hidden; }
+  .md__plabel { font: 10px/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: #9a9a9a; margin-bottom: 10px; }
+  .md__plabel i { color: #1a8917; font-style: normal; }
+  .md__art :global(h1) { font: 700 clamp(18px, 1.9vw, 24px)/1.15 Georgia, 'Iowan Old Style', serif; letter-spacing: -0.01em; margin: 0 0 8px; }
+  .md__art :global(p) { font: 400 13px/1.55 Georgia, serif; margin: 0 0 8px; }
+  .md__art :global(strong) { font-weight: 700; }
+  .md__art :global(blockquote) { margin: 10px 0; padding-left: 12px; border-left: 3px solid #242424; font: italic 400 16px/1.35 Georgia, serif; }
+  .md__art :global(pre) { margin: 8px 0; padding: 8px 10px; background: #f2f2f2; border-radius: 4px; font: 10.5px/1.5 var(--mono); white-space: pre-wrap; }
+  .md__art :global(hr) { border: 0; text-align: center; margin: 10px 0; }
+  .md__art :global(hr)::after { content: '· · ·'; letter-spacing: 0.6em; color: #242424; }
+  .md__foot { display: flex; align-items: center; gap: 10px; padding: 8px 14px; border-top: 1px solid rgb(255 255 255 / 0.07); }
+  .md__saved { color: #8a8a86; font: 10.5px/1 var(--mono); }
+  .md__foot kbd { margin-left: auto; font: 10px/1 var(--mono); padding: 3px 5px; border: 1px solid rgb(255 255 255 / 0.15); border-radius: 4px; color: #aaa; }
+  .md__copy { display: inline-flex; align-items: center; height: 30px; padding: 0 14px; border-radius: 999px; background: #1a8917; color: #fff; font-weight: 600; font-size: 12px; transition: background 0.3s, transform 0.2s; }
+  .md__copy.is-done { background: #4ade80; color: #062b07; }
+  .md__copy.is-press { transform: scale(0.95); }
+  @media (max-width: 700px) {
+    .md__panes { grid-template-columns: 1fr; }
+    .md__src { display: none; }
+  }
+</style>
+
+<script>
+  import { gsap } from '../../scripts/core';
+  import { mini, loop, sleep } from '../../scripts/mini';
+
+  const SRC = `# How I notarized my Mac app
+
+Selling outside the App Store means **notarization** — and it took me three tries.
+
+> Sign first. Staple last.
+
+\`\`\`bash
+xcrun notarytool submit App.zip --wait
+\`\`\`
+
+---
+
+Then Gumroad did the rest.`;
+
+  const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  /** tiny markdown renderer for the handful of constructs in SRC */
+  const render = (md: string) => {
+    const out: string[] = [];
+    const blocks = md.split(/\n\n/);
+    for (const b of blocks) {
+      if (b.startsWith('```')) {
+        const code = b.replace(/^```\w*\n?/, '').replace(/\n?```$/, '');
+        out.push(`<pre>${esc(code)}</pre>`);
+      } else if (b.startsWith('# ')) out.push(`<h1>${esc(b.slice(2))}</h1>`);
+      else if (b.startsWith('> ')) out.push(`<blockquote>${esc(b.slice(2))}</blockquote>`);
+      else if (b.trim() === '---') out.push('<hr>');
+      else if (b.trim()) out.push(`<p>${esc(b).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')}</p>`);
+    }
+    return out.join('');
+  };
+  const highlight = (md: string) => esc(md)
+    .replace(/^(# .*)$/gm, '<span class="h">$1</span>')
+    .replace(/(\*\*.+?\*\*)/g, '<span class="e">$1</span>')
+    .replace(/^(&gt; .*)$/gm, '<span class="q">$1</span>');
+
+  document.querySelectorAll<HTMLElement>('[data-mini="mdtomedium"]').forEach((root) => {
+    const q = <T extends Element = HTMLElement>(s: string) => root.querySelector<T>(s)!;
+    const src = q('[data-src]'), art = q('[data-art]'), meta = q('[data-meta]'), copy = q('[data-copy]'), saved = q('[data-saved]');
+    const paint = (s: string, cursor = true) => {
+      src.innerHTML = highlight(s) + (cursor ? '<span class="cur"></span>' : '');
+      art.innerHTML = render(s);
+      const words = s.replace(/[#>*`-]/g, ' ').split(/\s+/).filter(Boolean).length;
+      meta.textContent = `${words} words · ${Math.max(1, Math.ceil(words / 230))} min read`;
+    };
+    const L = loop(async (alive) => {
+      copy.textContent = 'Copy for Medium'; copy.classList.remove('is-done');
+      saved.textContent = '● Editing…';
+      for (let i = 0; i <= SRC.length; i += 2) {
+        if (!alive()) return;
+        paint(SRC.slice(0, i));
+        await sleep(SRC[i] === '\n' ? 90 : 22);
+      }
+      paint(SRC, false);
+      saved.textContent = '● Saved';
+      await sleep(900); if (!alive()) return;
+      copy.classList.add('is-press'); await sleep(150); copy.classList.remove('is-press');
+      copy.textContent = 'Copied! ✓'; copy.classList.add('is-done');
+      gsap.fromTo(art, { backgroundColor: 'rgba(26,137,23,0.12)' }, { backgroundColor: 'rgba(26,137,23,0)', duration: 1.2 });
+      await sleep(2600);
+    });
+    mini(root, { start: L.start, stop: L.stop, still: () => paint(SRC, false) });
+  });
+</script>

@@ -1,0 +1,113 @@
+---
+import { Image } from 'astro:assets';
+import portrait from '../assets/portrait.png';
+import { experiments } from '../data/lab';
+
+const reel = [
+  { y: '2017', where: 'AppKnit', what: 'Shipped my first iOS apps — ten of them, end to end, before anyone called it “full stack”.' },
+  { y: '2021', where: 'LambdaTest', what: 'Streamed a real iPhone into a browser over WebRTC. The proof of concept behind a $45M round.' },
+  { y: '2022', where: 'Majid Al Futtaim', what: 'Rebuilt Carrefour’s cart and checkout in SwiftUI for more than ten million people.' },
+  { y: '2025', where: 'India Today Group', what: 'Principal AI Engineer. Virtual anchors, horizontal-to-vertical video, voice and lip sync — on air.' },
+  { y: 'Now', where: 'The lab', what: 'Tools for creators and engineers, shipped after hours. This site is one of them.' },
+];
+const stats = [
+  { n: 8, suffix: '+', l: 'years shipping software' },
+  { n: 10, suffix: 'M+', l: 'people on an app I rebuilt' },
+  { n: 11, suffix: '', l: 'products shipped' },
+  { n: experiments.length, suffix: '', l: 'experiments on the bench' },
+];
+---
+
+<section class="about section" id="about" aria-labelledby="about-title">
+  <div class="wrap">
+    <header class="section-head">
+      <p class="micro"><span class="accent">(09)</span> About</p>
+      <p class="micro">New Delhi · <span data-clock>IST</span></p>
+    </header>
+
+    <h2 id="about-title" class="about__big" data-scrub-words>
+      Technology is interesting. But what humans create with it is <span class="serif">more interesting.</span>
+    </h2>
+
+    <div class="about__grid">
+      <figure class="about__portrait" data-reveal>
+        <div class="about__frame">
+          <Image src={portrait} alt="Rohit Saini in a navy suit at a studio desk with a microphone" widths={[360, 540, 720]} sizes="(max-width: 860px) 80vw, 30vw" quality={78} format="webp" loading="lazy" />
+          <span class="about__tc micro" aria-hidden="true">FRAME 0001 · A001_C007</span>
+        </div>
+        <figcaption class="micro">On the set of my virtual-anchor experiments.</figcaption>
+      </figure>
+
+      <div class="about__text">
+        <p class="about__lede" data-reveal>
+          I’m Rohit — an engineer who ended up in the space between code and craft. I build software exploring the
+          intersection of artificial intelligence, creativity, engineering and human potential.
+        </p>
+        <p class="about__p" data-reveal>
+          By day I’m a Principal AI Engineer building synthetic presenters and video automation for a national newsroom.
+          By night I ship small, sharp tools: a camera app, a terminal, a peer-to-peer protocol, a battery model. Most of
+          them start as a question I can’t stop asking.
+        </p>
+        <dl class="about__stats">
+          {stats.map((s) => (
+            <div>
+              <dt class="micro">{s.l}</dt>
+              <dd><span data-count={s.n}>{s.n}</span>{s.suffix}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </div>
+
+    <ol class="reel" aria-label="A short history">
+      {reel.map((r, i) => (
+        <li class="reel__frame" data-reveal style={`--d:${i * 0.08}s`}>
+          <span class="reel__holes" aria-hidden="true"></span>
+          <p class="reel__y">{r.y}</p>
+          <p class="reel__where micro">{r.where}</p>
+          <p class="reel__what">{r.what}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .about__big {
+    font-size: clamp(2.4rem, 6.4vw, 7rem);
+    line-height: 0.96; letter-spacing: -0.055em; font-weight: 500;
+    max-width: 17ch;
+  }
+  .about__big .serif { color: var(--accent); letter-spacing: -0.035em; }
+  .about__grid { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(32px, 6vw, 110px); margin-top: clamp(64px, 9vw, 140px); align-items: start; }
+  .about__portrait figcaption { margin-top: 12px; color: var(--fg-3); }
+  .about__frame { position: relative; border-radius: var(--radius-lg); overflow: hidden; aspect-ratio: 4 / 5; background: var(--bg-2); }
+  .about__frame :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; filter: grayscale(1) contrast(1.05) brightness(0.9); transition: filter 1s var(--ease-out), transform 1.4s var(--ease-out); }
+  .about__frame:hover :global(img) { filter: none; transform: scale(1.03); }
+  .about__tc { position: absolute; left: 14px; bottom: 14px; padding: 6px 8px; border-radius: 4px; background: rgb(0 0 0 / 0.6); color: #fff; font-size: 0.5625rem; }
+  .about__lede { font-size: clamp(1.3rem, 2vw, 1.9rem); line-height: 1.3; letter-spacing: -0.025em; }
+  .about__p { margin-top: 24px; color: var(--fg-2); max-width: 52ch; }
+  .about__stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; margin: 44px 0 0; border-top: 1px solid var(--line); }
+  .about__stats div { padding: 20px 0; border-bottom: 1px solid var(--line); }
+  .about__stats div:nth-child(odd) { padding-right: 20px; border-right: 1px solid var(--line); }
+  .about__stats div:nth-child(even) { padding-left: 20px; }
+  .about__stats dt { font-size: 0.625rem; }
+  .about__stats dd { margin: 10px 0 0; font-size: clamp(2.4rem, 4vw, 3.8rem); letter-spacing: -0.05em; line-height: 1; font-variant-numeric: tabular-nums; }
+
+  .reel { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin-top: clamp(80px, 10vw, 150px); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: #0d0d0e; }
+  .reel__frame { position: relative; padding: 42px 20px 26px; border-right: 1px solid var(--line); min-height: 230px; transition: background 0.5s; }
+  .reel__frame:last-child { border-right: 0; background: var(--accent-soft); }
+  .reel__frame:hover { background: var(--bg-3); }
+  .reel__holes { position: absolute; left: 0; right: 0; top: 10px; height: 10px; background: radial-gradient(circle at 8px 5px, var(--bg) 3px, transparent 3.5px) 0 0 / 22px 10px repeat-x; opacity: 0.9; }
+  .reel__y { font-size: clamp(1.8rem, 2.6vw, 2.6rem); letter-spacing: -0.04em; line-height: 1; }
+  .reel__frame:last-child .reel__y { color: var(--accent); }
+  .reel__where { margin-top: 10px; color: var(--fg); }
+  .reel__what { margin-top: 14px; color: var(--fg-2); font-size: 0.9rem; line-height: 1.5; }
+
+  @media (max-width: 1000px) {
+    .about__grid { grid-template-columns: 1fr; }
+    .about__portrait { max-width: 420px; }
+    .reel { grid-template-columns: 1fr; }
+    .reel__frame { border-right: 0; border-bottom: 1px solid var(--line); min-height: 0; }
+  }
+</style>

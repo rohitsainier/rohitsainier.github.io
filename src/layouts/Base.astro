@@ -1,0 +1,145 @@
+---
+import '@fontsource-variable/geist';
+import '@fontsource-variable/geist-mono';
+import '@fontsource/instrument-serif/400.css';
+import '@fontsource/instrument-serif/400-italic.css';
+import '@fontsource/tiro-devanagari-hindi/400.css';
+import '@fontsource-variable/noto-sans-devanagari';
+import '../styles/global.css';
+import geistLatin from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { site, url } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  intro?: boolean;
+  home?: boolean;
+  preload?: { href: string; as: string; type?: string }[];
+}
+const { title = site.title, description = site.description, intro = false, home = false, preload = [] } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const og = new URL(url('og.jpg'), Astro.site);
+---
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#0a0a0b" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="icon" href={url('favicon.svg')} type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={og} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preload" href={geistLatin} as="font" type="font/woff2" crossorigin />
+    {preload.map((p) => <link rel="preload" href={p.href} as={p.as} type={p.type} fetchpriority="high" />)}
+    <script is:inline define:vars={{ intro }}>
+      // Runs before paint: gate motion so content is never trapped invisible without JS.
+      var d = document.documentElement;
+      d.classList.remove('no-js');
+      d.classList.add('js');
+      var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!reduce) d.classList.add('motion');
+      var seen = false;
+      try { seen = sessionStorage.getItem('rs-intro') === '1'; } catch (e) {}
+      if (!intro || reduce || seen) d.classList.add('no-intro');
+      // Failsafe: if the app script never boots, reveal everything.
+      window.__rsFailsafe = setTimeout(function () {
+        d.classList.remove('motion');
+        d.classList.add('no-intro');
+      }, 3000);
+    </script>
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Person',
+      name: site.name,
+      jobTitle: 'Principal AI Engineer',
+      email: `mailto:${site.email}`,
+      url: Astro.site,
+      sameAs: [site.links.github, site.links.linkedin, site.links.medium, site.links.youtube],
+    })} />
+  </head>
+  <body data-page={home ? 'home' : 'inner'}>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    {intro && (
+      <div class="intro" aria-hidden="true">
+        <div class="intro__frame">
+          <p class="intro__tc micro"><span data-tc>00:00:00:00</span><span>REEL 01 · TAKE 01</span></p>
+          <p class="intro__name">
+            <span class="intro__line"><span>Rohit</span></span>
+            <span class="intro__line"><span>Saini</span></span>
+          </p>
+          <p class="intro__role micro">
+            <span>AI Engineer</span><i>/</i><span>Creator</span><i>/</i><span>Builder</span>
+          </p>
+          <div class="intro__bar"><i></i></div>
+        </div>
+      </div>
+    )}
+
+    <Nav home={home} />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+
+    <div class="cursor" aria-hidden="true">
+      <div class="cursor__ring"></div>
+      <div class="cursor__dot"></div>
+      <div class="cursor__label" data-cursor-label></div>
+    </div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <script>
+      import '../scripts/main';
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  .intro {
+    position: fixed; inset: 0; z-index: 200;
+    display: grid; place-items: center;
+    background: var(--bg);
+    clip-path: inset(0 0 0 0);
+    animation: intro-failsafe 0.01s 4s forwards;
+  }
+  html.no-intro .intro { display: none; }
+  @keyframes intro-failsafe { to { visibility: hidden; opacity: 0; } }
+  .intro__frame { width: min(92vw, 1400px); position: relative; }
+  .intro__tc {
+    display: flex; justify-content: space-between;
+    padding-bottom: 14px; margin-bottom: 3vh;
+    border-bottom: 1px solid var(--line);
+    color: var(--fg-3);
+  }
+  .intro__tc span:first-child { color: var(--accent); }
+  .intro__name {
+    font-size: clamp(4rem, 17vw, 17rem);
+    line-height: 0.82;
+    letter-spacing: -0.06em;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+  .intro__line { display: block; overflow: clip; }
+  .intro__line > span { display: block; }
+  .intro__line:last-child { text-align: right; }
+  .intro__role {
+    display: flex; gap: 14px; margin-top: 3.4vh;
+    font-size: clamp(0.72rem, 1vw, 0.95rem);
+    color: var(--fg);
+  }
+  .intro__role i { font-style: normal; color: var(--accent); }
+  .intro__bar { height: 1px; margin-top: 3vh; background: var(--line); }
+  .intro__bar i { display: block; height: 100%; width: 100%; background: var(--accent); transform-origin: 0 50%; transform: scaleX(0); }
+</style>

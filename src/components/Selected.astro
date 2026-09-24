@@ -1,0 +1,205 @@
+---
+import { projects, selectedSlugs } from '../data/projects';
+import { url, site } from '../data/site';
+import ProjectVisual from './ProjectVisual.astro';
+
+const items = selectedSlugs.map((s) => projects.find((p) => p.slug === s)!);
+---
+
+<section class="gal" id="projects" aria-labelledby="gal-title" data-gallery>
+  <div class="gal__pin" data-gal-pin>
+    <div class="gal__track" data-gal-track>
+      <div class="gal__intro">
+        <p class="micro"><span class="accent">(04)</span> Selected projects</p>
+        <h2 id="gal-title" class="gal__title">Small tools.<br /><span class="serif">Sharp edges.</span></h2>
+        <p class="gal__lede">
+          Things I built because I needed them — then shipped because other people did too. Each one is running live on
+          the right. Nothing here is a screenshot.
+        </p>
+        <p class="micro gal__hint" aria-hidden="true"><i></i>Scroll to move sideways</p>
+      </div>
+
+      {items.map((p, i) => (
+        <article class="gcard" data-gcard aria-labelledby={`g-${p.slug}`}>
+          <a class="gcard__visual" href={url(`work/${p.slug}`)} data-cursor="view" tabindex="-1" aria-hidden="true" style={`view-transition-name: media-${p.slug}`}>
+            <ProjectVisual project={p} />
+          </a>
+          <div class="gcard__text">
+            <p class="gcard__meta micro"><span class="accent">{String(i + 1).padStart(2, '0')} / {String(items.length).padStart(2, '0')}</span><span>{p.category}</span><span class="gcard__status">{p.status}</span></p>
+            <div class="gcard__row">
+              <div>
+                <h3 id={`g-${p.slug}`} class="gcard__name"><a href={url(`work/${p.slug}`)} data-cursor="view">{p.name}</a></h3>
+                <p class="gcard__tag">{p.tagline}</p>
+              </div>
+              <div class="gcard__links">
+                {p.links.map((l) => (
+                  <a class="micro link-u" href={l.href} data-cursor={l.kind === 'github' ? 'code' : 'open'}>{l.label} ↗</a>
+                ))}
+                <a class="gcard__case micro" href={url(`work/${p.slug}`)} data-cursor="view">Case study →</a>
+              </div>
+            </div>
+            <p class="gcard__sum">{p.summary}</p>
+          </div>
+        </article>
+      ))}
+
+      <div class="gal__end">
+        <p class="micro">More, smaller, weirder</p>
+        <a class="gal__endlink" href={site.links.apps} data-cursor="open">All apps &amp; tools <span aria-hidden="true">↗</span></a>
+        <a class="gal__endlink" href="#experiments">The lab <span aria-hidden="true">↓</span></a>
+      </div>
+    </div>
+    <div class="gal__progress" aria-hidden="true"><i data-gal-bar></i></div>
+  </div>
+</section>
+
+<style>
+  .gal { position: relative; border-top: 1px solid var(--line); }
+  .gal__pin { position: relative; height: 100svh; min-height: 640px; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
+  .gal__track {
+    display: flex; align-items: stretch; gap: clamp(20px, 2.4vw, 40px);
+    padding: calc(var(--nav-h) + 3vh) var(--pad) 5vh;
+    height: 100%;
+    width: max-content;
+    will-change: transform;
+  }
+  .gal__intro { flex: none; width: clamp(300px, 32vw, 520px); display: flex; flex-direction: column; justify-content: center; gap: 24px; padding-right: 2vw; }
+  .gal__title { font-size: clamp(2.8rem, 5.6vw, 6rem); line-height: 0.92; letter-spacing: -0.055em; }
+  .gal__title .serif { color: var(--accent); }
+  .gal__lede { color: var(--fg-2); max-width: 36ch; }
+  .gal__hint { display: flex; align-items: center; gap: 12px; }
+  .gal__hint i { width: 44px; height: 1px; background: var(--line-2); position: relative; overflow: hidden; }
+  .gal__hint i::after { content: ''; position: absolute; inset: 0; background: var(--accent); transform: translateX(-100%); animation: slide 1.8s var(--ease-io) infinite; }
+  @keyframes slide { to { transform: translateX(100%); } }
+
+  .gcard { flex: none; width: min(1060px, 64vw); display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 18px; }
+  .gcard__visual {
+    position: relative; display: block; min-height: 0;
+    border-radius: var(--radius-lg); overflow: hidden;
+    background: var(--bg-2);
+    box-shadow: 0 0 0 1px var(--line);
+    transform: translateZ(0);
+  }
+  .gcard__meta { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 10px; }
+  .gcard__status { color: var(--fg-3); }
+  .gcard__row { display: flex; justify-content: space-between; align-items: end; gap: 24px; }
+  .gcard__name { font-size: clamp(2rem, 3.4vw, 3.6rem); line-height: 0.95; letter-spacing: -0.05em; }
+  .gcard__tag { margin-top: 6px; font-family: var(--serif); font-style: italic; font-size: clamp(1.1rem, 1.5vw, 1.4rem); color: var(--fg-2); }
+  .gcard__links { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 18px; align-items: center; }
+  .gcard__links a { color: var(--fg-2); }
+  .gcard__links a:hover { color: var(--fg); }
+  .gcard__case { padding: 9px 14px; border: 1px solid var(--line-2); border-radius: 999px; color: var(--fg) !important; transition: background 0.3s, color 0.3s; }
+  .gcard__case:hover { background: var(--fg); color: var(--bg) !important; }
+  .gcard__sum { display: none; }
+
+  .gal__end { flex: none; width: clamp(260px, 26vw, 420px); display: flex; flex-direction: column; justify-content: center; gap: 12px; padding-right: var(--pad); }
+  .gal__endlink { font-size: clamp(1.8rem, 3vw, 3rem); letter-spacing: -0.045em; line-height: 1.05; transition: color 0.3s; }
+  .gal__endlink:hover { color: var(--accent); }
+  .gal__progress { position: absolute; left: var(--pad); right: var(--pad); bottom: 2.2vh; height: 1px; background: var(--line); }
+  .gal__progress i { display: block; height: 100%; width: 100%; background: var(--accent); transform-origin: 0 50%; transform: scaleX(0); }
+
+  /* no pinning: swipeable rail (mobile, tablets, reduced motion) */
+  html:not(.motion) .gal__pin, .gal.is-rail .gal__pin { height: auto; min-height: 0; overflow: visible; padding-block: clamp(80px, 12vw, 140px); }
+  html:not(.motion) .gal__track, .gal.is-rail .gal__track {
+    width: auto; height: auto; overflow-x: auto; overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory; scrollbar-width: none;
+    padding-top: 0; padding-bottom: 12px;
+  }
+  html:not(.motion) .gal__track::-webkit-scrollbar, .gal.is-rail .gal__track::-webkit-scrollbar { display: none; }
+  html:not(.motion) .gcard, .gal.is-rail .gcard { scroll-snap-align: center; }
+  html:not(.motion) .gcard__visual, .gal.is-rail .gcard__visual { aspect-ratio: 16 / 10.5; }
+  html:not(.motion) .gal__progress, .gal.is-rail .gal__progress { position: relative; left: auto; right: auto; bottom: auto; margin: 18px var(--pad) 0; }
+
+  @media (max-width: 1023px) {
+    .gal__pin { height: auto; min-height: 0; overflow: visible; padding-block: 80px 40px; }
+    .gal__track { flex-wrap: nowrap; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; width: auto; height: auto; padding-top: 0; }
+    .gal__track::-webkit-scrollbar { display: none; }
+    .gal__intro { width: 84vw; scroll-snap-align: start; }
+    .gcard { width: 86vw; scroll-snap-align: center; }
+    .gcard__visual { aspect-ratio: 4 / 4.4; }
+    .gcard__row { flex-direction: column; align-items: flex-start; gap: 14px; }
+    .gcard__links { justify-content: flex-start; }
+    .gcard__sum { display: block; color: var(--fg-2); font-size: 0.95rem; margin-top: 10px; }
+    .gal__end { width: 70vw; }
+    .gal__progress { position: relative; left: auto; right: auto; bottom: auto; margin: 18px var(--pad) 0; }
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, reduceMotion } from '../scripts/core';
+
+  document.querySelectorAll<HTMLElement>('[data-gallery]').forEach((gal) => {
+    const pin = gal.querySelector<HTMLElement>('[data-gal-pin]')!;
+    const track = gal.querySelector<HTMLElement>('[data-gal-track]')!;
+    const bar = gal.querySelector<HTMLElement>('[data-gal-bar]')!;
+    const cards = [...gal.querySelectorAll<HTMLElement>('[data-gcard]')];
+    const minis = cards.map((c) => c.querySelector<HTMLElement>('[data-mini]'));
+    let active = -1;
+    let inView = false;
+
+    const activate = (idx: number) => {
+      if (!inView) idx = -1;
+      if (idx === active) return;
+      active = idx;
+      minis.forEach((m, i) => m?.dispatchEvent(new Event(Math.abs(i - idx) <= 0 && idx >= 0 ? 'mini:on' : 'mini:off')));
+      cards.forEach((c, i) => c.classList.toggle('is-active', i === idx));
+    };
+    // which card is nearest the viewport centre
+    const nearest = () => {
+      const mid = innerWidth / 2;
+      let best = -1, dist = Infinity;
+      cards.forEach((c, i) => {
+        const r = c.getBoundingClientRect();
+        const d = Math.abs(r.left + r.width / 2 - mid);
+        if (d < dist && r.right > 0 && r.left < innerWidth) { dist = d; best = i; }
+      });
+      return best;
+    };
+
+    ScrollTrigger.create({
+      trigger: gal, start: 'top 80%', end: 'bottom 20%',
+      onToggle: (s) => { inView = s.isActive; activate(inView ? nearest() : -1); },
+    });
+
+    const mm = gsap.matchMedia();
+    mm.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
+      gal.classList.remove('is-rail');
+      const dist = () => Math.max(0, track.scrollWidth - innerWidth);
+      const tween = gsap.to(track, {
+        x: () => -dist(),
+        ease: 'none',
+        scrollTrigger: {
+          trigger: gal,
+          pin,
+          start: 'top top',
+          end: () => `+=${dist()}`,
+          scrub: 0.8,
+          invalidateOnRefresh: true,
+          onUpdate: (s) => {
+            bar.style.transform = `scaleX(${s.progress})`;
+            activate(nearest());
+          },
+        },
+      });
+      // depth: cards ease in as they approach the centre
+      cards.forEach((c) => {
+        gsap.fromTo(c.querySelector('.gcard__visual'), { scale: 0.9, opacity: 0.55 }, {
+          scale: 1, opacity: 1, ease: 'none',
+          scrollTrigger: { trigger: c, containerAnimation: tween, start: 'left 95%', end: 'center 55%', scrub: true },
+        });
+      });
+      return () => { gsap.set(track, { clearProps: 'transform' }); };
+    });
+    mm.add('(max-width: 1023px), (prefers-reduced-motion: reduce)', () => {
+      gal.classList.add('is-rail');
+      const onScroll = () => {
+        const max = track.scrollWidth - track.clientWidth;
+        bar.style.transform = `scaleX(${max > 0 ? track.scrollLeft / max : 0})`;
+        activate(nearest());
+      };
+      track.addEventListener('scroll', onScroll, { passive: true });
+      return () => track.removeEventListener('scroll', onScroll);
+    });
+    if (reduceMotion) gal.classList.add('is-rail');
+  });
+</script>

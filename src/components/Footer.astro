@@ -1,0 +1,134 @@
+---
+import { site } from '../data/site';
+const year = new Date().getFullYear();
+const credits = [
+  ['Written, designed & engineered by', 'Rohit Saini'],
+  ['Hindi voice', 'IndicF5, cloned from the source'],
+  ['Lip sync', 'LatentSync 1.5 on MLX'],
+  ['Set in', 'Geist, Geist Mono & Instrument Serif'],
+  ['Built with', 'Astro, GSAP & Lenis'],
+];
+---
+
+<footer class="foot" id="contact" aria-labelledby="foot-title">
+  <div class="wrap">
+    <p class="micro foot__eyebrow"><span class="dot" aria-hidden="true"></span>End of reel · Open for collaborations</p>
+    <h2 id="foot-title" class="foot__title" data-split="words">
+      Have an idea <span class="serif">worth</span> building?
+    </h2>
+
+    <div class="foot__cta">
+      <a class="foot__btn" href={`mailto:${site.email}?subject=Let%E2%80%99s%20build%20something`} data-magnetic="0.4" data-cursor="open">
+        <span class="foot__btn-txt">Let’s build it</span>
+        <span class="foot__btn-arrow" aria-hidden="true">→</span>
+      </a>
+      <p class="foot__mail">
+        <a class="link-u" href={`mailto:${site.email}`}>{site.email}</a>
+        <span class="micro dim">Replies within a day · <span data-clock>— IST</span></span>
+      </p>
+    </div>
+
+    <div class="foot__grid">
+      <nav class="foot__links" aria-label="Elsewhere">
+        <a href={site.links.github} data-cursor="code"><span>GitHub</span><i aria-hidden="true">↗</i></a>
+        <a href={site.links.linkedin}><span>LinkedIn</span><i aria-hidden="true">↗</i></a>
+        <a href={`mailto:${site.email}`}><span>Email</span><i aria-hidden="true">↗</i></a>
+        <a href={site.links.apps}><span>Portfolio of apps</span><i aria-hidden="true">↗</i></a>
+        <a href={site.links.medium}><span>Medium</span><i aria-hidden="true">↗</i></a>
+        <a href={site.links.youtube}><span>YouTube</span><i aria-hidden="true">↗</i></a>
+      </nav>
+      <dl class="foot__credits">
+        {credits.map(([k, v]) => (
+          <div>
+            <dt class="micro">{k}</dt>
+            <dd>{v}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+
+    <div class="foot__base">
+      <p class="micro">© {year} Rohit Saini</p>
+      <p class="micro">{site.location}</p>
+      <a class="micro link-u" href="#top">Back to the first frame ↑</a>
+    </div>
+  </div>
+  <p class="foot__giant" aria-hidden="true">Rohit Saini</p>
+</footer>
+
+<style>
+  .foot {
+    position: relative; overflow: clip;
+    padding-top: clamp(120px, 16vw, 240px);
+    background: radial-gradient(120% 70% at 50% 110%, rgb(255 91 34 / 0.13), transparent 60%), var(--bg);
+    border-top: 1px solid var(--line);
+  }
+  .foot__eyebrow { display: flex; align-items: center; gap: 10px; color: var(--fg); margin-bottom: clamp(24px, 3vw, 40px); }
+  .foot__title {
+    font-size: var(--t-mega);
+    line-height: 0.88; letter-spacing: -0.06em; font-weight: 500;
+    max-width: 12ch;
+  }
+  .foot__title .serif { color: var(--accent); letter-spacing: -0.035em; }
+
+  .foot__cta { display: flex; flex-wrap: wrap; align-items: center; gap: clamp(24px, 4vw, 64px); margin-top: clamp(40px, 6vw, 80px); }
+  .foot__btn {
+    position: relative; isolation: isolate; overflow: hidden;
+    display: inline-flex; align-items: center; gap: 22px;
+    height: clamp(72px, 8vw, 110px); padding: 0 clamp(30px, 3.4vw, 54px);
+    border-radius: 999px;
+    background: var(--accent); color: var(--accent-ink);
+    font: 500 clamp(1rem, 1.5vw, 1.35rem)/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .foot__btn::before {
+    content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit;
+    background: var(--fg); transform: scale(0.2); opacity: 0;
+    transition: transform 0.7s var(--ease-out), opacity 0.4s;
+  }
+  .foot__btn:hover::before { transform: none; opacity: 1; }
+  .foot__btn-arrow { font-size: 1.6em; line-height: 0; transition: transform 0.6s var(--ease-out); }
+  .foot__btn:hover .foot__btn-arrow { transform: translateX(8px) rotate(-45deg); }
+  .foot__mail { display: grid; gap: 8px; font-size: clamp(1.1rem, 1.6vw, 1.5rem); letter-spacing: -0.02em; }
+
+  .foot__grid {
+    display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(32px, 6vw, 120px);
+    margin-top: clamp(80px, 10vw, 160px); padding-top: 28px;
+    border-top: 1px solid var(--line);
+  }
+  .foot__links { display: grid; grid-template-columns: repeat(2, 1fr); column-gap: 32px; }
+  .foot__links a {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 0; border-bottom: 1px solid var(--line);
+    font-size: clamp(1.05rem, 1.4vw, 1.3rem); letter-spacing: -0.02em;
+    transition: color 0.3s, padding 0.5s var(--ease-out);
+  }
+  .foot__links a i { font-style: normal; color: var(--fg-3); transition: transform 0.5s var(--ease-out), color 0.3s; }
+  .foot__links a:hover { color: var(--accent); padding-left: 8px; }
+  .foot__links a:hover i { color: var(--accent); transform: translate(3px, -3px); }
+  .foot__credits { display: grid; gap: 14px; margin: 0; }
+  .foot__credits div { display: grid; grid-template-columns: minmax(150px, 0.8fr) 1fr; gap: 16px; align-items: baseline; }
+  .foot__credits dt { color: var(--fg-3); }
+  .foot__credits dd { margin: 0; color: var(--fg-2); font-size: 0.95rem; }
+
+  .foot__base {
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px;
+    margin-top: clamp(60px, 8vw, 110px); padding-block: 22px;
+    border-top: 1px solid var(--line);
+  }
+  .foot__base .micro { color: var(--fg-3); }
+  .foot__base a.micro { color: var(--fg-2); }
+  .foot__giant {
+    margin: 0 0 -0.23em;
+    text-align: center; white-space: nowrap;
+    font-size: 21.5vw; line-height: 0.9; letter-spacing: -0.055em; font-weight: 600;
+    text-transform: uppercase;
+    color: transparent;
+    background: linear-gradient(180deg, rgb(236 232 225 / 0.13) 10%, rgb(236 232 225 / 0) 78%);
+    -webkit-background-clip: text; background-clip: text;
+    user-select: none;
+  }
+  @media (max-width: 860px) {
+    .foot__grid { grid-template-columns: 1fr; }
+    .foot__credits div { grid-template-columns: 1fr; gap: 4px; }
+  }
+</style>

@@ -1,0 +1,284 @@
+---
+import Base from '../../layouts/Base.astro';
+import ProjectVisual from '../../components/ProjectVisual.astro';
+import Video from '../../components/Video.astro';
+import Battery from '../../components/Battery.astro';
+import DubDemo from '../../components/DubDemo.astro';
+import Pipeline from '../../components/case/Pipeline.astro';
+import { projects, type Project } from '../../data/projects';
+import { url } from '../../data/site';
+
+export function getStaticPaths() {
+  return projects.map((p, i) => ({ params: { slug: p.slug }, props: { p, i } }));
+}
+interface Props { p: Project; i: number }
+const { p, i } = Astro.props;
+const next = projects[(i + 1) % projects.length];
+const chapters = [
+  { id: 'idea', t: 'The Idea' },
+  { id: 'experiment', t: 'The Experiment' },
+  { id: 'technology', t: 'The Technology' },
+  { id: 'interface', t: 'The Interface' },
+  { id: 'result', t: 'The Result' },
+  { id: 'code', t: 'The Code' },
+];
+const repo = p.links.find((l) => l.kind === 'github');
+const interfaceMedia = p.media.filter((m) => m.video && !(p.visual === 'dub' && m.video === 'hero/en'));
+const statNum = (v: string) => (/^\d+$/.test(v.replace(/,/g, '')) ? Number(v.replace(/,/g, '')) : null);
+---
+
+<Base title={`${p.name} — ${p.tagline} · Rohit Saini`} description={p.summary}>
+  <article class="cs" data-case>
+    <header class="cs__hero">
+      <div class="wrap">
+        <nav class="cs__crumbs micro" aria-label="Breadcrumb">
+          <a class="link-u" href={url('/#work')} data-cursor="view">← All work</a>
+          <span>Case study {String(i + 1).padStart(2, '0')} / {String(projects.length).padStart(2, '0')}</span>
+        </nav>
+        <p class="micro cs__cat"><span class="accent">●</span> {p.category}</p>
+        <h1 class="cs__name" data-split="lines">{p.name}</h1>
+        <p class="cs__tag" data-reveal>{p.tagline}</p>
+        <div class="cs__meta">
+          <p class="cs__sum" data-reveal>{p.summary}</p>
+          <dl class="cs__facts" data-reveal>
+            <div><dt class="micro">Year</dt><dd>{p.year}</dd></div>
+            <div><dt class="micro">Status</dt><dd>{p.status}</dd></div>
+            <div><dt class="micro">Platform</dt><dd>{p.platforms}</dd></div>
+          </dl>
+        </div>
+        <div class="cs__actions" data-reveal>
+          {p.visual === 'dub' && (
+            <button class="btn btn--solid" type="button" data-demo-open data-cursor="play" data-magnetic>Watch the transformation <span class="arrow" aria-hidden="true">→</span></button>
+          )}
+          {p.links.map((l, k) => (
+            <a class={`btn ${k === 0 && p.visual !== 'dub' ? 'btn--solid' : 'btn--ghost'}`} href={l.href} data-cursor={l.kind === 'github' ? 'code' : 'open'} data-magnetic>
+              {l.label} <span class="arrow" aria-hidden="true">↗</span>
+            </a>
+          ))}
+        </div>
+      </div>
+      {p.visual === 'battery' ? (
+        <div class="cs__lab"><Battery compact id="battery-case" /></div>
+      ) : (
+        <div class="wrap">
+          <div class="cs__vframe" style={`view-transition-name: media-${p.slug}`} data-cursor={p.visual === 'dub' ? 'play' : undefined} data-demo-open={p.visual === 'dub' ? '' : undefined}>
+            <ProjectVisual project={p} mode="hero" />
+          </div>
+        </div>
+      )}
+    </header>
+
+    <div class="cs__body wrap">
+      <aside class="cs__rail" aria-label="Chapters">
+        <ol>
+          {chapters.map((c, k) => (
+            <li><a href={`#${c.id}`} data-chap-link={c.id}><span class="micro">0{k + 1}</span>{c.t}</a></li>
+          ))}
+        </ol>
+      </aside>
+
+      <div class="cs__chapters">
+        <section class="ch" id="idea" data-chap>
+          <p class="ch__no micro"><span class="accent">01</span> — The Idea</p>
+          <p class="ch__lead" data-scrub-lines>{p.story.idea}</p>
+        </section>
+
+        <section class="ch" id="experiment" data-chap>
+          <p class="ch__no micro"><span class="accent">02</span> — The Experiment</p>
+          <p class="ch__lead">{p.story.experiment}</p>
+          <ol class="ch__points">
+            {p.story.experimentPoints.map((pt, k) => (
+              <li data-reveal><span class="micro">{String(k + 1).padStart(2, '0')}</span><p>{pt}</p></li>
+            ))}
+          </ol>
+        </section>
+
+        <section class="ch" id="technology" data-chap>
+          <p class="ch__no micro"><span class="accent">03</span> — The Technology</p>
+          <p class="ch__lead">{p.story.technology}</p>
+          <Pipeline stages={p.story.pipeline} />
+          <ul class="ch__stack" aria-label="Stack">{p.stack.map((s) => <li class="chip">{s}</li>)}</ul>
+        </section>
+
+        <section class="ch" id="interface" data-chap>
+          <p class="ch__no micro"><span class="accent">04</span> — The Interface</p>
+          <p class="ch__lead">{p.story.interface}</p>
+          {interfaceMedia.length > 0 && (
+            <div class:list={['ch__media', { 'ch__media--grid': interfaceMedia.length > 1 }]}>
+              {interfaceMedia.map((m) => (
+                <figure class="ch__fig" data-reveal>
+                  <div class="ch__vid" style={`aspect-ratio:${m.aspect || '16/9'}`}>
+                    <Video src={m.video!} label={m.caption} />
+                  </div>
+                  <figcaption class="micro">{m.caption}</figcaption>
+                </figure>
+              ))}
+            </div>
+          )}
+          {p.visual === 'battery' && <p class="ch__note micro">↑ The lab at the top of this page is the interface — every number in it is computed live.</p>}
+        </section>
+
+        <section class="ch" id="result" data-chap>
+          <p class="ch__no micro"><span class="accent">05</span> — The Result</p>
+          <p class="ch__lead">{p.story.result}</p>
+          <dl class="ch__stats">
+            {p.story.stats.map((s) => {
+              const n = statNum(s.value);
+              return (
+                <div data-reveal>
+                  <dd>{n !== null ? <span data-count={n}>{s.value}</span> : s.value}</dd>
+                  <dt class="micro">{s.label}</dt>
+                </div>
+              );
+            })}
+          </dl>
+        </section>
+
+        <section class="ch" id="code" data-chap>
+          <p class="ch__no micro"><span class="accent">06</span> — The Code</p>
+          <p class="ch__lead">{p.story.code}</p>
+          {p.story.install && (
+            <div class="ch__install" data-reveal>
+              <code><span class="accent">$</span> {p.story.install}</code>
+              <button type="button" class="micro" data-copy={p.story.install}>Copy</button>
+            </div>
+          )}
+          <div class="ch__links">
+            {repo ? (
+              <a class="ch__repo" href={repo.href} data-cursor="code">
+                <span class="micro">Source</span>
+                <b>{repo.href.replace('https://', '')}</b>
+                <i aria-hidden="true">↗</i>
+              </a>
+            ) : (
+              <p class="ch__closed micro">Source not public · {p.links[0] ? <a class="link-u" href={p.links[0].href}>{p.links[0].label} ↗</a> : 'ask me about it'}</p>
+            )}
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <a class="cs__next" href={url(`work/${next.slug}`)} data-cursor="view">
+      <span class="wrap cs__next-in">
+        <span class="micro">Next case study</span>
+        <span class="cs__next-name">{next.name} <span class="cs__next-arrow" aria-hidden="true">→</span></span>
+        <span class="cs__next-tag">{next.tagline}</span>
+      </span>
+    </a>
+  </article>
+  {p.visual === 'dub' && <DubDemo />}
+</Base>
+
+<style>
+  .cs__hero { padding-top: calc(var(--nav-h) + clamp(40px, 7vw, 100px)); }
+  .cs__crumbs { display: flex; justify-content: space-between; gap: 20px; padding-bottom: 16px; margin-bottom: clamp(40px, 6vw, 90px); border-bottom: 1px solid var(--line); }
+  .cs__crumbs a { color: var(--fg); }
+  .cs__cat { margin-bottom: 20px; }
+  .cs__name { font-size: var(--t-mega); line-height: 0.86; letter-spacing: -0.065em; font-weight: 500; }
+  .cs__tag { margin-top: 18px; font-family: var(--serif); font-style: italic; font-size: clamp(1.6rem, 3vw, 3rem); line-height: 1.1; color: var(--accent); }
+  .cs__meta { display: grid; grid-template-columns: 1.3fr 1fr; gap: clamp(28px, 5vw, 90px); margin-top: clamp(36px, 5vw, 70px); align-items: start; }
+  .cs__sum { font-size: clamp(1.1rem, 1.5vw, 1.4rem); line-height: 1.45; color: var(--fg); max-width: 46ch; }
+  .cs__facts { margin: 0; display: grid; border-top: 1px solid var(--line); }
+  .cs__facts div { display: grid; grid-template-columns: 110px 1fr; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .cs__facts dd { margin: 0; color: var(--fg-2); }
+  .cs__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
+  .cs__vframe { margin-top: clamp(40px, 6vw, 90px); border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 0 0 1px var(--line); background: var(--bg-2); }
+  .cs__lab { margin-top: clamp(32px, 4vw, 60px); }
+
+  .cs__body { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: clamp(28px, 6vw, 120px); padding-top: clamp(90px, 12vw, 180px); }
+  .cs__rail ol { position: sticky; top: calc(var(--nav-h) + 40px); display: grid; gap: 2px; }
+  .cs__rail a { display: flex; gap: 12px; align-items: baseline; padding: 8px 0; color: var(--fg-3); transition: color 0.3s, transform 0.5s var(--ease-out); }
+  .cs__rail a .micro { color: inherit; }
+  .cs__rail a:hover { color: var(--fg); }
+  .cs__rail a.is-active { color: var(--fg); transform: translateX(6px); }
+  .cs__rail a.is-active .micro { color: var(--accent); }
+
+  .ch { padding-bottom: clamp(90px, 11vw, 170px); scroll-margin-top: calc(var(--nav-h) + 30px); }
+  .ch__no { margin-bottom: 26px; }
+  .ch__lead { font-size: clamp(1.45rem, 2.5vw, 2.5rem); line-height: 1.22; letter-spacing: -0.03em; max-width: 30ch; text-wrap: pretty; }
+  .ch__points { margin-top: 44px; display: grid; border-top: 1px solid var(--line); }
+  .ch__points li { display: grid; grid-template-columns: 50px 1fr; gap: 12px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+  .ch__points li .micro { color: var(--accent); padding-top: 4px; }
+  .ch__points p { color: var(--fg-2); font-size: 1.05rem; max-width: 60ch; }
+  .ch__stack { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 36px; }
+  .ch__media { margin-top: 44px; display: grid; gap: 22px; }
+  .ch__media--grid { grid-template-columns: repeat(2, 1fr); }
+  .ch__fig figcaption { margin-top: 12px; color: var(--fg-3); text-transform: none; letter-spacing: 0.02em; }
+  .ch__vid { border-radius: var(--radius); overflow: hidden; box-shadow: 0 0 0 1px var(--line); background: #000; }
+  .ch__note { margin-top: 24px; color: var(--fg-2); }
+  .ch__stats { margin: 44px 0 0; display: grid; grid-template-columns: repeat(2, 1fr); border-top: 1px solid var(--line); }
+  .ch__stats div { padding: 26px 0; border-bottom: 1px solid var(--line); }
+  .ch__stats div:nth-child(odd) { padding-right: 24px; border-right: 1px solid var(--line); }
+  .ch__stats div:nth-child(even) { padding-left: 24px; }
+  .ch__stats dd { margin: 0; font-size: clamp(2.6rem, 5vw, 5rem); line-height: 1; letter-spacing: -0.055em; }
+  .ch__stats dt { margin-top: 12px; }
+  .ch__install { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 36px; padding: 16px 18px; border: 1px solid var(--line-2); border-radius: 12px; background: var(--bg-2); font: 450 0.95rem/1.4 var(--mono); overflow-x: auto; }
+  .ch__install code { white-space: nowrap; }
+  .ch__install button { flex: none; padding: 8px 12px; border: 1px solid var(--line-2); border-radius: 999px; color: var(--fg); }
+  .ch__install button:hover { background: var(--fg); color: var(--bg); }
+  .ch__links { margin-top: 28px; }
+  .ch__repo { display: grid; grid-template-columns: 1fr auto; gap: 6px 20px; padding: 24px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .ch__repo b { font-weight: 500; font-size: clamp(1.4rem, 2.6vw, 2.4rem); letter-spacing: -0.035em; transition: color 0.3s; }
+  .ch__repo i { grid-row: 1 / 3; grid-column: 2; align-self: center; font-style: normal; font-size: 2rem; transition: transform 0.5s var(--ease-out); }
+  .ch__repo:hover b { color: var(--accent); }
+  .ch__repo:hover i { transform: translate(6px, -6px); color: var(--accent); }
+  .ch__closed { color: var(--fg-2); }
+
+  .cs__next { display: block; border-top: 1px solid var(--line); padding-block: clamp(80px, 11vw, 160px); background: linear-gradient(180deg, transparent, rgb(255 91 34 / 0.06)); transition: background 0.6s; }
+  .cs__next:hover { background: linear-gradient(180deg, transparent, rgb(255 91 34 / 0.14)); }
+  .cs__next-in { display: grid; gap: 16px; }
+  .cs__next-name { font-size: var(--t-display); line-height: 0.9; letter-spacing: -0.06em; font-weight: 500; }
+  .cs__next-arrow { display: inline-block; color: var(--accent); transition: transform 0.7s var(--ease-out); }
+  .cs__next:hover .cs__next-arrow { transform: translateX(0.2em); }
+  .cs__next-tag { font-family: var(--serif); font-style: italic; font-size: clamp(1.3rem, 2vw, 2rem); color: var(--fg-2); }
+
+  @media (max-width: 960px) {
+    .cs__meta { grid-template-columns: 1fr; }
+    .cs__body { grid-template-columns: 1fr; }
+    .cs__rail { display: none; }
+    .ch__media--grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, reduceMotion } from '../../scripts/core';
+  import '../../scripts/demo';
+
+  const root = document.querySelector<HTMLElement>('[data-case]');
+  if (root) {
+    // chapter rail follows the reader
+    const links = [...root.querySelectorAll<HTMLAnchorElement>('[data-chap-link]')];
+    const chaps = [...root.querySelectorAll<HTMLElement>('[data-chap]')];
+    const rail = () => {
+      const probe = innerHeight * 0.4;
+      let cur = '';
+      chaps.forEach((c) => { const r = c.getBoundingClientRect(); if (r.top <= probe && r.bottom > probe) cur = c.id; });
+      links.forEach((a) => a.classList.toggle('is-active', a.dataset.chapLink === cur));
+    };
+    rail();
+    addEventListener('scroll', rail, { passive: true });
+
+    // pipeline line draws as it scrolls through
+    root.querySelectorAll<HTMLElement>('[data-pipeline]').forEach((pl) => {
+      if (reduceMotion) return;
+      gsap.fromTo(pl, { '--p': 0 }, { '--p': 1, ease: 'none', scrollTrigger: { trigger: pl, start: 'top 85%', end: 'bottom 55%', scrub: true } });
+      gsap.from(pl.querySelectorAll('.pl__node'), { opacity: 0, y: 24, stagger: 0.08, duration: 0.9, ease: 'expo.out', scrollTrigger: { trigger: pl, start: 'top 85%', once: true } });
+    });
+
+    // idea paragraph lights up word by word
+    if (!reduceMotion) {
+      root.querySelectorAll<HTMLElement>('[data-scrub-lines]').forEach((el) => {
+        const words = el.textContent!.trim().split(/\s+/);
+        el.innerHTML = words.map((w) => `<span class="sw">${w}</span>`).join(' ');
+        gsap.fromTo(el.querySelectorAll('.sw'), { opacity: 0.16 }, { opacity: 1, stagger: 0.1, ease: 'none', scrollTrigger: { trigger: el, start: 'top 80%', end: 'bottom 50%', scrub: 0.5 } });
+      });
+    }
+
+    // copy-to-clipboard
+    root.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((b) => b.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(b.dataset.copy!); b.textContent = 'Copied ✓'; } catch { b.textContent = 'Select & copy'; }
+      setTimeout(() => (b.textContent = 'Copy'), 1800);
+    }));
+    ScrollTrigger.refresh();
+  }
+</script>

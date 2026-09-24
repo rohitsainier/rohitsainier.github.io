@@ -1,0 +1,139 @@
+---
+const styles = ['Insightful', 'Supportive', 'Curious', 'Contrarian', 'Criticize'];
+const providers = [
+  { n: 'OpenAI', c: '#10a37f' },
+  { n: 'Gemini', c: '#4285f4' },
+  { n: 'Claude', c: '#d97706' },
+  { n: 'Ollama', c: '#a1a1aa' },
+];
+---
+
+<div class="lc" data-mini="linkedcomment" aria-hidden="true">
+  <article class="lc__post">
+    <header class="lc__who">
+      <span class="lc__av">PR</span>
+      <span><b>Priya Raman</b><small>Founder · climate hardware · 2h</small></span>
+      <span class="lc__badge" data-badge>🔥 Trending</span>
+    </header>
+    <p class="lc__txt">
+      We shipped to our first 10,000 users with a team of four. The hardest part wasn’t the code — it was saying no to
+      features customers asked for.
+    </p>
+    <p class="lc__stats"><span>👍 ❤️ 💡 1,284</span><span>212 comments</span></p>
+    <div class="lc__box" data-box><span class="lc__me">RS</span><p data-inserted>Add a comment…</p></div>
+  </article>
+
+  <aside class="lc__ext" data-ext>
+    <header class="lc__head"><span class="lc__logo">Lc</span><b>LinkedComment</b><span class="lc__key">your key · local</span></header>
+    <p class="lc__lbl">Style</p>
+    <div class="lc__styles">{styles.map((s) => <span data-style={s}>{s}</span>)}</div>
+    <p class="lc__lbl">Angle</p>
+    <p class="lc__angle">as an indie developer</p>
+    <p class="lc__lbl">Model</p>
+    <div class="lc__prov">{providers.map((p) => <span data-prov={p.n}><i style={`background:${p.c}`}></i>{p.n}</span>)}</div>
+    <div class="lc__analysis" data-analysis>
+      <p><span>topic</span><b>focus, product scope</b></p>
+      <p><span>tone</span><b>reflective</b></p>
+      <p><span>reach</span><b class="lc__hot">viral · 4.7× baseline</b></p>
+    </div>
+    <p class="lc__out" data-out></p>
+    <span class="lc__insert" data-insert>Insert ↵</span>
+  </aside>
+</div>
+
+<style>
+  .lc { position: relative; width: 100%; height: 100%; overflow: hidden; display: grid; grid-template-columns: 1.1fr 1fr; gap: 16px; align-items: center; padding: clamp(14px, 3vw, 34px); background: radial-gradient(90% 90% at 30% 40%, #0f1512, #080a09); font-family: var(--sans); color: #e8ece9; }
+  .lc__post { background: #16181a; border: 1px solid rgb(255 255 255 / 0.08); border-radius: 12px; padding: 16px; font-size: 13px; }
+  .lc__who { display: grid; grid-template-columns: 36px 1fr auto; gap: 10px; align-items: center; }
+  .lc__who b { display: block; font-size: 13.5px; }
+  .lc__who small { display: block; color: #8b938e; font-size: 11px; }
+  .lc__av, .lc__me { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(135deg, #3b4a44, #1f2724); font: 600 11px/1 var(--mono); color: #cfe; }
+  .lc__badge { padding: 4px 8px; border-radius: 999px; background: rgb(52 211 153 / 0.15); color: #34d399; font: 600 10px/1 var(--mono); letter-spacing: 0.04em; opacity: 0; transform: scale(0.8); }
+  .lc__txt { margin: 12px 0 10px; line-height: 1.5; color: #d7ddd9; }
+  .lc__stats { display: flex; justify-content: space-between; color: #8b938e; font-size: 11px; padding-bottom: 10px; border-bottom: 1px solid rgb(255 255 255 / 0.07); }
+  .lc__box { display: grid; grid-template-columns: 30px 1fr; gap: 8px; align-items: start; margin-top: 10px; }
+  .lc__me { width: 30px; height: 30px; font-size: 9px; background: linear-gradient(135deg, #ff5b22, #b33a0b); color: #fff; }
+  .lc__box p { padding: 8px 12px; border-radius: 16px; border: 1px solid rgb(255 255 255 / 0.12); color: #8b938e; font-size: 12px; line-height: 1.45; min-height: 34px; }
+  .lc__box.is-done p { color: #e8ece9; border-color: rgb(52 211 153 / 0.5); }
+
+  .lc__ext { background: #0e1110; border: 1px solid rgb(52 211 153 / 0.3); border-radius: 12px; padding: 14px; font-size: 12px; box-shadow: 0 24px 60px -24px rgb(52 211 153 / 0.25); }
+  .lc__head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .lc__logo { width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center; background: linear-gradient(135deg, #34d399, #059669); color: #03140c; font: 700 10px/1 var(--mono); }
+  .lc__key { margin-left: auto; font: 500 9.5px/1 var(--mono); color: #8b938e; }
+  .lc__lbl { margin: 10px 0 5px; font: 600 9.5px/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: #6f7a74; }
+  .lc__styles, .lc__prov { display: flex; flex-wrap: wrap; gap: 5px; }
+  .lc__styles span, .lc__prov span { display: inline-flex; align-items: center; gap: 5px; padding: 4px 8px; border-radius: 999px; border: 1px solid rgb(255 255 255 / 0.1); color: #aeb7b2; font-size: 11px; transition: all 0.3s; }
+  .lc__styles span.is-on { background: #34d399; border-color: #34d399; color: #03140c; font-weight: 600; }
+  .lc__prov span.is-on { border-color: rgb(255 255 255 / 0.5); color: #fff; }
+  .lc__prov i { width: 6px; height: 6px; border-radius: 50%; }
+  .lc__angle { color: #d7ddd9; font-style: italic; }
+  .lc__analysis { margin-top: 10px; display: grid; gap: 3px; opacity: 0; }
+  .lc__analysis p { display: flex; justify-content: space-between; font: 10.5px/1.5 var(--mono); color: #8b938e; }
+  .lc__analysis b { color: #d7ddd9; font-weight: 500; }
+  .lc__hot { color: #34d399 !important; }
+  .lc__out { margin-top: 10px; padding: 10px; border-radius: 8px; background: rgb(52 211 153 / 0.07); min-height: 78px; line-height: 1.5; color: #e8ece9; font-size: 12px; }
+  .lc__insert { display: grid; place-items: center; margin-top: 10px; width: 100%; height: 32px; border-radius: 8px; background: #34d399; color: #03140c; font-weight: 600; font-size: 12px; opacity: 0.35; transition: opacity 0.3s, transform 0.3s; }
+  .lc__insert.is-ready { opacity: 1; }
+  .lc__insert.is-press { transform: scale(0.96); }
+  @media (max-width: 700px) {
+    .lc { grid-template-columns: 1fr; align-content: center; }
+    .lc__post { display: none; }
+  }
+</style>
+
+<script>
+  import { gsap } from '../../scripts/core';
+  import { mini, loop, sleep, type } from '../../scripts/mini';
+
+  const DRAFTS: Record<string, string> = {
+    Insightful: 'Saying no is a product skill nobody puts on a résumé. With four people, every “no” bought you focus. Which cut hurt the most?',
+    Curious: 'As an indie developer I’m fighting the same fight. How did you decide which requests to decline — data, or gut?',
+    Contrarian: 'Counterpoint: some of those “no”s become someone else’s product. Did any feature you cut show up in a competitor?',
+  };
+
+  document.querySelectorAll<HTMLElement>('[data-mini="linkedcomment"]').forEach((root) => {
+    const q = <T extends Element = HTMLElement>(s: string) => root.querySelector<T>(s)!;
+    const badge = q('[data-badge]'), out = q('[data-out]'), ins = q('[data-insert]'), box = q('[data-box]'), inserted = q('[data-inserted]'), analysis = q('[data-analysis]');
+    const styleEls = [...root.querySelectorAll<HTMLElement>('[data-style]')];
+    const provEls = [...root.querySelectorAll<HTMLElement>('[data-prov]')];
+    const pick = (els: HTMLElement[], key: string, v: string) => els.forEach((e) => e.classList.toggle('is-on', e.dataset[key] === v));
+
+    const runOnce = async (style: string, prov: string, alive: () => boolean) => {
+      pick(styleEls, 'style', style); pick(provEls, 'prov', prov);
+      out.textContent = ''; ins.classList.remove('is-ready'); box.classList.remove('is-done'); inserted.textContent = 'Add a comment…';
+      gsap.set(analysis, { opacity: 0 });
+      await sleep(500); if (!alive()) return false;
+      gsap.to(analysis, { opacity: 1, duration: 0.5 });
+      gsap.from(analysis.children, { x: -8, opacity: 0, stagger: 0.15, duration: 0.4 });
+      await sleep(1100); if (!alive()) return false;
+      if (!(await type(out, DRAFTS[style], alive, 16))) return false;
+      ins.classList.add('is-ready');
+      await sleep(700); if (!alive()) return false;
+      ins.classList.add('is-press'); await sleep(160); ins.classList.remove('is-press');
+      inserted.textContent = DRAFTS[style]; box.classList.add('is-done');
+      gsap.from(inserted, { opacity: 0, y: 6, duration: 0.5 });
+      await sleep(2200);
+      return alive();
+    };
+
+    const L = loop(async (alive) => {
+      gsap.set(badge, { opacity: 0, scale: 0.8 });
+      await sleep(400);
+      gsap.to(badge, { opacity: 1, scale: 1, duration: 0.5, ease: 'back.out(2)' });
+      await sleep(600);
+      if (!(await runOnce('Insightful', 'Claude', alive))) return;
+      if (!(await runOnce('Curious', 'Ollama', alive))) return;
+      await runOnce('Contrarian', 'OpenAI', alive);
+    });
+
+    mini(root, {
+      start: L.start,
+      stop: L.stop,
+      still: () => {
+        gsap.set([badge, analysis], { opacity: 1, scale: 1 });
+        pick(styleEls, 'style', 'Insightful'); pick(provEls, 'prov', 'Claude');
+        out.textContent = DRAFTS.Insightful; ins.classList.add('is-ready');
+      },
+    });
+  });
+</script>

@@ -1,0 +1,161 @@
+---
+import { site, url } from '../data/site';
+interface Props { home?: boolean }
+const { home = false } = Astro.props;
+const href = (h: string) => (home ? h : url(`/${h}`));
+---
+
+<header class="nav" data-nav>
+  <div class="nav__inner">
+    <a class="nav__brand" href={home ? '#top' : url('/')} aria-label="Rohit Saini — home" data-magnetic>
+      <span class="nav__name">Rohit Saini</span>
+      <span class="nav__role micro" aria-hidden="true">AI Engineer / Creator / Builder</span>
+    </a>
+
+    <nav class="nav__links" aria-label="Primary">
+      <ul>
+        {site.nav.map((l, i) => (
+          <li>
+            <a class="nav__link" href={href(l.href)} data-magnetic>
+              <span class="nav__idx" aria-hidden="true">0{i + 1}</span>
+              <span class="nav__txt" data-text={l.label}>{l.label}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <p class="nav__status" title={`${site.status}: ${site.statusDetail}`}>
+      <span class="dot" aria-hidden="true"></span>
+      <span class="nav__status-txt">{site.status}</span>
+      <span class="nav__status-detail" aria-hidden="true">— {site.statusDetail}</span>
+    </p>
+
+    <button class="nav__menu" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-btn>
+      <span class="sr-only">Menu</span>
+      <i aria-hidden="true"></i><i aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <div class="mmenu" id="mobile-menu" data-menu hidden>
+    <ul>
+      {site.nav.map((l, i) => (
+        <li>
+          <a href={href(l.href)} data-menu-link>
+            <span class="micro">0{i + 1}</span>{l.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+    <div class="mmenu__foot">
+      <a class="micro" href={site.links.github}>GitHub ↗</a>
+      <a class="micro" href={site.links.linkedin}>LinkedIn ↗</a>
+      <a class="micro" href={`mailto:${site.email}`}>Email ↗</a>
+    </div>
+  </div>
+</header>
+
+<style>
+  .nav {
+    position: fixed; inset: 0 0 auto 0; z-index: 100;
+    padding-top: env(safe-area-inset-top);
+    transition: background 0.6s var(--ease-out), border-color 0.6s var(--ease-out), backdrop-filter 0.6s;
+    border-bottom: 1px solid transparent;
+  }
+  .nav.is-scrolled {
+    background: rgb(10 10 11 / 0.62);
+    backdrop-filter: blur(14px) saturate(1.2);
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+    border-bottom-color: var(--line);
+  }
+  .nav.on-light { background: rgb(235 231 223 / 0.72); border-bottom-color: rgb(20 20 20 / 0.12); color: var(--ink); }
+  .nav.on-light .nav__link { color: var(--ink-2); }
+  .nav.on-light .nav__link:hover, .nav.on-light .nav__link.is-active, .nav.on-light .nav__txt::after { color: var(--ink); }
+  .nav.on-light .nav__idx { color: rgb(20 20 20 / 0.45); }
+  .nav.on-light .nav__status { border-color: rgb(20 20 20 / 0.2); color: var(--ink); }
+  .nav.on-light .nav__menu { border-color: rgb(20 20 20 / 0.2); }
+  .nav.on-light .nav__menu i { background: var(--ink); }
+  .nav__inner {
+    display: flex; align-items: center; gap: 28px;
+    height: var(--nav-h);
+    max-width: var(--max); margin-inline: auto; padding-inline: var(--pad);
+  }
+  .nav__brand { display: flex; align-items: baseline; gap: 14px; margin-right: auto; white-space: nowrap; }
+  .nav__name {
+    font-size: 0.9375rem; font-weight: 600;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .nav__role { color: var(--fg-3); transition: opacity 0.5s, transform 0.5s var(--ease-out); }
+  .nav.is-scrolled .nav__role { opacity: 0; transform: translateY(-4px); }
+
+  .nav__links ul { display: flex; gap: 4px; }
+  .nav__link {
+    display: flex; align-items: baseline; gap: 6px;
+    padding: 10px 12px; border-radius: 999px;
+    font-size: 0.875rem; color: var(--fg-2);
+    transition: color 0.3s;
+  }
+  .nav__link:hover, .nav__link.is-active { color: var(--fg); }
+  .nav__idx { font: 450 0.625rem/1 var(--mono); color: var(--fg-3); transition: color 0.3s; }
+  .nav__link:hover .nav__idx, .nav__link.is-active .nav__idx { color: var(--accent); }
+  .nav__txt { position: relative; display: inline-block; overflow: hidden; line-height: 1.2; }
+  .nav__txt::after {
+    content: attr(data-text);
+    position: absolute; left: 0; top: 100%;
+    color: var(--fg);
+  }
+  .nav__txt, .nav__txt::after { transition: transform 0.5s var(--ease-out); }
+  @media (hover: hover) {
+    .nav__link:hover .nav__txt { transform: translateY(-100%); }
+  }
+
+  .nav__status {
+    display: flex; align-items: center; gap: 9px;
+    height: 34px; padding: 0 14px 0 12px;
+    border: 1px solid var(--line-2); border-radius: 999px;
+    font: 450 0.6875rem/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--fg);
+    white-space: nowrap;
+  }
+  .nav__status-detail {
+    max-width: 0; overflow: hidden; color: var(--fg-2);
+    text-transform: none; letter-spacing: 0.02em;
+    transition: max-width 0.7s var(--ease-out);
+  }
+  .nav__status:hover .nav__status-detail { max-width: 320px; }
+
+  .nav__menu { display: none; width: 40px; height: 40px; position: relative; border-radius: 50%; border: 1px solid var(--line-2); }
+  .nav__menu i {
+    position: absolute; left: 12px; right: 12px; height: 1.5px; background: var(--fg);
+    transition: transform 0.5s var(--ease-out);
+  }
+  .nav__menu i:first-of-type { top: 16px; }
+  .nav__menu i:last-of-type { top: 22px; }
+  .nav__menu[aria-expanded='true'] i:first-of-type { transform: translateY(3px) rotate(45deg); }
+  .nav__menu[aria-expanded='true'] i:last-of-type { transform: translateY(-3px) rotate(-45deg); }
+
+  .mmenu {
+    position: fixed; inset: 0; z-index: -1;
+    display: none; flex-direction: column; justify-content: flex-end;
+    padding: calc(var(--nav-h) + 40px) var(--pad) calc(32px + env(safe-area-inset-bottom));
+    background: var(--bg);
+  }
+  .mmenu:not([hidden]) { display: flex; }
+  .mmenu ul { display: grid; gap: 4px; }
+  .mmenu a[data-menu-link] {
+    display: flex; align-items: baseline; gap: 14px;
+    font-size: clamp(2.6rem, 13vw, 4.5rem); line-height: 1.02; letter-spacing: -0.045em; font-weight: 500;
+  }
+  .mmenu a .micro { color: var(--accent); }
+  .mmenu__foot { display: flex; gap: 20px; margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line); }
+
+  @media (max-width: 1100px) {
+    .nav__role { display: none; }
+  }
+  @media (max-width: 860px) {
+    .nav__links, .nav__status-txt, .nav__status-detail { display: none; }
+    .nav__status { width: 34px; padding: 0; justify-content: center; }
+    .nav__menu { display: block; }
+    .nav__inner { gap: 12px; }
+  }
+</style>

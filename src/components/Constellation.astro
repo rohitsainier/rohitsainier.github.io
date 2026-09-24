@@ -1,0 +1,154 @@
+---
+import { tech, works } from '../data/lab';
+import { url } from '../data/site';
+
+// edges: technologies that share at least one project
+const edges: { a: string; b: string; w: number }[] = [];
+for (let i = 0; i < tech.length; i++)
+  for (let j = i + 1; j < tech.length; j++) {
+    const shared = tech[i].uses.filter((u) => tech[j].uses.includes(u)).length;
+    if (shared) edges.push({ a: tech[i].id, b: tech[j].id, w: shared });
+  }
+const byId = Object.fromEntries(tech.map((t) => [t.id, t]));
+// background stars (deterministic)
+const stars = Array.from({ length: 70 }, (_, i) => ({ x: (i * 137.5) % 1000, y: (i * 89.3 + (i % 7) * 31) % 620, r: 0.6 + ((i * 7) % 5) / 6 }));
+---
+
+<section class="con section" id="technology" aria-labelledby="con-title" data-con>
+  <div class="wrap">
+    <header class="section-head">
+      <p class="micro"><span class="accent">(08)</span> Technology</p>
+      <p class="micro">{tech.length} tools · {Object.keys(works).length} things made with them</p>
+    </header>
+    <div class="con__grid">
+      <div class="con__copy">
+        <h2 id="con-title" class="con__title" data-split="words">A stack is just a <span class="serif">constellation.</span></h2>
+        <p class="lede" data-reveal>Hover a technology to see what I’ve made with it. Lines connect tools that ended up in the same project.</p>
+        <div class="con__panel" aria-live="polite">
+          <p class="micro con__plabel" data-con-label>Select a star</p>
+          <ul class="con__works" data-con-works>
+            <li class="dim">Swift, Python, Rust, MCP…</li>
+          </ul>
+        </div>
+      </div>
+      <div class="con__sky">
+        <svg class="con__svg" viewBox="0 0 1000 620" role="img" aria-label="Technology constellation">
+          <g class="con__stars" aria-hidden="true">{stars.map((s) => <circle cx={s.x} cy={s.y} r={s.r} />)}</g>
+          <g class="con__edges" aria-hidden="true">
+            {edges.map((e) => (
+              <line x1={byId[e.a].x} y1={byId[e.a].y} x2={byId[e.b].x} y2={byId[e.b].y} data-a={e.a} data-b={e.b} style={`--w:${Math.min(3, e.w)}`} />
+            ))}
+          </g>
+        </svg>
+        <ul class="con__nodes">
+          {tech.map((t, i) => (
+            <li style={`left:${t.x / 10}%; top:${(t.y / 620) * 100}%; --s:${t.size || 1}; --d:${(i % 5) * -1.3}s`}>
+              <button type="button" class="star" data-tech={t.id} data-uses={t.uses.join(',')} aria-describedby="con-help">
+                <i aria-hidden="true"></i><span>{t.label}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+        <p id="con-help" class="sr-only">Shows the projects built with this technology.</p>
+      </div>
+    </div>
+  </div>
+  <script type="application/json" id="con-works" set:html={JSON.stringify(Object.fromEntries(Object.entries(works).map(([k, w]) => [k, { name: w.name, href: w.href ? (w.href.startsWith('#') ? w.href : url(w.href)) : null }])))} />
+</section>
+
+<style>
+  .con__grid { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr); gap: clamp(28px, 4vw, 72px); align-items: center; }
+  .con__title { font-size: clamp(2.4rem, 4.6vw, 5rem); line-height: 0.95; letter-spacing: -0.05em; }
+  .con__title .serif { color: var(--accent); }
+  .con__copy .lede { margin-top: 24px; }
+  .con__panel { margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--line); min-height: 220px; }
+  .con__plabel { margin-bottom: 14px; }
+  .con__plabel b { color: var(--accent); font-weight: 500; }
+  .con__works { display: grid; gap: 2px; }
+  .con__works :global(li) { display: flex; justify-content: space-between; align-items: baseline; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 1.15rem; letter-spacing: -0.02em; }
+  .con__works :global(a) { transition: color 0.3s, padding 0.4s var(--ease-out); }
+  .con__works :global(a:hover) { color: var(--accent); padding-left: 6px; }
+  .con__works :global(.go) { font: 500 0.625rem/1 var(--mono); color: var(--fg-3); letter-spacing: 0.1em; }
+
+  .con__sky { position: relative; aspect-ratio: 1000 / 620; border: 1px solid var(--line); border-radius: var(--radius-lg); background: radial-gradient(70% 70% at 55% 45%, #15130f 0%, #0b0b0c 70%); overflow: hidden; }
+  .con__svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .con__stars circle { fill: rgb(236 232 225 / 0.25); }
+  .con__edges line { stroke: rgb(236 232 225 / 0.1); stroke-width: calc(var(--w) * 0.6); transition: stroke 0.4s, stroke-width 0.4s; }
+  .con__edges line.is-on { stroke: var(--accent); stroke-width: calc(var(--w) * 0.9 + 0.6); }
+  .con__edges line.is-off { stroke: rgb(236 232 225 / 0.03); }
+  .con__nodes li { position: absolute; transform: translate(-50%, -50%); animation: drift 7s ease-in-out infinite; animation-delay: var(--d); }
+  @keyframes drift { 50% { transform: translate(-50%, calc(-50% - 5px)); } }
+  .star { display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 6px; border-radius: 10px; transition: opacity 0.4s; }
+  .star i { width: calc(9px * var(--s)); height: calc(9px * var(--s)); border-radius: 50%; background: var(--fg); box-shadow: 0 0 0 calc(5px * var(--s)) rgb(236 232 225 / 0.06), 0 0 18px rgb(236 232 225 / 0.3); transition: background 0.3s, box-shadow 0.3s, transform 0.4s var(--ease-out); }
+  .star span { font: 500 clamp(0.62rem, 0.8vw, 0.78rem)/1 var(--mono); letter-spacing: 0.06em; color: var(--fg-2); white-space: nowrap; transition: color 0.3s; }
+  .star:hover i, .star:focus-visible i, .star.is-on i { background: var(--accent); box-shadow: 0 0 0 calc(7px * var(--s)) rgb(255 91 34 / 0.18), 0 0 26px rgb(255 91 34 / 0.7); transform: scale(1.3); }
+  .star:hover span, .star:focus-visible span, .star.is-on span { color: var(--fg); }
+  .star.is-near i { background: var(--fg); box-shadow: 0 0 0 calc(5px * var(--s)) rgb(255 91 34 / 0.12); }
+  .star.is-near span { color: var(--fg); }
+  .star.is-off { opacity: 0.25; }
+  @media (max-width: 960px) {
+    .con__grid { grid-template-columns: 1fr; }
+    .con__sky { aspect-ratio: 1 / 1.15; }
+    .con__panel { min-height: 0; }
+  }
+  @media (max-width: 960px) {
+    .con__nodes li { left: var(--mx) !important; top: var(--my) !important; }
+    .con__edges { display: none; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-con]').forEach((root) => {
+    const works = JSON.parse(root.querySelector('#con-works')!.textContent!) as Record<string, { name: string; href: string | null }>;
+    const stars = [...root.querySelectorAll<HTMLButtonElement>('[data-tech]')];
+    const lines = [...root.querySelectorAll<SVGLineElement>('.con__edges line')];
+    const label = root.querySelector<HTMLElement>('[data-con-label]')!;
+    const list = root.querySelector<HTMLElement>('[data-con-works]')!;
+    let pinned: string | null = null;
+
+    // mobile: re-lay the stars on a tighter grid so labels never collide
+    const mobile = matchMedia('(max-width: 960px)');
+    const relayout = () => stars.forEach((s, i) => {
+      const li = s.parentElement as HTMLElement;
+      if (mobile.matches) { li.style.setProperty('--mx', `${19 + (i % 3) * 31}%`); li.style.setProperty('--my', `${7 + Math.floor(i / 3) * 15.5}%`); }
+    });
+    relayout(); mobile.addEventListener('change', relayout);
+
+    const show = (id: string | null) => {
+      const star = stars.find((s) => s.dataset.tech === id);
+      if (!star) {
+        stars.forEach((s) => s.classList.remove('is-on', 'is-off', 'is-near'));
+        lines.forEach((l) => l.classList.remove('is-on', 'is-off'));
+        label.innerHTML = 'Select a star';
+        list.innerHTML = '<li class="dim">Swift, Python, Rust, MCP…</li>';
+        return;
+      }
+      const uses = star.dataset.uses!.split(',');
+      const near = new Set<string>();
+      lines.forEach((l) => {
+        const on = l.dataset.a === id || l.dataset.b === id;
+        l.classList.toggle('is-on', on); l.classList.toggle('is-off', !on);
+        if (on) near.add(l.dataset.a === id ? l.dataset.b! : l.dataset.a!);
+      });
+      stars.forEach((s) => {
+        const t = s.dataset.tech!;
+        s.classList.toggle('is-on', t === id);
+        s.classList.toggle('is-near', near.has(t));
+        s.classList.toggle('is-off', t !== id && !near.has(t));
+      });
+      label.innerHTML = `<b>${star.querySelector('span')!.textContent}</b> → ${uses.length} project${uses.length > 1 ? 's' : ''}`;
+      list.innerHTML = uses.map((u) => {
+        const w = works[u];
+        return w.href ? `<li><a href="${w.href}" data-cursor="view">${w.name}</a><span class="go">case study →</span></li>` : `<li><span>${w.name}</span><span class="go">lab</span></li>`;
+      }).join('');
+    };
+    stars.forEach((s) => {
+      s.addEventListener('pointerenter', () => { if (!pinned) show(s.dataset.tech!); });
+      s.addEventListener('focus', () => show(s.dataset.tech!));
+      s.addEventListener('click', () => { pinned = pinned === s.dataset.tech ? null : s.dataset.tech!; show(pinned ?? s.dataset.tech!); });
+    });
+    root.querySelector('.con__sky')!.addEventListener('pointerleave', () => { if (!pinned) show(null); });
+    // start with something lit so the idea is obvious
+    show('ai');
+  });
+</script>

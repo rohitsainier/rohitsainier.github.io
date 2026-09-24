@@ -1,0 +1,121 @@
+---
+---
+
+<div class="ss" data-mini="stylesnap" aria-hidden="true">
+  <div class="ss__browser">
+    <div class="ss__chrome"><i></i><i></i><i></i><span class="ss__url">acme.studio</span><span class="ss__ext" data-ext>◎</span></div>
+    <div class="ss__page" data-page>
+      <nav class="ss__nav" data-el="nav" data-css="nav"><b>acme</b><span>Work</span><span>Pricing</span><span>Docs</span></nav>
+      <h4 class="ss__h" data-el="h1" data-css="h1">Ship the thing.</h4>
+      <p class="ss__p">Tools for teams who would rather be building.</p>
+      <span class="ss__btn" data-el="btn" data-css="btn">Start free</span>
+      <div class="ss__cards">
+        <div class="ss__card" data-el="card" data-css="card"><i></i><b>Fast</b><span>Ships in minutes</span></div>
+        <div class="ss__card"><i></i><b>Private</b><span>Runs locally</span></div>
+        <div class="ss__card"><i></i><b>Open</b><span>MIT licensed</span></div>
+      </div>
+      <div class="ss__box" data-box><span class="ss__m"></span><span class="ss__pad"></span><span class="ss__tag" data-tag>button.cta · 132×40</span></div>
+      <span class="ss__cursor" data-cursor-dot></span>
+    </div>
+  </div>
+  <aside class="ss__panel" data-panel>
+    <header><span class="ss__logo">◎</span><b>StyleSnap</b><span class="ss__pin">Space to pin</span></header>
+    <div class="ss__tabs" data-tabs><span data-tab="css" class="is-on">CSS</span><span data-tab="tw">Tailwind</span><span data-tab="scss">SCSS</span><span data-tab="js">JS</span></div>
+    <pre class="ss__code" data-code></pre>
+    <p class="ss__copied" data-copied>Copied to clipboard ✓</p>
+  </aside>
+</div>
+
+<style>
+  .ss { position: relative; width: 100%; height: 100%; overflow: hidden; display: grid; grid-template-columns: 1.35fr 1fr; gap: 14px; align-items: center; padding: clamp(14px, 2.6vw, 30px); background: radial-gradient(90% 90% at 30% 40%, #18130b, #0a0907); font-family: var(--sans); }
+  .ss__browser { border-radius: 10px; overflow: hidden; background: #fbfaf7; box-shadow: 0 0 0 1px rgb(255 255 255 / 0.1), 0 30px 70px -30px #000; }
+  .ss__chrome { display: flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; background: #ecebe6; }
+  .ss__chrome i { width: 8px; height: 8px; border-radius: 50%; background: #d0cec7; }
+  .ss__url { margin: 0 auto; padding: 2px 30px; border-radius: 5px; background: #fff; font: 10px/1.4 var(--mono); color: #777; }
+  .ss__ext { color: #f59e0b; font-size: 13px; }
+  .ss__page { position: relative; padding: 14px 18px 18px; color: #171717; }
+  .ss__nav { display: flex; gap: 14px; font-size: 11px; color: #555; padding-bottom: 12px; }
+  .ss__nav b { color: #111; margin-right: auto; font-size: 12px; }
+  .ss__h { margin: 8px 0 4px; font-size: clamp(20px, 2.4vw, 30px); letter-spacing: -0.04em; font-weight: 600; }
+  .ss__p { font-size: 11.5px; color: #666; margin-bottom: 12px; }
+  .ss__btn { display: inline-flex; padding: 10px 20px; border-radius: 999px; background: #ff5b22; color: #fff; font-size: 12px; font-weight: 600; }
+  .ss__cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 16px; }
+  .ss__card { padding: 10px; border-radius: 10px; background: #fff; box-shadow: 0 0 0 1px #eceae4; font-size: 10.5px; display: grid; gap: 2px; }
+  .ss__card i { width: 16px; height: 16px; border-radius: 5px; background: #f3efe8; margin-bottom: 4px; }
+  .ss__card span { color: #777; }
+  .ss__box { position: absolute; left: 0; top: 0; width: 10px; height: 10px; pointer-events: none; opacity: 0; box-shadow: 0 0 0 1px #3b82f6; background: rgb(59 130 246 / 0.16); }
+  .ss__m { position: absolute; inset: -8px; border: 8px solid rgb(249 115 22 / 0.22); }
+  .ss__pad { position: absolute; inset: 0; border: 6px solid rgb(34 197 94 / 0.25); }
+  .ss__tag { position: absolute; left: -1px; bottom: calc(100% + 10px); padding: 3px 6px; border-radius: 4px; background: #111; color: #fbbf24; font: 9.5px/1.2 var(--mono); white-space: nowrap; }
+  .ss__cursor { position: absolute; left: 0; top: 0; width: 12px; height: 12px; pointer-events: none; }
+  .ss__cursor::before { content: ''; position: absolute; left: 0; top: 0; border-left: 7px solid #111; border-top: 4px solid transparent; border-bottom: 9px solid transparent; transform: rotate(-20deg); filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff); }
+  .ss__panel { border-radius: 12px; background: #121110; border: 1px solid rgb(245 158 11 / 0.35); padding: 12px; color: #eee; font-size: 12px; box-shadow: 0 24px 60px -24px rgb(245 158 11 / 0.3); }
+  .ss__panel header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .ss__logo { width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center; background: linear-gradient(135deg, #f59e0b, #ea580c); color: #1b0d00; font-size: 12px; }
+  .ss__pin { margin-left: auto; font: 9.5px/1 var(--mono); color: #8d877d; }
+  .ss__tabs { display: flex; gap: 4px; margin-bottom: 8px; }
+  .ss__tabs span { padding: 4px 8px; border-radius: 6px; font: 500 10.5px/1 var(--mono); color: #8d877d; transition: all 0.25s; }
+  .ss__tabs .is-on { background: rgb(245 158 11 / 0.18); color: #fbbf24; }
+  .ss__code { margin: 0; min-height: 124px; padding: 10px; border-radius: 8px; background: #0a0908; font: 10.5px/1.6 var(--mono); color: #e8e2d8; white-space: pre-wrap; }
+  .ss__code :global(.p) { color: #fbbf24; }
+  .ss__code :global(.v) { color: #e8e2d8; }
+  .ss__copied { margin-top: 8px; font: 10.5px/1 var(--mono); color: #4ade80; opacity: 0; }
+  @media (max-width: 700px) {
+    .ss { grid-template-columns: 1fr; }
+    .ss__panel { display: none; }
+  }
+</style>
+
+<script>
+  import { gsap } from '../../scripts/core';
+  import { mini, loop, sleep } from '../../scripts/mini';
+
+  const CSS: Record<string, Record<string, string>> = {
+    h1: { css: 'font-size: 30px;\nfont-weight: 600;\nletter-spacing: -0.04em;\ncolor: #171717;\nmargin: 8px 0 4px;', tw: 'text-3xl font-semibold\ntracking-tighter text-neutral-900\nmt-2 mb-1', scss: '$ink: #171717;\nh1 { font: 600 30px/1.1 $sans;\n  letter-spacing: -.04em; color: $ink; }', js: "{ fontSize: '30px', fontWeight: 600,\n  letterSpacing: '-0.04em', color: '#171717' }" },
+    btn: { css: 'display: inline-flex;\npadding: 10px 20px;\nborder-radius: 999px;\nbackground: #ff5b22;\ncolor: #fff;\nfont-weight: 600;', tw: 'inline-flex px-5 py-2.5\nrounded-full bg-[#ff5b22]\ntext-white text-xs font-semibold', scss: '.cta {\n  @include pill(10px 20px);\n  background: $signal; color: #fff;\n}', js: "{ display: 'inline-flex', padding: '10px 20px',\n  borderRadius: 999, background: '#ff5b22' }" },
+    card: { css: 'padding: 10px;\nborder-radius: 10px;\nbackground: #fff;\nbox-shadow: 0 0 0 1px #eceae4;\ndisplay: grid; gap: 2px;', tw: 'p-2.5 rounded-[10px] bg-white\nring-1 ring-[#eceae4] grid gap-0.5', scss: '.card { padding: 10px;\n  border-radius: 10px;\n  box-shadow: 0 0 0 1px $line; }', js: "{ padding: 10, borderRadius: 10,\n  background: '#fff' }" },
+  };
+  const hl = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/^([\w-]+):/gm, '<span class="p">$1</span>:');
+
+  document.querySelectorAll<HTMLElement>('[data-mini="stylesnap"]').forEach((root) => {
+    const q = <T extends Element = HTMLElement>(s: string) => root.querySelector<T>(s)!;
+    const page = q('[data-page]'), box = q('[data-box]'), tag = q('[data-tag]'), dot = q('[data-cursor-dot]'), code = q('[data-code]'), copied = q('[data-copied]');
+    const tabs = [...root.querySelectorAll<HTMLElement>('[data-tab]')];
+    const els = Object.fromEntries([...root.querySelectorAll<HTMLElement>('[data-el]')].map((e) => [e.dataset.el!, e]));
+    const setTab = (t: string, key: string) => {
+      tabs.forEach((x) => x.classList.toggle('is-on', x.dataset.tab === t));
+      code.innerHTML = hl(CSS[key][t]);
+      gsap.from(code, { opacity: 0.2, duration: 0.3 });
+    };
+    const inspect = async (key: string, alive: () => boolean) => {
+      const el = els[key]; if (!el) return false;
+      const pr = page.getBoundingClientRect(), r = el.getBoundingClientRect();
+      const x = r.left - pr.left, y = r.top - pr.top;
+      await new Promise<void>((res) => gsap.to(dot, { x: x + r.width * 0.6, y: y + r.height * 0.55, duration: 0.8, ease: 'power3.inOut', onComplete: res }));
+      if (!alive()) return false;
+      gsap.to(box, { x, y, width: r.width, height: r.height, opacity: 1, duration: 0.35, ease: 'power3.out' });
+      tag.textContent = `${el.tagName.toLowerCase()}.${key} · ${Math.round(r.width)}×${Math.round(r.height)}`;
+      setTab('css', key);
+      return true;
+    };
+    const L = loop(async (alive) => {
+      gsap.set(copied, { opacity: 0 });
+      for (const key of ['h1', 'btn', 'card']) {
+        if (!(await inspect(key, alive))) return;
+        await sleep(1100); if (!alive()) return;
+        if (key === 'btn') {
+          for (const t of ['tw', 'scss', 'js']) { setTab(t, key); await sleep(900); if (!alive()) return; }
+          setTab('tw', key);
+          gsap.fromTo(copied, { opacity: 0, y: 4 }, { opacity: 1, y: 0, duration: 0.3 });
+          await sleep(1300); gsap.to(copied, { opacity: 0, duration: 0.3 });
+        }
+      }
+      await sleep(600);
+    });
+    mini(root, {
+      start: () => { gsap.set(dot, { x: 40, y: 30 }); L.start(); },
+      stop: L.stop,
+      still: () => { setTab('tw', 'btn'); },
+    });
+  });
+</script>

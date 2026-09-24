@@ -1,0 +1,32 @@
+---
+import { url } from '../data/site';
+interface Props {
+  src: string;
+  label?: string;
+  class?: string;
+  webm?: boolean;
+  fit?: 'cover' | 'contain';
+  position?: string;
+}
+const { src, label, class: cls = '', webm = false, fit = 'cover', position = 'center' } = Astro.props;
+---
+
+<video
+  class:list={['vid', cls]}
+  data-autoplay
+  muted
+  loop
+  playsinline
+  preload="none"
+  poster={url(`media/${src}.webp`)}
+  aria-label={label}
+  aria-hidden={label ? undefined : 'true'}
+  style={`object-fit:${fit};object-position:${position}`}
+>
+  {webm && <source src={url(`media/${src}.webm`)} type="video/webm" />}
+  <source src={url(`media/${src}.mp4`)} type="video/mp4" />
+</video>
+
+<style>
+  .vid { width: 100%; height: 100%; display: block; background: #050505; }
+</style>

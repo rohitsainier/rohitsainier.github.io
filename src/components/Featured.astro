@@ -1,0 +1,92 @@
+---
+import { getProject } from '../data/projects';
+import { url } from '../data/site';
+import ProjectVisual from './ProjectVisual.astro';
+
+const dub = getProject('ai-video-dubbing')!;
+const cc = getProject('creatorcut')!;
+const flux = getProject('flux-terminal')!;
+const cards = [dub, cc, flux];
+const icon: Record<string, string> = { github: '↗', store: '↗', live: '↗', crate: '↗', site: '↗' };
+---
+
+<section class="featured section" id="work" aria-labelledby="work-title">
+  <div class="wrap">
+    <header class="section-head">
+      <h2 id="work-title" class="micro"><span class="accent">(02)</span> Featured work</h2>
+      <p class="micro">04 experiments that became products</p>
+    </header>
+
+    {cards.map((p, i) => (
+      <article class={`card card--${p.slug} ${i % 2 ? 'card--flip' : ''}`} data-card>
+        {p.visual === 'flux' ? (
+          <div class="card__visual" style={`view-transition-name: media-${p.slug}`}>
+            <ProjectVisual project={p} />
+          </div>
+        ) : (
+          <a class="card__visual" href={url(`work/${p.slug}`)} data-cursor="view" aria-label={`${p.name} — case study`} style={`view-transition-name: media-${p.slug}`}>
+            <ProjectVisual project={p} />
+          </a>
+        )}
+
+        <div class="card__text">
+          <p class="card__meta micro"><span class="accent">0{i + 1}</span><span>{p.category}</span><span class="dim">{p.status}</span></p>
+          <h3 class="card__name"><a href={url(`work/${p.slug}`)} data-cursor="view">{p.name}</a></h3>
+          <p class="card__tag">{p.tagline}</p>
+          <p class="card__sum">{p.summary}</p>
+          <ul class="card__stack" aria-label="Technology">
+            {p.stack.slice(0, 5).map((s) => <li class="chip">{s}</li>)}
+          </ul>
+          <div class="card__actions">
+            <a class="btn btn--ghost" href={url(`work/${p.slug}`)} data-cursor="view" data-magnetic>Case study <span class="arrow" aria-hidden="true">→</span></a>
+            {p.links.slice(0, 1).map((l) => (
+              <a class="card__link micro link-u" href={l.href} data-cursor={l.kind === 'github' ? 'code' : 'open'}>
+                {l.label} {icon[l.kind]}
+              </a>
+            ))}
+          </div>
+        </div>
+      </article>
+    ))}
+  </div>
+</section>
+
+<style>
+  .card {
+    display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+    gap: clamp(28px, 4vw, 72px); align-items: center;
+    margin-bottom: clamp(100px, 13vw, 200px);
+  }
+  .card--flip { grid-template-columns: minmax(0, 1fr) minmax(0, 1.55fr); }
+  .card--flip .card__visual { order: 2; }
+  .card__visual {
+    position: relative; display: block;
+    border-radius: var(--radius-lg); overflow: hidden;
+    background: var(--bg-2);
+    box-shadow: 0 0 0 1px var(--line);
+    transform: translateZ(0);
+  }
+  .card__visual::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    border-radius: inherit; box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.05);
+  }
+  .card__meta { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 22px; }
+  .card__name { font-size: clamp(2.6rem, 5.4vw, 5.6rem); line-height: 0.92; letter-spacing: -0.055em; }
+  .card__name a { background: linear-gradient(currentColor, currentColor) 0 96% / 0 2px no-repeat; transition: background-size 0.6s var(--ease-out); }
+  .card__name a:hover { background-size: 100% 2px; }
+  .card__tag { margin-top: 16px; font-family: var(--serif); font-style: italic; font-size: clamp(1.35rem, 2vw, 1.9rem); line-height: 1.15; color: var(--fg); }
+  .card__sum { margin-top: 18px; color: var(--fg-2); max-width: 44ch; }
+  .card__stack { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 26px; }
+  .card__actions { display: flex; align-items: center; flex-wrap: wrap; gap: 26px; margin-top: 32px; }
+  .card__link { color: var(--fg-2); }
+  .card__link:hover { color: var(--fg); }
+
+  @media (hover: hover) {
+    .card__visual :global(.vid) { transition: transform 1.2s var(--ease-out); }
+    .card__visual:hover :global(.ccv .vid) { transform: scale(1.03); }
+  }
+  @media (max-width: 960px) {
+    .card, .card--flip { grid-template-columns: 1fr; }
+    .card--flip .card__visual { order: 0; }
+  }
+</style>

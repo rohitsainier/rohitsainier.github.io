@@ -1,0 +1,35 @@
+---
+interface Props { stages: { stage: string; detail: string }[] }
+const { stages } = Astro.props;
+---
+
+<ol class="pl" data-pipeline aria-label="Architecture, in order">
+  {stages.map((s, i) => (
+    <li class="pl__node">
+      <span class="pl__i micro">{String(i + 1).padStart(2, '0')}</span>
+      <span class="pl__dot" aria-hidden="true"></span>
+      <b class="pl__stage">{s.stage}</b>
+      <span class="pl__detail">{s.detail}</span>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .pl { position: relative; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 0; margin-top: 36px; }
+  .pl::before { content: ''; position: absolute; left: 0; right: 0; top: 33px; height: 1px; background: var(--line-2); }
+  .pl::after { content: ''; position: absolute; left: 0; right: 0; top: 33px; height: 1px; background: var(--accent); transform-origin: 0 50%; transform: scaleX(var(--p, 1)); }
+  .pl__node { position: relative; display: grid; gap: 8px; padding-right: 18px; }
+  .pl__i { color: var(--fg-3); }
+  .pl__dot { width: 11px; height: 11px; border-radius: 50%; background: var(--bg); border: 1.5px solid var(--accent); position: relative; z-index: 1; margin: 2px 0 6px; }
+  .pl__node:first-child .pl__dot, .pl__node:last-child .pl__dot { background: var(--accent); }
+  .pl__stage { font-weight: 500; font-size: 1.1rem; letter-spacing: -0.02em; }
+  .pl__detail { font: 450 0.75rem/1.45 var(--mono); color: var(--fg-2); }
+  @media (max-width: 860px) {
+    .pl { grid-auto-flow: row; gap: 18px; }
+    .pl::before, .pl::after { left: 5px; right: auto; top: 0; bottom: 0; width: 1px; height: auto; }
+    .pl::after { transform: scaleY(var(--p, 1)); transform-origin: 50% 0; }
+    .pl__node { grid-template-columns: 11px 1fr; column-gap: 16px; padding: 0; }
+    .pl__i { display: none; }
+    .pl__dot { grid-row: 1 / 3; margin: 6px 0 0; }
+  }
+</style>

@@ -1,0 +1,169 @@
+---
+import { url } from '../data/site';
+import { experiments } from '../data/lab';
+
+const fields = [
+  { name: 'AI', line: 'Models as a raw material, not a feature.' },
+  { name: 'Creative Tools', line: 'Software for people who make things.' },
+  { name: 'Video', line: 'The medium I keep coming back to.' },
+  { name: 'Developer Tools', line: 'Sharp tools for my own hands first.' },
+  { name: 'Simulation', line: 'Physics you can drag around.' },
+  { name: 'Automation', line: 'Pipelines that work while I sleep.' },
+];
+const now = [
+  { k: 'Building', mark: 'live', name: 'Relay Newsroom', line: 'A news channel with a synthetic presenter, on autopilot.' },
+  { k: 'Shipped', mark: 'done', name: 'CreatorCut', line: 'Record once, publish everywhere — on the App Store.', href: 'work/creatorcut' },
+  { k: 'Testing', mark: 'half', name: 'lipsync-mlx', line: 'LatentSync on Apple silicon, 2.73× faster sampling.' },
+];
+---
+
+<section class="statement" aria-labelledby="st-title">
+  <div class="wrap">
+    <div class="statement__head">
+      <p class="micro"><span class="accent">(01)</span> Introduction</p>
+      <p class="micro dim">Engineer → Creator → Experimenter → Builder</p>
+    </div>
+
+    <div class="statement__grid">
+      <div class="statement__main">
+        <h2 id="st-title" class="statement__text" data-scrub-words>
+          I build software at the intersection of AI, creativity and <span class="serif">human expression.</span>
+        </h2>
+        <p class="statement__lede" data-reveal>
+          Eight years of shipping — from iPhone apps used by ten million people to AI systems that put synthetic
+          presenters on air. These days I spend most of my time on one question: what happens when I point a model at
+          something people make?
+        </p>
+      </div>
+
+      <aside class="now" aria-label="What I’m doing now" data-reveal>
+        <p class="now__head micro"><span>Now</span><span data-clock>IST</span></p>
+        <ul class="now__list">
+          {now.map((n) => (
+            <li class="now__row">
+              <span class={`now__mark now__mark--${n.mark}`} aria-hidden="true"></span>
+              <span class="now__k micro">{n.k}</span>
+              <span class="now__body">
+                {n.href ? <a class="now__name link-u" href={url(n.href)} data-cursor="view">{n.name}</a> : <b class="now__name">{n.name}</b>}
+                <span class="now__line">{n.line}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+        <a class="now__more micro" href="#experiments">{experiments.length} experiments on the bench <span aria-hidden="true">↓</span></a>
+      </aside>
+    </div>
+
+    <ol class="fields" aria-label="What I work on">
+      {fields.map((f, i) => (
+        <li class="field" data-field>
+          <span class="field__idx micro">0{i + 1}</span>
+          <span class="field__name"><span class="field__inner">{f.name}</span></span>
+          <span class="field__line">{f.line}</span>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .statement { position: relative; padding-block: clamp(80px, 9vw, 140px) clamp(80px, 10vw, 150px); }
+  .statement__head { display: flex; justify-content: space-between; gap: 20px; padding-bottom: 18px; border-bottom: 1px solid var(--line); margin-bottom: clamp(40px, 5vw, 72px); }
+
+  .statement__grid {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 0.36fr);
+    gap: clamp(32px, 5vw, 96px); align-items: end;
+  }
+  .statement__text {
+    font-size: clamp(2.5rem, 6.7vw, 8.2rem);
+    line-height: 0.98; letter-spacing: -0.052em; font-weight: 500;
+    text-wrap: balance;
+  }
+  .statement__text .serif { color: var(--accent); letter-spacing: -0.03em; }
+  .statement__lede {
+    margin-top: clamp(28px, 3.4vw, 52px);
+    max-width: 58ch;
+    color: var(--fg-2);
+    font-size: clamp(1.05rem, 0.95rem + 0.4vw, 1.3rem); line-height: 1.5;
+  }
+
+  /* “Now” panel — the lab’s pulse */
+  .now {
+    border: 1px solid var(--line-2); border-radius: var(--radius);
+    background: linear-gradient(180deg, rgb(255 255 255 / 0.03), rgb(255 255 255 / 0.01));
+    padding: 18px 20px 16px;
+  }
+  .now__head { display: flex; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid var(--line); color: var(--fg); }
+  .now__head span:last-child { color: var(--fg-3); }
+  .now__list { display: grid; }
+  .now__row { display: grid; grid-template-columns: 12px 72px 1fr; gap: 10px; align-items: baseline; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .now__mark { width: 8px; height: 8px; border-radius: 50%; transform: translateY(-1px); }
+  .now__mark--live { background: var(--accent); animation: pulse 2.2s infinite; }
+  .now__mark--done { background: var(--fg-2); }
+  .now__mark--half { border: 1.5px solid var(--accent); background: linear-gradient(90deg, var(--accent) 50%, transparent 50%); }
+  .now__k { font-size: 0.625rem; color: var(--fg-3); }
+  .now__body { display: grid; gap: 3px; }
+  .now__name { font-weight: 500; font-size: 1.02rem; letter-spacing: -0.015em; color: var(--fg); }
+  .now__line { color: var(--fg-2); font-size: 0.875rem; line-height: 1.45; }
+  .now__more { display: inline-flex; gap: 8px; margin-top: 14px; color: var(--fg-2); transition: color 0.3s; }
+  .now__more:hover { color: var(--accent); }
+
+  .fields { margin-top: clamp(56px, 7vw, 110px); border-top: 1px solid var(--line); }
+  .field {
+    position: relative;
+    display: grid; grid-template-columns: 56px 1fr minmax(0, 0.7fr); align-items: center; gap: 20px;
+    padding: clamp(10px, 1.4vw, 22px) 0;
+    border-bottom: 1px solid var(--line);
+    overflow: hidden;
+  }
+  .field::before {
+    content: ''; position: absolute; inset: 0; z-index: -1;
+    background: linear-gradient(90deg, var(--accent-soft), transparent 70%);
+    transform: scaleX(0); transform-origin: 0 50%;
+    transition: transform 0.8s var(--ease-out);
+  }
+  .field:hover::before { transform: none; }
+  .field__idx { color: var(--fg-3); }
+  .field__name { display: block; overflow: clip; }
+  .field__inner {
+    display: inline-block;
+    font-size: clamp(2.4rem, 7.4vw, 8.2rem);
+    line-height: 1; letter-spacing: -0.055em; font-weight: 500;
+    transition: transform 0.8s var(--ease-out), color 0.5s;
+  }
+  .field:hover .field__inner { transform: translateX(clamp(10px, 1.6vw, 28px)); color: var(--accent); }
+  .field__line { color: var(--fg-2); max-width: 30ch; }
+
+  @media (max-width: 960px) {
+    .statement__grid { grid-template-columns: 1fr; align-items: start; }
+  }
+  @media (max-width: 860px) {
+    .field { grid-template-columns: 32px 1fr; row-gap: 4px; }
+    .field__line { grid-column: 2; font-size: 0.9rem; }
+  }
+</style>
+
+<script>
+  import { gsap, SplitText, reduceMotion } from '../scripts/core';
+  if (!reduceMotion) {
+    document.fonts.ready.then(() => {
+      document.querySelectorAll<HTMLElement>('[data-scrub-words]').forEach((el) => {
+        const split = SplitText.create(el, { type: 'words', wordsClass: 'sw' });
+        gsap.fromTo(split.words, { opacity: 0.14 }, {
+          opacity: 1, ease: 'none', stagger: 0.12,
+          scrollTrigger: { trigger: el, start: 'top 82%', end: 'bottom 55%', scrub: 0.6 },
+        });
+      });
+      gsap.utils.toArray<HTMLElement>('[data-field]').forEach((f, i) => {
+        gsap.from(f.querySelector('.field__inner'), {
+          yPercent: 105, duration: 1.2, ease: 'expo.out',
+          scrollTrigger: { trigger: f, start: 'top 92%', once: true },
+        });
+        gsap.from(f.querySelectorAll('.field__line, .field__idx'), {
+          opacity: 0, x: i % 2 ? 24 : -24, duration: 1, ease: 'power3.out', delay: 0.15,
+          scrollTrigger: { trigger: f, start: 'top 92%', once: true },
+        });
+      });
+    });
+  }
+</script>
