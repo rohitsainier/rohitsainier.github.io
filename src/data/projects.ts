@@ -47,12 +47,12 @@ export const projects: Project[] = [
     status: 'Experiment',
     year: '2026',
     platforms: 'macOS · Apple silicon',
-    stack: ['Python', 'faster-whisper', 'LLM translation', 'IndicF5', 'LatentSync · MLX', 'FFmpeg'],
+    stack: ['Speech recognition', 'Neural translation', 'Voice cloning', 'Lip sync', 'Video pipeline'],
     links: [{ label: 'GitHub', href: 'https://github.com/rohitsainier', kind: 'github' }],
     visual: 'dub',
     media: [
       { video: 'hero/en', poster: 'hero/poster', caption: 'Source — English, 22.9 s', aspect: '9/16' },
-      { video: 'work/editra-transcript', caption: 'Speech recognition on the same clip inside Editra, my Mac captioning studio', aspect: '16/9' },
+      { video: 'work/editra-transcript', caption: 'Speech recognition inside Editra, my Mac captioning studio', aspect: '16/9' },
     ],
     story: {
       idea:
@@ -60,34 +60,34 @@ export const projects: Project[] = [
       experiment:
         'A pipeline that takes a finished video and hands back the same video speaking Hindi. The heavy lifting — recognition, voice and lips — runs on my MacBook.',
       experimentPoints: [
-        'Whisper transcribes the source with word-level timestamps and detects the language.',
+        'Speech recognition transcribes the source with word-level timestamps and detects the language.',
         'Each line is translated to fit the timing window of the original sentence.',
-        'IndicF5 clones the speaker’s voice from an eight-second reference and speaks the translation.',
-        'LatentSync, ported to MLX, regenerates only the mouth region, frame by frame.',
-        'FFmpeg aligns, loudness-normalises and muxes the final cut.',
+        'A voice model clones the speaker from a few seconds of reference audio and speaks the translation.',
+        'A lip-sync model regenerates only the mouth region, frame by frame.',
+        'The final cut is aligned, loudness-matched and muxed.',
       ],
       technology:
         'Five models in a line, each one handing timestamps to the next. The trick is not any single model — it is keeping time aligned from the first word to the last frame.',
       pipeline: [
-        { stage: 'Video', detail: 'H.264 source · 25 fps · 732×1280' },
-        { stage: 'Speech recognition', detail: 'faster-whisper · word timestamps · language ID' },
-        { stage: 'Translation', detail: 'LLM · sentence-level, timing-aware' },
-        { stage: 'Voice generation', detail: 'IndicF5 · zero-shot voice clone' },
-        { stage: 'Lip synchronization', detail: 'LatentSync 1.5 · MLX port · DPM-Solver++' },
-        { stage: 'Video', detail: 'FFmpeg · loudnorm · mux' },
+        { stage: 'Video', detail: 'Finished source clip' },
+        { stage: 'Speech recognition', detail: 'Word timestamps · language ID' },
+        { stage: 'Translation', detail: 'Sentence-level, timing-aware' },
+        { stage: 'Voice generation', detail: 'Zero-shot voice clone' },
+        { stage: 'Lip synchronization', detail: 'Mouth region, frame by frame' },
+        { stage: 'Video', detail: 'Loudness-matched · muxed' },
       ],
       interface:
         'The demo on this site is the real output: the English source on one side, the Hindi render on the other. Flip between them mid-sentence — the face never changes, only the language does.',
       result:
-        'A 23-second clip, dubbed end to end on Apple silicon. The same pipeline powers my experiments in synthetic news anchors and real-time avatars.',
+        'A short clip, dubbed end to end on a laptop. The same pipeline powers my experiments in synthetic news anchors and real-time avatars.',
       stats: [
-        { value: '5', label: 'models, one timeline' },
-        { value: '2.73×', label: 'faster lip-sync sampling (DPM-Solver++, 8 steps)' },
-        { value: '8 s', label: 'of reference audio to clone a voice' },
+        { value: '5', label: 'stages, one timeline' },
+        { value: '0', label: 'reshoots or re-recordings' },
+        { value: '2.73×', label: 'faster lip sync after a rebuild' },
         { value: '1', label: 'MacBook. No studio.' },
       ],
       code:
-        'The pipeline is a set of Python stages glued by timestamps. The LatentSync port swaps PyTorch kernels for MLX and adds a faster sampler.',
+        'A chain of stages glued together by timestamps — each one swappable as better models appear. The pipeline stays private while it’s an experiment.',
     },
   },
   {

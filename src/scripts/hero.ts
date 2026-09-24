@@ -166,7 +166,7 @@ function initHero(hero: HTMLElement) {
     syncSlave();
     if (state.beat <= 0) {
       state.waveMix = state.dub;
-      const lbl = vis === 'hi' ? 'HI · cloned voice (IndicF5)' : 'EN · source voice';
+      const lbl = vis === 'hi' ? 'HI · cloned voice' : 'EN · source voice';
       if (waveLabel.textContent !== lbl) waveLabel.textContent = lbl;
     }
 
@@ -251,7 +251,7 @@ function initHero(hero: HTMLElement) {
     gsap.to(txHi, { opacity: beat === 0 || beat >= 5 ? 1 : 0, duration: 0.6, overwrite: 'auto' });
     gsap.to(langChip, { opacity: beat === 0 || beat >= 4 ? 1 : 0.25, duration: 0.5, overwrite: 'auto' });
     if (beat === 4) gsap.fromTo(langChip.querySelector('.lang__bar i'), { scaleX: 0 }, { scaleX: 1, duration: 1.2, ease: 'expo.out' });
-    waveLabel.textContent = beat >= 6 || (beat === 0 && visibleLang() === 'hi') ? 'HI · cloned voice (IndicF5)' : 'EN · source voice';
+    waveLabel.textContent = beat >= 6 || (beat === 0 && visibleLang() === 'hi') ? 'HI · cloned voice' : 'EN · source voice';
   };
 
   let shownBeat = 0;

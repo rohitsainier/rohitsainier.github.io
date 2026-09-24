@@ -4,21 +4,21 @@ import en from '../data/hero-en.json';
 
 const pipeline = [
   { name: 'Video', detail: 'Source · 732×1280 · 25 fps' },
-  { name: 'Speech recognition', detail: `faster-whisper · ${en.words.length} words` },
-  { name: 'Translation', detail: 'LLM · en → hi · timing-aware' },
-  { name: 'Voice generation', detail: 'IndicF5 · cloned from 8 s' },
-  { name: 'Lip synchronization', detail: 'LatentSync 1.5 · MLX' },
-  { name: 'Video', detail: 'FFmpeg · loudnorm · mux' },
+  { name: 'Speech recognition', detail: `word-level timing · ${en.words.length} words` },
+  { name: 'Translation', detail: 'en → hi · timing-aware' },
+  { name: 'Voice generation', detail: 'cloned from the source voice' },
+  { name: 'Lip synchronization', detail: 'mouth region · frame by frame' },
+  { name: 'Video', detail: 'loudness-matched · muxed' },
 ];
 
 const beats = [
   { no: 'Source', title: 'The original video.', body: 'One take, one speaker, English. Everything that follows is generated from these 23 seconds.' },
   { no: 'Audio', title: 'Isolate the voice.', body: 'The soundtrack becomes a waveform the models can reason about.' },
-  { no: 'Transcript', title: 'Every word, timestamped.', body: `Whisper transcribes the speech — ${en.words.length} words, each pinned to the millisecond.` },
+  { no: 'Transcript', title: 'Every word, timestamped.', body: `Speech recognition catches every word — ${en.words.length} of them, each pinned to the millisecond.` },
   { no: 'Language', title: 'Detect the language.', body: `English, with ${(en.probability * 100).toFixed(1)}% confidence. Now pick a new one.` },
   { no: 'Translation', title: 'Rewrite it in Hindi.', body: 'Each sentence is translated to fit the time the original took to say it.' },
-  { no: 'Voice', title: 'Speak it in the same voice.', body: 'IndicF5 clones the speaker from eight seconds of audio and reads the translation.' },
-  { no: 'Lip sync', title: 'Move the lips to match.', body: 'LatentSync regenerates only the lower half of the face, frame by frame, on Apple silicon.' },
+  { no: 'Voice', title: 'Speak it in the same voice.', body: 'A voice model clones the speaker from a few seconds of audio and reads the translation.' },
+  { no: 'Lip sync', title: 'Move the lips to match.', body: 'Only the lower half of the face is regenerated, frame by frame, to match the new audio.' },
   { no: 'Output', title: 'Same face. New language.', body: 'Nothing re-shot. Nothing re-recorded. The person never said these words — their face does.' },
   { no: 'Pipeline', title: 'Five models. One timeline.', body: 'Video → speech → translation → voice → lips → video. Time stays aligned from the first word to the last frame.' },
 ];
@@ -89,7 +89,7 @@ const beats = [
             <track kind="captions" srclang="hi" label="हिन्दी" src={url('media/hero/hi.vtt')} />
           </video>
           <div class="hv__roi" data-roi aria-hidden="true">
-            <span class="hv__roi-label">face · 256²</span>
+            <span class="hv__roi-label">face · mouth region</span>
             <span class="hv__roi-mask"><em>regenerated</em></span>
           </div>
         </div>

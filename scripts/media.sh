@@ -26,7 +26,7 @@ ffmpeg -v error -y -ss 0 -to 22.96 -i "$ANCHOR" -vf "fps=25" -c:v libvpx-vp9 -cr
 ffmpeg -v error -y -ss 0.4 -i "$ANCHOR" -frames:v 1 -c:v libwebp -quality 80 "$OUT/hero/poster.webp"
 echo "  en.mp4=$(du -h $OUT/hero/en.mp4 | cut -f1) en.webm=$(du -h $OUT/hero/en.webm | cut -f1)"
 
-echo "hero (Hindi dub — produced by the IndicF5 + LatentSync pipeline, see the case study)"
+echo "hero (Hindi dub from the dubbing pipeline)"
 DUB="${DUB:-}"
 if [ -n "$DUB" ] && [ -f "$DUB" ]; then
   ffmpeg -v error -y -i "$DUB" -vf fps=25 -c:v libx264 -preset slow -crf 25 -pix_fmt yuv420p -profile:v high -movflags +faststart -c:a aac -b:a 96k -ac 1 "$OUT/hero/hi.mp4"

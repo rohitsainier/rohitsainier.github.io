@@ -29,13 +29,8 @@ npm run preview
 
 ## The hero clip is real
 
-`public/media/hero/hi.mp4` is an actual dub of `en.mp4`, produced locally:
-
-1. **ASR** — faster-whisper (word timestamps + language ID, 99.8 % English)
-2. **Translation** — sentence by sentence, fitted to each sentence’s time window
-3. **Voice** — IndicF5, cloned from ~8 s of the original speaker
-4. **Lips** — LatentSync 1.5 via `latentsync-mlx` (DPM-Solver++, guidance 2.0)
-5. **Mux** — FFmpeg, loudness-normalised
+`public/media/hero/hi.mp4` is an actual dub of `en.mp4`, produced locally by a five-stage pipeline:
+speech recognition → timing-aware translation → voice cloning → lip sync → mux.
 
 To swap in a new pair: replace `en.*` / `hi.*` in `public/media/hero/`, regenerate `hero-en.json` / `hero-hi.json` (word timings + peaks) and run `node scripts/vtt.mjs` for captions.
 
