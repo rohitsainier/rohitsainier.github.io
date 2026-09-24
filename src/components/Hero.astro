@@ -99,7 +99,16 @@ const beats = [
         </div>
         <button class="hv__toggle micro" type="button" data-lang-toggle aria-pressed="false">
           <span data-l="en">EN</span><i aria-hidden="true"></i><span data-l="hi">हिन्दी</span>
-          <span class="sr-only">Switch between the English source and the Hindi dub</span>
+          <span class="sr-only">Switch between the English and Hindi takes</span>
+        </button>
+        <button class="hv__sound micro" type="button" data-sound aria-pressed="false" data-cursor="unmute">
+          <svg class="hv__spk" viewBox="0 0 16 16" aria-hidden="true">
+            <path class="hv__cone" d="M2 6h2.7L8.4 3v10L4.7 10H2z" />
+            <path class="hv__x" d="M10.8 6.1l3.8 3.8M14.6 6.1l-3.8 3.8" />
+          </svg>
+          <span class="hv__eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span aria-hidden="true" data-sound-text>Sound off</span>
+          <span class="sr-only">Sound</span>
         </button>
       </div>
       <figcaption class="sr-only">
@@ -253,7 +262,7 @@ const beats = [
   .hv__tag.is-dub .rec { background: var(--accent-ink); box-shadow: none; }
   .hv__tc { position: absolute; right: 24px; top: 28px; color: rgb(255 255 255 / 0.85); font-size: 0.625rem; font-variant-numeric: tabular-nums; }
   .hv__caption {
-    position: absolute; left: 50%; bottom: 7%;
+    position: absolute; left: 50%; bottom: 68px;
     width: 84%; transform: translateX(-50%);
     text-align: center; color: #fff;
     font: 500 clamp(0.78rem, 0.95vw, 0.95rem)/1.35 var(--sans);
@@ -269,7 +278,7 @@ const beats = [
     opacity: 0;
   }
   .hv__toggle {
-    position: absolute; right: 16px; bottom: 16px; z-index: 3;
+    position: absolute; right: 22px; bottom: 22px; z-index: 3;
     display: none; align-items: center; gap: 8px;
     height: 34px; padding: 0 12px; border-radius: 999px;
     background: rgb(0 0 0 / 0.6); color: #fff;
@@ -280,6 +289,33 @@ const beats = [
   .hv__toggle[aria-pressed='true'] i { background: var(--accent); }
   .hv__toggle[aria-pressed='true'] i::after { transform: translateX(12px); }
   .hv__toggle [data-l='hi'] { font-family: var(--deva-sans); letter-spacing: 0; text-transform: none; font-size: 0.75rem; }
+
+  /* sound: the takes start muted (autoplay rules); this is the one way to hear them here */
+  .hv__sound {
+    position: absolute; left: 22px; bottom: 22px; z-index: 3;
+    display: inline-flex; align-items: center; gap: 8px;
+    height: 34px; padding: 0 13px 0 10px; border-radius: 999px;
+    background: rgb(0 0 0 / 0.6); color: #fff;
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    transition: background 0.35s, color 0.35s;
+  }
+  .hv__sound:hover { background: rgb(0 0 0 / 0.82); }
+  .hv__sound[aria-pressed='true'] { background: var(--accent); color: var(--accent-ink); }
+  .hv__spk { width: 16px; height: 16px; flex: none; }
+  .hv__cone { fill: currentColor; }
+  .hv__x { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; }
+  .hv__eq { display: none; align-items: center; gap: 2px; height: 12px; margin-left: -3px; }
+  .hv__eq i { width: 2px; height: 100%; border-radius: 1px; background: currentColor; transform: scaleY(var(--h, 0.3)); }
+  .hv__sound[aria-pressed='true'] .hv__x { display: none; }
+  .hv__sound[aria-pressed='true'] .hv__eq { display: inline-flex; }
+  /* a quiet nudge, three rings, so people know there is something to hear */
+  .hv__sound::after {
+    content: ''; position: absolute; inset: 0; border-radius: inherit;
+    border: 1px solid rgb(255 255 255 / 0.8); opacity: 0; pointer-events: none;
+  }
+  html.motion .hv__sound.is-nudge::after { animation: nudge 1.9s var(--ease-out) 3; }
+  @keyframes nudge { from { opacity: 0.9; transform: scale(1); } to { opacity: 0; transform: scale(1.3, 1.7); } }
+  html:not(.js) .hv__sound { display: none; }
 
   /* ——— right: console ——— */
   .hero__console {

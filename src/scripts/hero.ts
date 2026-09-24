@@ -36,6 +36,9 @@ function initHero(hero: HTMLElement) {
   const caption = $('[data-caption]');
   const scan = $('[data-scan]');
   const toggle = $<HTMLButtonElement>('[data-lang-toggle]');
+  const soundBtn = $<HTMLButtonElement>('[data-sound]');
+  const soundText = $('[data-sound-text]');
+  const eqBars = $$('.hv__eq i');
   const canvas = $<HTMLCanvasElement>('[data-wave]');
   const waveLabel = $('[data-wave-label]');
   const txEn = $('[data-tx-en]');
@@ -56,6 +59,7 @@ function initHero(hero: HTMLElement) {
     cur: 'en' as Lang, // the take on screen, or fading in
     switching: false,
     sent: 0, // trailer: the sentence the take on screen is telling
+    sound: false,
     waveMix: 0,
     zoom: 0,
     trailer: true,
@@ -70,7 +74,13 @@ function initHero(hero: HTMLElement) {
   /* ——— video helpers ——— */
   const visibleLang = (): Lang => (state.dub >= 0.5 ? 'hi' : 'en');
   const other = (l: Lang): Lang => (l === 'en' ? 'hi' : 'en');
-  const play = (v: HTMLVideoElement) => { if (v.paused) v.play().catch(() => {}); };
+  const play = (v: HTMLVideoElement) => {
+    if (!v.paused) return;
+    v.play().catch((e) => {
+      // a browser that refuses to play with sound gets silent playback, not a frozen frame
+      if (e?.name === 'NotAllowedError' && !v.muted) { setSound(false); v.play().catch(() => {}); }
+    });
+  };
 
   const applyDub = (d: number) => {
     state.dub = d;
@@ -80,6 +90,26 @@ function initHero(hero: HTMLElement) {
     const label = state.beat === 7 && state.switching ? 'Lip sync · rendering' : isHi ? 'AI · हिन्दी' : 'Source · English';
     if (tagText.textContent !== label) tagText.textContent = label;
     toggle.setAttribute('aria-pressed', String(isHi));
+    applyAudio();
+  };
+
+  /* ——— sound: only the take on screen is ever audible, and it dips to silence through each crossfade ——— */
+  const applyAudio = () => {
+    const hi = state.dub >= 0.5;
+    const muteEn = !state.sound || hi, muteHi = !state.sound || !hi;
+    if (V.en.muted !== muteEn) V.en.muted = muteEn;
+    if (V.hi.muted !== muteHi) V.hi.muted = muteHi;
+    const vol = Math.min(1, Math.abs(1 - 2 * state.dub) * 1.25); // iOS ignores volume; the mute flip still happens
+    if (Math.abs(V.en.volume - vol) > 0.01) { V.en.volume = vol; V.hi.volume = vol; }
+  };
+  const setSound = (on: boolean) => {
+    state.sound = on;
+    soundBtn.setAttribute('aria-pressed', String(on));
+    soundBtn.dataset.cursor = on ? 'mute' : 'unmute';
+    soundText.textContent = on ? 'Sound on' : 'Sound off';
+    soundBtn.classList.remove('is-nudge');
+    if (!on) eqBars.forEach((b) => b.style.removeProperty('--h'));
+    applyAudio();
   };
 
   /*
@@ -239,6 +269,12 @@ function initHero(hero: HTMLElement) {
       renderEnSentence(sv);
       renderHiSentence(sv, state.beat >= 5 || state.beat === 0);
     }
+    // the sound button's meter follows the real voice
+    if (state.sound) {
+      const tr = TRACK[vis];
+      eqBars.forEach((b, i) => b.style.setProperty('--h', (0.25 + 0.75 * Math.min(1, peakAt(tr, tv + i * 0.07 - 0.1) * 1.6)).toFixed(2)));
+    }
+
     txEn.querySelectorAll<HTMLElement>('.w').forEach((w) => {
       const s = Number(w.dataset.s), e = Number(w.dataset.e);
       const on = vis === 'en' && tEn >= s && tEn <= e + 0.08;
@@ -372,6 +408,22 @@ function initHero(hero: HTMLElement) {
   });
 
 
+  soundBtn.addEventListener('click', () => {
+    const on = !state.sound;
+    // unmute both takes inside the click, so either one may speak later without another tap (Safari, iOS)
+    if (on) { V.en.muted = false; V.hi.muted = false; }
+    setSound(on);
+    if (on) { start(); play(V[state.cur]); }
+    soundBtn.dispatchEvent(new PointerEvent('pointerover', { bubbles: true })); // refresh the cursor label
+  });
+
+  // a hidden tab shouldn't keep talking (or decoding)
+  let resumeOnShow = false;
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { resumeOnShow = state.running; if (resumeOnShow) stop(); }
+    else if (resumeOnShow) { resumeOnShow = false; start(); }
+  });
+
   // no `loop` attribute: a take that runs out mid-fade holds its last frame; the one on screen starts over
   (['en', 'hi'] as Lang[]).forEach((l) => V[l].addEventListener('ended', () => {
     if (state.running && state.cur === l) { V[l].currentTime = 0; play(V[l]); }
@@ -411,8 +463,9 @@ function initHero(hero: HTMLElement) {
       .from('[data-console] .mod', { opacity: 0, y: 30, duration: 1, stagger: 0.1 }, 0.5)
       .from('.hero__foot', { opacity: 0, duration: 1 }, 0.8);
   };
-  if ((window as any).__introDone) enter();
-  else addEventListener('intro:done', enter, { once: true });
+  const nudge = () => setTimeout(() => { if (!state.sound) soundBtn.classList.add('is-nudge'); }, 2600);
+  if ((window as any).__introDone) { enter(); nudge(); }
+  else addEventListener('intro:done', () => { enter(); nudge(); }, { once: true });
 
   /* ——— full-screen demonstration: pause the hero while it plays ——— */
   addEventListener('demo:open', stop);
