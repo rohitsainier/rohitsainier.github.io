@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Interactive EV battery simulator: drive cycle, State of Health, and thermal analysis. Built by Saini & Co.">
+<link rel="icon" href="favicon.svg">
+<title>EV Battery Simulator &middot; Saini &amp; Co.</title>
+<style>
+  .site-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:11px 20px;background:#04060c;border-bottom:1px solid rgba(255,255,255,.08);
+    font-family:"Space Grotesk",system-ui,-apple-system,sans-serif}
+  .site-bar .brand{display:flex;align-items:center;gap:9px;text-decoration:none;color:#eef2fa;font-weight:700;letter-spacing:-.01em;font-size:15px}
+  .site-bar .logo{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:linear-gradient(135deg,#38e8ff,#b9ff2e)}
+  .site-bar .logo svg{width:15px;height:15px;fill:#04060c;display:block}
+  .site-bar .brand .dot{color:#b9ff2e}
+  .site-bar .back{display:flex;align-items:center;gap:6px;text-decoration:none;color:#8b98b0;font-size:13px;font-weight:600}
+  .site-bar .back:hover{color:#b9ff2e}
+  .site-bar .back svg{width:14px;height:14px}
+</style>
+</head>
+<body>
+<div class="site-bar">
+  <a class="brand" href="./"><span class="logo"><svg viewBox="0 0 24 24"><path d="M13 2 4.5 14H11l-1.5 8L18 10h-6.5L13 2z"/></svg></span>Saini &amp; Co<span class="dot">.</span></a>
+  <a class="back" href="./"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to site</a>
+</div>
+<style>
+  /* ============================ DESIGN TOKENS ============================ */
+  :root{
+    /* light "daylight lab" (default) */
+    --bg:#EEF1F5; --panel:#FFFFFF; --panel-2:#F6F8FB; --inset:#EDF1F6;
+    --border:#D8DFE7; --border-2:#E7ECF2;
+    --text:#16202B; --muted:#5C6B7A; --faint:#8A98A6;
+    --accent:#E85D0C;      /* HV orange – power/load */
+    --cyan:#0C8FA3;        /* kinematics */
+    --green:#12A15A; --amber:#BC8410; --red:#D8434A; --violet:#7A5BD6;
+    --grid:#E6EBF1; --grid-strong:#D5DCE4;
+    --glow:0;              /* canvas glow multiplier */
+    --shadow:0 1px 2px rgba(20,32,45,.06), 0 8px 24px rgba(20,32,45,.05);
+    --font-ui:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --font-mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#0A0E13; --panel:#111922; --panel-2:#0D141C; --inset:#0A1017;
+      --border:#233039; --border-2:#1A2530;
+      --text:#E7EEF4; --muted:#8B9BA8; --faint:#5F6E7B;
+      --accent:#FF7A2E; --cyan:#22D3EE;
+      --green:#34D399; --amber:#F5B841; --red:#F2606A; --violet:#A78BFA;
+      --grid:#17202B; --grid-strong:#202C38;
+      --glow:1;
+      --shadow:0 1px 0 rgba(255,255,255,.02), 0 10px 30px rgba(0,0,0,.45);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0A0E13; --panel:#111922; --panel-2:#0D141C; --inset:#0A1017;
+    --border:#233039; --border-2:#1A2530;
+    --text:#E7EEF4; --muted:#8B9BA8; --faint:#5F6E7B;
+    --accent:#FF7A2E; --cyan:#22D3EE;
+    --green:#34D399; --amber:#F5B841; --red:#F2606A; --violet:#A78BFA;
+    --grid:#17202B; --grid-strong:#202C38;
+    --glow:1;
+    --shadow:0 1px 0 rgba(255,255,255,.02), 0 10px 30px rgba(0,0,0,.45);
+  }
+  :root[data-theme="light"]{
+    --bg:#EEF1F5; --panel:#FFFFFF; --panel-2:#F6F8FB; --inset:#EDF1F6;
+    --border:#D8DFE7; --border-2:#E7ECF2;
+    --text:#16202B; --muted:#5C6B7A; --faint:#8A98A6;
+    --accent:#E85D0C; --cyan:#0C8FA3;
+    --green:#12A15A; --amber:#BC8410; --red:#D8434A; --violet:#7A5BD6;
+    --grid:#E6EBF1; --grid-strong:#D5DCE4;
+    --glow:0;
+    --shadow:0 1px 2px rgba(20,32,45,.06), 0 8px 24px rgba(20,32,45,.05);
+  }
+
+  *{box-sizing:border-box}
+  body{margin:0}
+  .app{
+    background:var(--bg); color:var(--text);
+    font-family:var(--font-ui); line-height:1.5;
+    min-height:100vh; padding:clamp(14px,2.5vw,28px);
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1440px; margin:0 auto}
+
+  /* ============================ HEADER ============================ */
+  header.top{
+    display:flex; align-items:flex-end; justify-content:space-between;
+    gap:20px; flex-wrap:wrap; margin-bottom:20px;
+  }
+  .brand{display:flex; align-items:center; gap:13px}
+  .mark{
+    position:relative; width:40px; height:40px; border-radius:11px; flex:none;
+    background:linear-gradient(150deg,var(--accent),color-mix(in srgb,var(--accent) 55%, var(--violet)));
+    display:grid; place-items:center; box-shadow:0 6px 18px color-mix(in srgb,var(--accent) 35%, transparent);
+  }
+  .mark svg{width:22px; height:22px; display:block}
+  .mark .pulse{
+    position:absolute; right:-3px; top:-3px; width:11px; height:11px; border-radius:50%;
+    background:var(--green); border:2px solid var(--panel);
+  }
+  .app:not([data-reduce]) .mark .pulse{animation:pulse 2s ease-in-out infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--green) 70%,transparent)}50%{box-shadow:0 0 0 5px transparent}}
+  h1{font-size:clamp(1.15rem,2.4vw,1.5rem); margin:0; letter-spacing:-.02em; font-weight:750; text-wrap:balance}
+  .brand .sub{font-size:.78rem; color:var(--muted); margin-top:1px; letter-spacing:.01em}
+  .eyebrow{font-family:var(--font-mono); font-size:.66rem; letter-spacing:.22em; text-transform:uppercase; color:var(--accent); font-weight:600}
+
+  .toolbar{display:flex; align-items:center; gap:8px}
+  .btn{
+    font-family:var(--font-ui); font-size:.82rem; font-weight:600; color:var(--text);
+    background:var(--panel); border:1px solid var(--border); border-radius:10px;
+    padding:9px 14px; cursor:pointer; display:inline-flex; align-items:center; gap:8px;
+    transition:border-color .15s, transform .06s, background .15s;
+  }
+  .btn:hover{border-color:var(--accent)}
+  .btn:active{transform:translateY(1px)}
+  .btn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  .btn.run{
+    background:linear-gradient(180deg,var(--accent),color-mix(in srgb,var(--accent) 82%, #000));
+    color:#fff; border-color:transparent; box-shadow:0 4px 14px color-mix(in srgb,var(--accent) 30%,transparent);
+  }
+  .btn.run:hover{filter:brightness(1.06); border-color:transparent}
+  .icon-btn{width:38px; height:38px; padding:0; justify-content:center}
+  .icon-btn svg{width:17px; height:17px}
+
+  /* ============================ LAYOUT ============================ */
+  .layout{display:grid; grid-template-columns:320px minmax(0,1fr); gap:18px; align-items:start}
+  @media (max-width:960px){ .layout{grid-template-columns:1fr} }
+
+  .panel{
+    background:var(--panel); border:1px solid var(--border); border-radius:16px;
+    box-shadow:var(--shadow);
+  }
+
+  /* ---------- control bay ---------- */
+  .bay{position:sticky; top:14px; padding:6px 6px 10px}
+  @media (max-width:960px){ .bay{position:static} }
+  .group{padding:14px 15px 6px; border-bottom:1px solid var(--border-2)}
+  .group:last-child{border-bottom:0}
+  .group>.g-head{
+    display:flex; align-items:center; gap:8px; margin-bottom:11px;
+  }
+  .g-head .dot{width:7px; height:7px; border-radius:2px; background:var(--accent)}
+  .g-head h3{margin:0; font-family:var(--font-mono); font-size:.7rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); font-weight:600}
+
+  .segbtns{display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:6px}
+  .seg{
+    font-family:var(--font-ui); font-size:.78rem; font-weight:600; text-align:center;
+    padding:9px 4px; border-radius:9px; cursor:pointer; color:var(--muted);
+    background:var(--panel-2); border:1px solid var(--border); transition:.15s;
+  }
+  .seg:hover{color:var(--text)}
+  .seg[aria-pressed="true"]{color:#fff; background:var(--cyan); border-color:transparent; box-shadow:0 3px 10px color-mix(in srgb,var(--cyan) 30%,transparent)}
+  :root[data-theme="light"] .seg[aria-pressed="true"], :root:not([data-theme]) .seg[aria-pressed="true"]{color:#fff}
+
+  /* ---- custom drive-cycle CSV import ---- */
+  .seg-custom[hidden], .csvunit[hidden]{display:none}   /* explicit: our display:flex would otherwise beat [hidden] */
+  .seg-custom{grid-column:1/-1; display:flex; align-items:center; justify-content:center; gap:7px; overflow:hidden}
+  .seg-custom .cs-ico{width:13px; height:13px; flex:none; opacity:.85}
+  .seg-custom .cs-name{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-family:var(--font-mono); font-size:.72rem; max-width:100%}
+  .import-row{display:flex; align-items:stretch; gap:7px; margin-top:6px}
+  .import-btn{flex:1; display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    font-family:var(--font-ui); font-size:.78rem; font-weight:600; color:var(--muted);
+    background:var(--panel-2); border:1px dashed var(--border); border-radius:9px; padding:9px 10px; cursor:pointer; transition:.15s}
+  .import-btn:hover{border-color:var(--accent); color:var(--accent)}
+  .import-btn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  .import-btn svg{width:15px; height:15px; flex:none}
+  .csvunit{display:flex; gap:2px; background:var(--panel-2); border:1px solid var(--border); border-radius:9px; padding:2px}
+  .csvunit .u{display:grid; place-items:center; font-family:var(--font-mono); font-size:.64rem; padding:0 7px; border-radius:7px; cursor:pointer; color:var(--muted); transition:.12s}
+  .csvunit .u:hover{color:var(--text)}
+  .csvunit .u[aria-pressed="true"]{background:var(--accent); color:#fff}
+  .import-msg{font-family:var(--font-mono); font-size:.71rem; line-height:1.45; margin-top:8px}
+  .import-msg:empty{display:none}
+  .import-msg[data-kind="ok"]{color:var(--green)}
+  .import-msg[data-kind="err"]{color:var(--red)}
+  .import-hint{font-size:.67rem; color:var(--faint); margin-top:6px; line-height:1.45}
+  .import-hint b{color:var(--muted); font-weight:600}
+
+  .ctrl{margin-bottom:13px}
+  .ctrl .row{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px}
+  .ctrl label{font-size:.82rem; color:var(--text); font-weight:500}
+  .ctrl .val{font-family:var(--font-mono); font-size:.82rem; font-weight:600; color:var(--accent); font-variant-numeric:tabular-nums}
+  .ctrl .val small{color:var(--muted); font-weight:500; font-size:.72rem; margin-left:1px}
+
+  input[type=range]{
+    -webkit-appearance:none; appearance:none; width:100%; height:5px; border-radius:5px;
+    background:var(--inset); outline:none; cursor:pointer;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; appearance:none; width:17px; height:17px; border-radius:50%;
+    background:var(--panel); border:2.5px solid var(--accent); cursor:pointer;
+    box-shadow:0 1px 4px rgba(0,0,0,.2); transition:transform .08s;
+  }
+  input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.12)}
+  input[type=range]::-moz-range-thumb{width:15px; height:15px; border-radius:50%; background:var(--panel); border:2.5px solid var(--accent); cursor:pointer}
+  input[type=range]:focus-visible::-webkit-slider-thumb{outline:2px solid var(--accent); outline-offset:2px}
+
+  .chemtoggle{display:grid; grid-template-columns:1fr 1fr; gap:6px}
+  .chem{font-size:.8rem; font-weight:600; text-align:center; padding:8px; border-radius:9px; cursor:pointer;
+    color:var(--muted); background:var(--panel-2); border:1px solid var(--border); transition:.15s}
+  .chem[aria-pressed="true"]{color:var(--text); border-color:var(--accent); background:color-mix(in srgb,var(--accent) 9%,var(--panel))}
+
+  .spec{
+    margin:2px 9px 8px; padding:10px 12px; border-radius:11px; background:var(--panel-2);
+    border:1px solid var(--border-2); display:grid; grid-template-columns:1fr 1fr; gap:6px 10px;
+  }
+  .spec div{display:flex; justify-content:space-between; gap:8px; font-size:.74rem}
+  .spec .k{color:var(--muted)}
+  .spec .v{font-family:var(--font-mono); font-weight:600; font-variant-numeric:tabular-nums}
+
+  /* ---------- readout column ---------- */
+  .stack{display:flex; flex-direction:column; gap:18px; min-width:0}
+
+  .hero{padding:16px 18px 8px; position:relative; overflow:hidden}
+  .hero .h-top{display:flex; justify-content:space-between; align-items:flex-start; gap:16px; margin-bottom:6px}
+  .hero .title-s{font-family:var(--font-mono); font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted)}
+  .hero h2{margin:2px 0 0; font-size:1.02rem; font-weight:700; letter-spacing:-.01em}
+  .speedbig{text-align:right; font-family:var(--font-mono); line-height:1}
+  .speedbig .n{font-size:2.1rem; font-weight:700; color:var(--cyan); font-variant-numeric:tabular-nums}
+  .speedbig .u{font-size:.72rem; color:var(--muted); letter-spacing:.08em}
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 4px}
+  .chip{
+    display:flex; align-items:center; gap:7px; padding:6px 11px; border-radius:9px;
+    background:var(--panel-2); border:1px solid var(--border-2); font-size:.76rem; color:var(--muted);
+  }
+  .chip b{font-family:var(--font-mono); color:var(--text); font-weight:600; font-variant-numeric:tabular-nums}
+  .chip .sw{width:8px; height:8px; border-radius:2px}
+  canvas{display:block; width:100%}
+  .c-hero{height:190px}
+
+  /* ---------- instruments row ---------- */
+  .insts{display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:18px}
+  @media (max-width:1180px){ .insts{grid-template-columns:1fr 1fr} }
+  @media (max-width:520px){ .insts{grid-template-columns:1fr 1fr} }
+  .gauge{padding:14px 12px 12px; text-align:center; position:relative}
+  .gauge .g-label{font-family:var(--font-mono); font-size:.66rem; letter-spacing:.13em; text-transform:uppercase; color:var(--muted); margin-bottom:2px}
+  .c-gauge{height:132px}
+  .gauge .g-foot{font-size:.72rem; color:var(--muted); margin-top:4px}
+  .gauge .g-foot b{font-family:var(--font-mono); color:var(--text); font-variant-numeric:tabular-nums}
+  .err-pill{display:inline-block; font-family:var(--font-mono); font-size:.66rem; padding:2px 7px; border-radius:20px; margin-top:5px; font-variant-numeric:tabular-nums}
+
+  .kpi{padding:15px 15px; display:flex; flex-direction:column; justify-content:center; gap:3px}
+  .kpi .k-label{font-family:var(--font-mono); font-size:.64rem; letter-spacing:.13em; text-transform:uppercase; color:var(--muted)}
+  .kpi .k-val{font-family:var(--font-mono); font-size:1.72rem; font-weight:700; letter-spacing:-.01em; font-variant-numeric:tabular-nums; line-height:1.05}
+  .kpi .k-val small{font-size:.8rem; color:var(--muted); font-weight:600; margin-left:2px}
+  .kpi .k-sub{font-size:.72rem; color:var(--muted)}
+
+  /* ---------- traces grid ---------- */
+  .traces{display:grid; grid-template-columns:1fr 1fr; gap:18px}
+  @media (max-width:840px){ .traces{grid-template-columns:1fr} }
+  .trace{padding:14px 15px 10px}
+  .trace .t-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px}
+  .trace h3{margin:0; font-size:.92rem; font-weight:650}
+  .trace .t-meta{font-family:var(--font-mono); font-size:.72rem; color:var(--muted); font-variant-numeric:tabular-nums}
+  .c-trace{height:172px}
+  .legend{display:flex; gap:13px; flex-wrap:wrap; margin-top:7px}
+  .legend span{display:flex; align-items:center; gap:6px; font-size:.72rem; color:var(--muted)}
+  .legend .sw{width:11px; height:3px; border-radius:2px}
+  .legend .sw.dash{background:none!important; border-top:2px dashed}
+
+  footer.note{margin-top:20px; padding:14px 16px; font-size:.76rem; color:var(--muted); line-height:1.6}
+  footer.note b{color:var(--text); font-weight:600}
+  footer.note code{font-family:var(--font-mono); font-size:.72rem; background:var(--panel-2); padding:1px 6px; border-radius:5px; border:1px solid var(--border-2)}
+
+  /* ---------- mode-switch CTAs ---------- */
+  .modes{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:18px}
+  @media (max-width:620px){ .modes{grid-template-columns:1fr} }
+  .mode-cta{
+    display:flex; align-items:center; gap:13px; text-align:left; cursor:pointer; width:100%;
+    background:var(--panel); border:1px solid var(--border); border-radius:16px;
+    padding:14px 16px; box-shadow:var(--shadow); font-family:var(--font-ui);
+    transition:border-color .15s, transform .06s, background .15s;
+  }
+  .mode-cta:hover{border-color:var(--accent)}
+  .mode-cta:active{transform:translateY(1px)}
+  .mode-cta:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  .mode-cta[aria-pressed="true"]{
+    border-color:transparent;
+    background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 12%,var(--panel)),var(--panel));
+    box-shadow:0 0 0 1.5px var(--accent), var(--shadow);
+  }
+  .mc-ico{width:42px; height:42px; border-radius:11px; flex:none; display:grid; place-items:center;
+    background:var(--panel-2); color:var(--muted); border:1px solid var(--border-2); transition:.15s}
+  .mc-ico svg{width:22px; height:22px}
+  .mode-cta[aria-pressed="true"] .mc-ico{background:var(--accent); color:#fff; border-color:transparent}
+  .mc-body{display:flex; flex-direction:column; gap:1px; flex:1; min-width:0}
+  .mc-title{font-size:.98rem; font-weight:700; letter-spacing:-.01em}
+  .mc-sub{font-size:.73rem; color:var(--muted)}
+  .mc-stat{font-family:var(--font-mono); font-size:1.18rem; font-weight:700; font-variant-numeric:tabular-nums; color:var(--accent)}
+
+  .app[data-mode="soh"] .only-thermal{display:none}
+  .app[data-mode="thermal"] .only-soh{display:none}
+  .app[data-mode="soh"] #viewThermal{display:none}
+  .app[data-mode="thermal"] #viewSOH{display:none}
+
+  @media (prefers-reduced-motion:reduce){ *{animation-duration:.001ms!important; transition-duration:.001ms!important} }
+</style>
+
+<div class="app" id="app" data-mode="soh">
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <div class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M7 3h6l-1 6h4l-8 12 2-9H6l1-9z" fill="#fff"/></svg>
+        <span class="pulse"></span>
+      </div>
+      <div>
+        <div class="eyebrow">Drive Cycle &middot; Battery Analytics</div>
+        <h1>EV Battery Simulator</h1>
+        <div class="sub">Drive a cycle, then dive into State of Health or Thermal behaviour.</div>
+      </div>
+    </div>
+    <div class="toolbar">
+      <button class="btn run" id="runBtn" title="Animate the drive cycle">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        Run cycle
+      </button>
+      <button class="btn icon-btn" id="themeBtn" title="Toggle theme" aria-label="Toggle light / dark theme">
+        <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <nav class="modes" id="modes" aria-label="Analysis mode">
+    <button class="mode-cta" data-mode="soh" aria-pressed="true">
+      <span class="mc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h4l2.5-6 4 13 2.5-9 1.5 2H22"/></svg></span>
+      <span class="mc-body"><span class="mc-title">State of Health</span><span class="mc-sub">Capacity &amp; resistance from the logs</span></span>
+      <span class="mc-stat" id="ctaSOHstat">88.1%</span>
+    </button>
+    <button class="mode-cta" data-mode="thermal" aria-pressed="false">
+      <span class="mc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V5a2 2 0 0 0-4 0v9.76a4 4 0 1 0 4 0z"/></svg></span>
+      <span class="mc-body"><span class="mc-title">Thermal Analysis</span><span class="mc-sub">Heat generation &amp; pack temperature</span></span>
+      <span class="mc-stat" id="ctaThermStat">38&deg;C</span>
+    </button>
+  </nav>
+
+  <div class="layout">
+
+    <!-- ============== CONTROL BAY ============== -->
+    <aside class="panel bay" aria-label="Simulation controls">
+      <div class="group">
+        <div class="g-head"><span class="dot"></span><h3>Drive Cycle</h3></div>
+        <div class="segbtns" id="cycleSeg">
+          <div class="seg" data-cyc="wltp" aria-pressed="true" role="button" tabindex="0">WLTP</div>
+          <div class="seg" data-cyc="urban" aria-pressed="false" role="button" tabindex="0">Urban</div>
+          <div class="seg" data-cyc="highway" aria-pressed="false" role="button" tabindex="0">Highway</div>
+          <div class="seg seg-custom" id="customSeg" data-cyc="custom" role="button" tabindex="0" aria-pressed="false" hidden>
+            <svg class="cs-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v4a1 1 0 0 0 1 1h4M6 3h9l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/></svg>
+            <span class="cs-name">custom.csv</span>
+          </div>
+        </div>
+        <div class="import-row">
+          <button class="import-btn" id="importBtn" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3m0 0L8 7m4-4 4 4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+            <span id="importLabel">Import CSV</span>
+          </button>
+          <div class="csvunit" id="csvUnit" hidden aria-label="Speed unit of imported data">
+            <span class="u" data-u="kmh" role="button" tabindex="0">km/h</span>
+            <span class="u" data-u="ms" role="button" tabindex="0">m/s</span>
+            <span class="u" data-u="mph" role="button" tabindex="0">mph</span>
+          </div>
+        </div>
+        <input type="file" id="csvInput" accept=".csv,.txt,text/csv,text/plain" hidden>
+        <div class="import-msg" id="importMsg"></div>
+        <div class="import-hint">Columns: <b>time (s)</b>, <b>speed</b> &mdash; or a single speed column at 1&nbsp;Hz. Resampled to 1&nbsp;Hz.</div>
+      </div>
+
+      <div class="group">
+        <div class="g-head"><span class="dot"></span><h3>Vehicle</h3></div>
+        <div class="ctrl">
+          <div class="row"><label for="mass">Mass</label><span class="val" id="massV">1650<small> kg</small></span></div>
+          <input type="range" id="mass" min="1200" max="2600" step="25" value="1650">
+        </div>
+        <div class="ctrl">
+          <div class="row"><label for="cd">Drag coefficient &middot; C<sub>d</sub></label><span class="val" id="cdV">0.28</span></div>
+          <input type="range" id="cd" min="0.20" max="0.42" step="0.005" value="0.28">
+        </div>
+      </div>
+
+      <div class="group">
+        <div class="g-head"><span class="dot"></span><h3>Battery Pack</h3></div>
+        <div class="chemtoggle" id="chemSeg" style="margin-bottom:12px">
+          <div class="chem" data-chem="nmc" aria-pressed="true" role="button" tabindex="0">NMC</div>
+          <div class="chem" data-chem="lfp" aria-pressed="false" role="button" tabindex="0">LFP</div>
+        </div>
+        <div class="ctrl">
+          <div class="row"><label for="energy">Pack energy</label><span class="val" id="energyV">60<small> kWh</small></span></div>
+          <input type="range" id="energy" min="30" max="110" step="2" value="60">
+        </div>
+        <div class="ctrl">
+          <div class="row"><label for="soc0">Start SOC</label><span class="val" id="soc0V">80<small> %</small></span></div>
+          <input type="range" id="soc0" min="40" max="100" step="1" value="80">
+        </div>
+      </div>
+
+      <div class="group">
+        <div class="g-head"><span class="dot" style="background:var(--amber)"></span><h3>Battery Ageing</h3></div>
+        <div class="ctrl">
+          <div class="row"><label for="rgrow">Resistance growth</label><span class="val" id="rgrowV">1.40<small> &times;</small></span></div>
+          <input type="range" id="rgrow" min="1.0" max="2.0" step="0.05" value="1.40">
+        </div>
+      </div>
+
+      <div class="group only-soh">
+        <div class="g-head"><span class="dot" style="background:var(--green)"></span><h3>SOH Test</h3></div>
+        <div class="ctrl">
+          <div class="row"><label for="sohc">True capacity SOH</label><span class="val" id="sohcV">88<small> %</small></span></div>
+          <input type="range" id="sohc" min="70" max="100" step="0.5" value="88">
+        </div>
+        <div class="ctrl">
+          <div class="row"><label for="noise">Sensor noise</label><span class="val" id="noiseV">1.0<small> &times;</small></span></div>
+          <input type="range" id="noise" min="0" max="2.5" step="0.1" value="1.0">
+        </div>
+      </div>
+
+      <div class="group only-thermal">
+        <div class="g-head"><span class="dot" style="background:var(--red)"></span><h3>Cooling &amp; Heat</h3></div>
+        <div class="segbtns" id="coolSeg" style="margin-bottom:12px">
+          <div class="seg" data-cool="air" aria-pressed="false" role="button" tabindex="0">Air</div>
+          <div class="seg" data-cool="liquid" aria-pressed="true" role="button" tabindex="0">Liquid</div>
+          <div class="seg" data-cool="immersion" aria-pressed="false" role="button" tabindex="0">Immersion</div>
+        </div>
+        <div class="ctrl">
+          <div class="row"><label for="tcool">Coolant temperature</label><span class="val" id="tcoolV">25<small> &deg;C</small></span></div>
+          <input type="range" id="tcool" min="10" max="40" step="1" value="25">
+        </div>
+        <div class="ctrl">
+          <div class="row"><label for="dudt">Entropic dU/dT</label><span class="val" id="dudtV">-0.10<small> mV/K</small></span></div>
+          <input type="range" id="dudt" min="-0.40" max="0.40" step="0.02" value="-0.10">
+        </div>
+      </div>
+
+      <div class="spec" id="spec" aria-label="Derived pack specification"></div>
+    </aside>
+
+    <!-- ============== READOUTS · SOH ============== -->
+    <div class="stack" id="viewSOH">
+
+      <!-- hero drive cycle -->
+      <section class="panel hero">
+        <div class="h-top">
+          <div>
+            <div class="title-s">Speed profile &middot; 1 Hz</div>
+            <h2 id="cycName">WLTP-class cycle</h2>
+          </div>
+          <div class="speedbig"><span class="n" id="spNow">0</span><br><span class="u">km/h</span></div>
+        </div>
+        <canvas class="c-hero" id="cHero"></canvas>
+        <div class="chips" id="chips"></div>
+      </section>
+
+      <!-- instruments -->
+      <section class="insts">
+        <div class="panel gauge">
+          <div class="g-label">SOH &middot; Capacity</div>
+          <canvas class="c-gauge" id="gCap"></canvas>
+          <div class="g-foot">true <b id="capTrue">88.0%</b></div>
+          <span class="err-pill" id="capErr"></span>
+        </div>
+        <div class="panel gauge">
+          <div class="g-label">SOH &middot; Resistance</div>
+          <canvas class="c-gauge" id="gRes"></canvas>
+          <div class="g-foot">true <b id="resTrue">60.0%</b></div>
+          <span class="err-pill" id="resErr"></span>
+        </div>
+        <div class="panel kpi">
+          <div class="k-label">Consumption</div>
+          <div class="k-val" id="kCons">15.1<small> kWh/100km</small></div>
+          <div class="k-sub" id="kConsSub">24.3 km &middot; 3.68 kWh drawn</div>
+        </div>
+        <div class="panel kpi">
+          <div class="k-label">Usable range now</div>
+          <div class="k-val" id="kRange">352<small> km</small></div>
+          <div class="k-sub" id="kRangeSub">EOL &asymp; 1271 full cycles</div>
+        </div>
+      </section>
+
+      <!-- traces -->
+      <section class="traces">
+        <div class="panel trace">
+          <div class="t-head"><h3>Battery load</h3><span class="t-meta" id="mLoad"></span></div>
+          <canvas class="c-trace" id="cLoad"></canvas>
+          <div class="legend">
+            <span><i class="sw" style="background:var(--accent)"></i>Power</span>
+            <span><i class="sw" style="background:var(--cyan)"></i>Current</span>
+            <span>traction &#9650; &middot; regen &#9660;</span>
+          </div>
+        </div>
+        <div class="panel trace">
+          <div class="t-head"><h3>State of charge</h3><span class="t-meta" id="mSoc"></span></div>
+          <canvas class="c-trace" id="cSoc"></canvas>
+          <div class="legend"><span><i class="sw" style="background:var(--green)"></i>SOC &middot; Coulomb counting</span></div>
+        </div>
+        <div class="panel trace">
+          <div class="t-head"><h3>Overpotential fit &rarr; resistance</h3><span class="t-meta" id="mRes"></span></div>
+          <canvas class="c-trace" id="cScatter"></canvas>
+          <div class="legend">
+            <span><i class="sw" style="background:var(--violet)"></i>&eta; = V<sub>ocv</sub> &minus; V</span>
+            <span><i class="sw dash" style="border-color:var(--text)"></i>fit &eta; = R&middot;I + c</span>
+          </div>
+        </div>
+        <div class="panel trace">
+          <div class="t-head"><h3>Life projection</h3><span class="t-meta" id="mLife"></span></div>
+          <canvas class="c-trace" id="cLife"></canvas>
+          <div class="legend">
+            <span><i class="sw" style="background:var(--green)"></i>SOH capacity</span>
+            <span><i class="sw dash" style="border-color:var(--accent)"></i>R / R<sub>BOL</sub></span>
+            <span><i class="sw" style="background:var(--red)"></i>EOL 80%</span>
+          </div>
+        </div>
+      </section>
+
+      <footer class="panel note">
+        <b>How it works.</b> The speed trace drives a longitudinal vehicle model (rolling + aero + inertia, drivetrain losses, regen) to get the pack's power demand. An R-int equivalent-circuit model turns that into current, voltage and SOC. The two SOH figures are then estimated <b>blind from those logs</b>: capacity by ampere-hour counting between two rest-OCV points over a multi-cycle test, resistance by regressing overpotential against current (<code>&eta; = R&middot;I + c</code>). Drag <b>Battery Condition</b> and watch the estimates track the true state. Model is illustrative &mdash; a representative WLTP-class trace, not the exact regulatory cycle.
+      </footer>
+    </div>
+
+    <!-- ============== READOUTS · THERMAL ============== -->
+    <div class="stack" id="viewThermal">
+
+      <!-- hero: pack temperature transient -->
+      <section class="panel hero">
+        <div class="h-top">
+          <div>
+            <div class="title-s">Pack temperature &middot; 8 cycles back-to-back</div>
+            <h2>Thermal transient</h2>
+          </div>
+          <div class="speedbig"><span class="n" id="tpNow" style="color:var(--accent)">0</span><br><span class="u">&deg;C peak</span></div>
+        </div>
+        <canvas class="c-hero" id="cThermHero"></canvas>
+        <div class="chips" id="thChips"></div>
+      </section>
+
+      <!-- instruments -->
+      <section class="insts">
+        <div class="panel gauge">
+          <div class="g-label">Peak temperature</div>
+          <canvas class="c-gauge" id="gTemp"></canvas>
+          <div class="g-foot" id="gTempFoot">limit <b>45&deg;C</b></div>
+        </div>
+        <div class="panel gauge">
+          <div class="g-label">Heat split</div>
+          <canvas class="c-gauge" id="dHeat"></canvas>
+          <div class="legend" style="justify-content:center">
+            <span><i class="sw" style="background:var(--accent)"></i>Joule</span>
+            <span><i class="sw" style="background:var(--violet)"></i>Entropic</span>
+          </div>
+        </div>
+        <div class="panel kpi">
+          <div class="k-label">Cooling load</div>
+          <div class="k-val" id="kCool">1.2<small> kW</small></div>
+          <div class="k-sub" id="kCoolSub">min cooling to hold coolant temp</div>
+        </div>
+        <div class="panel kpi">
+          <div class="k-label">Thermal time constant</div>
+          <div class="k-val" id="kTau">11.0<small> min</small></div>
+          <div class="k-sub" id="kTauSub">peak C-rate</div>
+        </div>
+      </section>
+
+      <!-- traces -->
+      <section class="traces">
+        <div class="panel trace">
+          <div class="t-head"><h3>Heat generation</h3><span class="t-meta" id="mHeat"></span></div>
+          <canvas class="c-trace" id="cHeat"></canvas>
+          <div class="legend">
+            <span><i class="sw" style="background:var(--accent)"></i>Joule I&sup2;R</span>
+            <span><i class="sw" style="background:var(--violet)"></i>Entropic</span>
+          </div>
+        </div>
+        <div class="panel trace">
+          <div class="t-head"><h3>Heat balance</h3><span class="t-meta" id="mBalance"></span></div>
+          <canvas class="c-trace" id="cBalance"></canvas>
+          <div class="legend">
+            <span><i class="sw" style="background:var(--accent)"></i>Generated</span>
+            <span><i class="sw" style="background:#3B82F6"></i>Cooling removed</span>
+          </div>
+        </div>
+        <div class="panel trace">
+          <div class="t-head"><h3>Temperature vs ageing</h3><span class="t-meta" id="mSensAge"></span></div>
+          <canvas class="c-trace" id="cSensAge"></canvas>
+          <div class="legend"><span><i class="sw" style="background:var(--accent)"></i>steady-state temp vs resistance growth</span></div>
+        </div>
+        <div class="panel trace">
+          <div class="t-head"><h3>Temperature vs cooling</h3><span class="t-meta" id="mSensCool"></span></div>
+          <canvas class="c-trace" id="cSensCool"></canvas>
+          <div class="legend"><span><i class="sw" style="background:var(--accent)"></i>steady-state temp vs cooling power (UA)</span></div>
+        </div>
+      </section>
+
+      <footer class="panel note">
+        <b>How it works.</b> Heat comes from two sources: irreversible <b>Joule heating</b> (I&sup2;R, which grows as the pack ages and resistance rises) and reversible <b>entropic heat</b> (I&middot;T&middot;dU/dT). A lumped-capacitance balance <code>C&middot;dT/dt = Q<sub>gen</sub> &minus; UA&middot;(T&minus;T<sub>cool</sub>)</code> integrates pack temperature over eight back-to-back cycles; steady-state temperature is <code>T<sub>cool</sub> + Q<sub>avg</sub>/UA</code>. Push <b>Resistance growth</b> up (Battery Ageing group, shared with the SOH view) and watch an aged pack run hotter.
+      </footer>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+(function(){
+"use strict";
+const $ = s => document.querySelector(s);
+const app = $("#app");
+const reduceMotion = window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+if(reduceMotion) app.setAttribute("data-reduce","");
+
+/* ============================ PHYSICS ============================ */
+const G=9.81, RHO=1.225, AREA=2.30, CRR=0.010, ROT=0.05,
+      ETA=0.97*0.92, P_AUX=700, P_MOT_MAX=150e3, P_REGEN_MAX=60e3, V_REGEN_MIN=1.5,
+      Q_CELL=5.0, R_CELL=0.030;
+
+const CHEM={
+  nmc:{ns:96, vnom:3.6, soc:[0,.05,.1,.2,.3,.4,.5,.6,.7,.8,.9,.95,1],
+        ocv:[3.0,3.42,3.52,3.58,3.63,3.68,3.74,3.82,3.92,4.02,4.11,4.16,4.20]},
+  lfp:{ns:110, vnom:3.2, soc:[0,.05,.1,.2,.3,.5,.7,.8,.9,.95,1],
+        ocv:[2.80,3.10,3.20,3.25,3.28,3.30,3.32,3.33,3.34,3.42,3.55]}
+};
+
+function interp(x, xs, ys){
+  if(x<=xs[0])return ys[0];
+  const n=xs.length; if(x>=xs[n-1])return ys[n-1];
+  let i=1; while(x>xs[i])i++;
+  const t=(x-xs[i-1])/(xs[i]-xs[i-1]);
+  return ys[i-1]+t*(ys[i]-ys[i-1]);
+}
+function gauss(){ // Box-Muller
+  let u=0,v=0; while(u===0)u=Math.random(); while(v===0)v=Math.random();
+  return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
+}
+function gradient(a){ // central differences, dt=1
+  const n=a.length, g=new Float64Array(n);
+  if(n===1){g[0]=0;return g;}
+  g[0]=a[1]-a[0]; g[n-1]=a[n-1]-a[n-2];
+  for(let i=1;i<n-1;i++)g[i]=(a[i+1]-a[i-1])/2;
+  return g;
+}
+function trapz(y,x){let s=0;for(let i=1;i<y.length;i++)s+=(y[i]+y[i-1])*0.5*(x[i]-x[i-1]);return s;}
+
+/* ---- drive cycle presets ---- */
+function microTrip(vPeak,aAcc,cruise,aDec,idle){
+  const seg=[]; let v=0;
+  while(v<vPeak){v=Math.min(vPeak,v+aAcc);seg.push(v);}
+  for(let i=0;i<Math.round(cruise);i++)seg.push(vPeak);
+  while(v>0){v=Math.max(0,v-aDec);seg.push(v);}
+  for(let i=0;i<Math.round(idle);i++)seg.push(0);
+  return seg;
+}
+const CYCLES={
+  wltp:{name:"WLTP-class cycle", phases:[
+    ["Low",[[15,.9,4,1,8],[33,.8,6,1.1,5],[25,.9,8,1,4],[41,.8,10,1.1,6],[56,.7,14,1,5],[35,.9,8,1.1,4],[20,.9,5,1,12]]],
+    ["Medium",[[45,.8,18,1,4],[60,.7,22,.9,3],[76,.6,20,.9,4],[55,.7,16,.9,3],[68,.6,24,.9,6]]],
+    ["High",[[80,.6,30,.8,3],[97,.5,34,.8,3],[85,.6,28,.8,3],[92,.5,40,.8,5]]],
+    ["Extra-High",[[110,.5,45,.7,2],[131,.4,55,.6,2],[125,.4,60,.7,4]]]
+  ]},
+  urban:{name:"Urban stop-and-go", phases:[
+    ["Urban",[[20,.9,6,1.1,10],[32,.9,8,1.2,6],[45,.8,10,1,8],[28,.9,6,1.1,12],[50,.8,14,1,7],[35,.9,8,1.1,10]]],
+    ["Urban",[[42,.8,12,1,15],[25,.9,5,1.1,14],[48,.8,16,1,9],[30,.9,7,1.1,20],[38,.85,10,1.05,12],[22,.9,6,1.1,16]]]
+  ]},
+  highway:{name:"Highway (aggressive)", phases:[
+    ["Cruise",[[90,1.2,40,1,3],[120,1.4,60,1.2,2],[105,1.1,50,1,3]]],
+    ["Rapid",[[130,1.3,70,1.2,2],[115,1.2,80,1,4],[128,1.3,55,1.1,2]]]
+  ]}
+};
+function buildCycle(key){
+  if(key==='custom') return STATE.customCycle || buildCycle('wltp');
+  const spec=CYCLES[key]; const v=[], ph=[];
+  for(const [label,trips] of spec.phases){
+    for(const [vp,aa,cs,ad,idl] of trips){
+      const seg=microTrip(vp/3.6,aa,cs,ad,idl);
+      for(const s of seg){v.push(s);ph.push(label);}
+    }
+  }
+  const t=new Float64Array(v.length); for(let i=0;i<v.length;i++)t[i]=i;
+  return {t, v:Float64Array.from(v), ph, name:spec.name};
+}
+
+/* ---- parse a user CSV into a 1 Hz drive cycle (time[s], speed) ---- */
+function parseCSVCycle(text, unitOverride){
+  const lines = text.replace(/^﻿/,'')
+    .split(/\r\n|\r|\n/).map(l=>l.trim())
+    .filter(l=>l.length && !l.startsWith('#') && !l.startsWith('//'));
+  if(lines.length < 2) throw new Error('File has fewer than 2 rows.');
+
+  // pick the delimiter that splits the first row into the most fields
+  let delim=',', best=1;
+  for(const d of [',',';','\t','|']){ const c=lines[0].split(d).length; if(c>best){best=c; delim=d;} }
+  const whitespace = best<=1;
+  const split = row => (whitespace ? row.split(/\s+/) : row.split(delim)).map(s=>s.trim());
+
+  const first = split(lines[0]);
+  const headerish = first.some(c=>c!=='' && isNaN(Number(c)));
+  const single = first.length === 1;
+  let startRow=0, tCol=0, vCol=1, unit='kmh';
+  if(headerish){
+    startRow = 1;
+    const lc = first.map(c=>c.toLowerCase());
+    if(!single){
+      const ti = lc.findIndex(c=>/\b(time|t|sec|secs|second|seconds|timestamp|elapsed)\b/.test(c) || /\(s\)/.test(c));
+      const vi = lc.findIndex(c=>/(speed|velocity|vel|kph|km\/?h|mph|m\/?s)/.test(c) || /\bv\b/.test(c));
+      tCol = ti>=0 ? ti : 0;
+      vCol = vi>=0 ? vi : (tCol===0 ? 1 : 0);
+    } else { vCol = 0; }
+    const vh = lc[vCol] || '';
+    if(/mph|mile/.test(vh)) unit='mph';
+    else if(/(m\/s|m\.s|mps|_ms|meters?\/s|metres?\/s)/.test(vh) && !/km/.test(vh)) unit='ms';
+    else unit='kmh';
+  }
+  if(unitOverride) unit = unitOverride;
+
+  const T=[], V=[];
+  for(let i=startRow;i<lines.length;i++){
+    const c = split(lines[i]);
+    const s = single ? Number(c[0]) : Number(c[vCol]);
+    const t = single ? T.length : Number(c[tCol]);
+    if(!isFinite(t) || !isFinite(s)) continue;
+    T.push(t); V.push(Math.max(0, s));
+  }
+  if(V.length < 2) throw new Error('Could not read 2+ numeric rows. Expected columns: time, speed.');
+
+  // sort by time, drop duplicate timestamps
+  const order = [...T.keys()].sort((a,b)=>T[a]-T[b]);
+  const Ts=[], Vs=[];
+  for(const i of order){ if(Ts.length && T[i]===Ts[Ts.length-1]) { Vs[Vs.length-1]=V[i]; continue; } Ts.push(T[i]); Vs.push(V[i]); }
+  const t0 = Ts[0]; for(let i=0;i<Ts.length;i++) Ts[i]-=t0;
+  const dur = Ts[Ts.length-1];
+  if(!(dur>0)) throw new Error('Time column is not increasing.');
+  const n = Math.round(dur)+1;
+  if(n > 20000) throw new Error('Cycle is over 20000 s — is the time column in milliseconds? Use seconds.');
+
+  const k = unit==='mph' ? 0.44704 : unit==='ms' ? 1 : 1/3.6;   // -> m/s
+  const t=new Float64Array(n), v=new Float64Array(n);
+  let vmax=0;
+  for(let j=0;j<n;j++){ t[j]=j; v[j]=Math.max(0, interp(j, Ts, Vs))*k; if(v[j]>vmax)vmax=v[j]; }
+  if(vmax*3.6 < 1) throw new Error('No vehicle motion detected (all speeds ~0). Check the speed column / unit.');
+
+  return { t, v, ph:new Array(n).fill('Custom'), name:'Custom cycle',
+           unit, dur:n-1, dist:trapz(v,t)/1000, vmaxKmh:vmax*3.6, nSrc:V.length };
+}
+
+/* ---- vehicle → battery power ---- */
+function batteryPower(t,v,mass,cd){
+  const a=gradient(v), n=v.length, P=new Float64Array(n);
+  for(let i=0;i<n;i++){
+    const roll = v[i]>0.1 ? CRR*mass*G : 0;
+    const aero = 0.5*RHO*cd*AREA*v[i]*v[i];
+    const acc  = mass*(1+ROT)*a[i];
+    const Pw = (roll+aero+acc)*v[i];
+    let p;
+    if(Pw>=0){ p=Math.min(Pw/ETA, P_MOT_MAX); }
+    else if(v[i]>V_REGEN_MIN){ p=Math.max(Pw*ETA, -P_REGEN_MAX); }
+    else p=0;
+    P[i]=p+P_AUX;
+  }
+  return P;
+}
+
+/* ---- pack ECM ---- */
+function makePack(energyKWh, chemKey){
+  const ch=CHEM[chemKey]; const Ns=ch.ns;
+  const cellWh=ch.vnom*Q_CELL;
+  const Np=Math.max(1,Math.round(energyKWh*1000/(Ns*cellWh)));
+  const Qpack=Np*Q_CELL, Vnom=Ns*ch.vnom, Rpack=R_CELL*Ns/Np;
+  const socTab=ch.soc, ocvTab=ch.ocv;
+  return {
+    Ns,Np,Qpack,Vnom,Rpack, Ebol:Qpack*Vnom/1000,
+    packOCV:s=>Ns*interp(s,socTab,ocvTab),
+    socFromOCV:vp=>interp(vp/Ns,ocvTab,socTab)
+  };
+}
+function simulate(t,P,soc0,sohc,rgrow,pack,noiseK){
+  const n=t.length, dt=gradient(t);
+  const Q=pack.Qpack*sohc, R=pack.Rpack*rgrow;
+  const V=new Float64Array(n),I=new Float64Array(n),SOC=new Float64Array(n),PP=new Float64Array(n);
+  let s=soc0;
+  for(let k=0;k<n;k++){
+    const ocv=pack.packOCV(s);
+    let p=P[k];
+    const pmax=0.95*ocv*ocv/(4*R);
+    if(p>pmax)p=pmax; else if(p<-pmax)p=-pmax;
+    const disc=Math.max(ocv*ocv-4*R*p,0);
+    const i=(ocv-Math.sqrt(disc))/(2*R);
+    let v=ocv-i*R;
+    s=Math.min(1,Math.max(0,s - i*dt[k]/(3600*Q)));
+    if(noiseK>0){v+=gauss()*0.30*noiseK; }
+    let im=i; if(noiseK>0)im+=gauss()*0.50*noiseK;
+    V[k]=v; I[k]=im; SOC[k]=s; PP[k]=v*im;
+  }
+  return {t,V,I,SOC,P:PP,Qtrue:Q,Rtrue:R};
+}
+
+/* ---- SOH estimators ---- */
+function capacityTest(cycle,soc0,sohc,rgrow,pack,noiseK){
+  const {t,v}=cycle; const P1=batteryPower(t,v,STATE.mass,STATE.cd);
+  const probe=simulate(t,P1,Math.min(0.9,soc0+0.1),sohc,rgrow,pack,0);
+  const ahCyc=trapz(probe.I,t)/3600;
+  const startSOC=0.90;
+  let nRep=Math.round(0.35/(ahCyc/probe.Qtrue));
+  nRep=Math.min(8,Math.max(3,nRep||3));
+  const PRE=90, POST=120, L=t.length;
+  const total=PRE+nRep*L+POST;
+  const Pf=new Float64Array(total); // rests = 0
+  for(let r=0;r<nRep;r++)for(let i=0;i<L;i++)Pf[PRE+r*L+i]=P1[i];
+  const tf=new Float64Array(total); for(let i=0;i<total;i++)tf[i]=i;
+  const sim=simulate(tf,Pf,startSOC,sohc,rgrow,pack,noiseK);
+  const dStart=PRE, dEnd=PRE+nRep*L;
+  let ocvS=0; for(let i=20;i<PRE-3;i++)ocvS+=sim.V[i]; ocvS/=(PRE-23);
+  let ocvE=0,cE=0; for(let i=dEnd+8;i<dEnd+40&&i<total;i++){ocvE+=sim.V[i];cE++;} ocvE/=cE;
+  const socS=pack.socFromOCV(ocvS), socE=pack.socFromOCV(ocvE);
+  let ah=0; for(let i=dStart+1;i<dEnd;i++)ah+=(sim.I[i]+sim.I[i-1])*0.5; ah/=3600;
+  const Qest=ah/Math.max(socS-socE,1e-6);
+  const sohEst=Qest/pack.Qpack;
+  return {sohEst, Qest, socS, socE, ah, sim, dStart, dEnd, PRE, nRep};
+}
+function resistanceSOH(cap,pack){
+  const sim=cap.sim, {V,I}=sim, n=V.length;
+  const dt=gradient(sim.t);
+  let ocv0=0; for(let i=20;i<cap.PRE-3;i++)ocv0+=V[i]; ocv0/=(cap.PRE-23);
+  let soc0=pack.socFromOCV(ocv0);
+  const eta=new Float64Array(n); let cum=0;
+  const Qref=cap.Qest*pack.Qpack/pack.Qpack; // = Qest (Ah)
+  for(let k=0;k<n;k++){
+    cum+=I[k]*dt[k];
+    let s=soc0-cum/(3600*cap.Qest); s=Math.min(1,Math.max(0,s));
+    eta[k]=pack.packOCV(s)-V[k];
+  }
+  // regression η = R·I + c on |I|>20
+  let sx=0,sy=0,sxy=0,sxx=0,m=0;
+  for(let k=0;k<n;k++){ if(Math.abs(I[k])>20){sx+=I[k];sy+=eta[k];sxy+=I[k]*eta[k];sxx+=I[k]*I[k];m++;} }
+  const R=(m*sxy-sx*sy)/(m*sxx-sx*sx);
+  const c=(sy-R*sx)/m;
+  const Rbol=pack.Rpack;
+  const sohR=(2*Rbol-R)/Rbol;
+  return {R,c,Rbol,sohR,eta,I,growth:R/Rbol, nPts:m};
+}
+function agingCurve(){
+  const N=[],cap=[],rr=[]; const a=0.20/Math.sqrt(1500), b=1/Math.sqrt(1500);
+  let eol=null;
+  for(let n=0;n<=2000;n+=8){
+    const sc=1-a*Math.sqrt(n)-0.02*Math.sqrt(n/2000);
+    N.push(n);cap.push(sc);rr.push(1+b*Math.sqrt(n));
+    if(eol===null&&sc<=0.80)eol=n;
+  }
+  return {N,cap,rr,eol};
+}
+function cycleStats(cycle,sim){
+  const {t,v}=cycle;
+  const dist=trapz(v,t)/1000;
+  const eNet=trapz(sim.P,t)/3.6e6;
+  let sum=0,cnt=0,mx=0; for(let i=0;i<v.length;i++){if(v[i]>0.1){sum+=v[i];cnt++;} if(v[i]>mx)mx=v[i];}
+  return {dist, eNet, cons:eNet/dist*100, vmax:mx*3.6, vavgMove:sum/cnt*3.6, dur:t[t.length-1]};
+}
+
+/* ============================ STATE ============================ */
+const UA_PRESET={air:80, liquid:400, immersion:900};   // W/K overall thermal conductance
+const CP_PER_KWH=6000;                                 // J/K of thermal mass per kWh of pack
+const T_WARN=45, T_CRIT=55;                             // deg C limits
+
+const STATE={mode:"soh", cyc:"wltp", chem:"nmc", mass:1650, cd:0.28, energy:60, soc0:0.80,
+             sohc:0.88, rgrow:1.40, noise:1.0,
+             tcool:25, cooling:"liquid", ua:400, dudt:-0.10,   // thermal controls
+             customCycle:null,                                 // user-imported CSV drive cycle
+             data:null};
+
+/* ---- lumped thermal model: heat generation + cooling -> pack temperature ---- */
+function thermalModel(cycle, pack, P){
+  const L=cycle.t.length;
+  const clean=simulate(cycle.t, P, STATE.soc0, STATE.sohc, STATE.rgrow, pack, 0);
+  const I=clean.I;
+  const R=pack.Rpack*STATE.rgrow;                 // aged resistance -> Joule heat
+  const NsdUdT=pack.Ns*(STATE.dudt/1000);         // entropic coeff, V/K (pack)
+  const UA=STATE.ua, Tcool=STATE.tcool, Cth=STATE.energy*CP_PER_KWH;
+
+  // transient: run the cycle back-to-back so temperature rises toward steady state
+  const Ntile=8, n=L*Ntile;
+  const T=new Float64Array(n), Qcool=new Float64Array(n);
+  let temp=Tcool, maxLast=-1e9, sumLast=0;
+  for(let k=0;k<n;k++){
+    const i=I[k%L], Tk=temp+273.15;
+    const qgen=i*i*R - i*Tk*NsdUdT;               // Joule + reversible(entropic)
+    const qcool=UA*(temp-Tcool);
+    temp += (qgen-qcool)/Cth;                      // dt = 1 s
+    T[k]=temp; Qcool[k]=qcool;
+    if(k>=n-L){ if(temp>maxLast)maxLast=temp; sumLast+=temp; }
+  }
+  // per-cycle heat breakdown
+  const Qj=new Float64Array(L), Qe=new Float64Array(L);
+  let qjAvg=0, qeAvg=0, ipk=0;
+  const Tref=maxLast+273.15;
+  for(let k=0;k<L;k++){
+    const i=I[k];
+    Qj[k]=i*i*R; Qe[k]=-i*Tref*NsdUdT;
+    qjAvg+=Qj[k]; qeAvg+=Qe[k];
+    if(Math.abs(i)>ipk)ipk=Math.abs(i);
+  }
+  qjAvg/=L; qeAvg/=L;
+  const qgAvg=qjAvg+qeAvg;
+  const Tss=Tcool + qgAvg/UA;                      // steady-state mean temp
+  const amp=Math.max(0, maxLast - sumLast/L);      // per-cycle oscillation above the mean
+  const peak=Math.max(maxLast, Tss+amp);           // settled worst-case peak (safety number)
+  return {I,R,NsdUdT,UA,Tcool,Cth,L,Ntile,n,T,Qcool,Qj,Qe,
+          qjAvg,qeAvg,qgAvg,Tss,peak,tau:Cth/UA,cRate:ipk/pack.Qpack,ipk};
+}
+
+/* ============================ CANVAS HELPERS ============================ */
+function css(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+function pal(){
+  const isDark = (app.getAttribute("data-forcetheme")||themeMode())==="dark";
+  return {text:css("--text"),muted:css("--muted"),grid:css("--grid"),gridS:css("--grid-strong"),
+    accent:css("--accent"),cyan:css("--cyan"),green:css("--green"),amber:css("--amber"),
+    red:css("--red"),violet:css("--violet"),panel:css("--panel"),panel2:css("--panel-2"),
+    border:css("--border"), glow:parseFloat(css("--glow"))||0, dark:isDark,
+    blue:isDark?"#5AA9FF":"#2E6FD6"};
+}
+function fit(cv){
+  const r=cv.getBoundingClientRect(); const dpr=window.devicePixelRatio||1;
+  cv.width=Math.max(1,Math.round(r.width*dpr)); cv.height=Math.max(1,Math.round(r.height*dpr));
+  const ctx=cv.getContext("2d"); ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx,w:r.width,h:r.height};
+}
+function hx(hex,a){ // hex/var color to rgba-ish with alpha via color-mix fallback
+  return hex; // colors already resolved; alpha applied via globalAlpha
+}
+function niceMax(x){ if(x<=0)return 1; const p=Math.pow(10,Math.floor(Math.log10(x))); const f=x/p;
+  const n=f<=1?1:f<=2?2:f<=5?5:10; return n*p; }
+
+function drawLine(cv, opts){
+  const {ctx,w,h}=fit(cv); const P=pal();
+  const m={l:opts.ml??38,r:opts.mr??12,t:opts.mt??10,b:opts.mb??20};
+  const iw=w-m.l-m.r, ih=h-m.t-m.b;
+  const xmin=opts.xmin, xmax=opts.xmax, ymin=opts.ymin, ymax=opts.ymax;
+  const X=x=>m.l+(x-xmin)/(xmax-xmin)*iw, Y=y=>m.t+(1-(y-ymin)/(ymax-ymin))*ih;
+  // bands
+  if(opts.bands)for(const b of opts.bands){
+    ctx.fillStyle=b.color; ctx.globalAlpha=P.dark?0.16:0.5;
+    ctx.fillRect(X(b.x0),m.t,Math.max(1,X(b.x1)-X(b.x0)),ih); ctx.globalAlpha=1;
+  }
+  // grid
+  ctx.strokeStyle=P.grid; ctx.lineWidth=1; ctx.fillStyle=P.muted;
+  ctx.font="10px "+css("--font-mono"); ctx.textAlign="right"; ctx.textBaseline="middle";
+  const yt=opts.yticks??4;
+  for(let i=0;i<=yt;i++){ const yy=ymin+(ymax-ymin)*i/yt; const py=Y(yy);
+    ctx.beginPath();ctx.moveTo(m.l,py);ctx.lineTo(m.l+iw,py);ctx.stroke();
+    ctx.fillText(opts.yfmt?opts.yfmt(yy):(''+Math.round(yy)), m.l-6, py);
+  }
+  // zero line
+  if(ymin<0&&ymax>0){ctx.strokeStyle=P.gridS;ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(m.l,Y(0));ctx.lineTo(m.l+iw,Y(0));ctx.stroke();}
+  // horizontal reference lines
+  if(opts.hlines)for(const hl of opts.hlines){ const py=Y(hl.y); if(py<m.t-0.5||py>m.t+ih+0.5)continue;
+    ctx.strokeStyle=hl.color;ctx.lineWidth=hl.width||1.1; ctx.globalAlpha=hl.alpha??0.85;
+    if(hl.dash)ctx.setLineDash(hl.dash);
+    ctx.beginPath();ctx.moveTo(m.l,py);ctx.lineTo(m.l+iw,py);ctx.stroke();
+    ctx.setLineDash([]);ctx.globalAlpha=1;
+    if(hl.label){ctx.fillStyle=hl.color;ctx.font="9px "+css("--font-mono");ctx.textAlign="right";ctx.textBaseline="bottom";ctx.fillText(hl.label,m.l+iw-1,py-1);ctx.textBaseline="middle";} }
+  // x labels
+  ctx.textAlign="center";ctx.textBaseline="top";
+  const xt=opts.xticks??4;
+  for(let i=0;i<=xt;i++){const xx=xmin+(xmax-xmin)*i/xt;
+    ctx.fillText(opts.xfmt?opts.xfmt(xx):(''+Math.round(xx)), X(xx), m.t+ih+5);}
+  // series
+  for(const s of opts.series){
+    const xs=s.xs, ys=s.ys, step=s.step||1;
+    if(s.fill){
+      ctx.beginPath(); ctx.moveTo(X(xs[0]),Y(0));
+      for(let i=0;i<xs.length;i+=step)ctx.lineTo(X(xs[i]),Y(ys[i]));
+      ctx.lineTo(X(xs[xs.length-1]),Y(0)); ctx.closePath();
+      const g=ctx.createLinearGradient(0,m.t,0,m.t+ih);
+      g.addColorStop(0,s.color);g.addColorStop(1,s.color);
+      ctx.globalAlpha=P.dark?0.14:0.10; ctx.fillStyle=s.color; ctx.fill(); ctx.globalAlpha=1;
+    }
+    ctx.beginPath();
+    for(let i=0;i<xs.length;i+=step){const px=X(xs[i]),py=Y(ys[i]); i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);}
+    ctx.strokeStyle=s.color; ctx.lineWidth=s.width||1.6; ctx.lineJoin="round";
+    if(P.glow&&s.glow){ctx.shadowColor=s.color;ctx.shadowBlur=6;}
+    ctx.stroke(); ctx.shadowBlur=0;
+    if(s.dash){ctx.setLineDash([]);}
+  }
+  // playhead
+  if(opts.playX!=null && opts.playX>=xmin && opts.playX<=xmax){
+    const px=X(opts.playX);
+    ctx.strokeStyle=P.cyan;ctx.lineWidth=1.4;ctx.globalAlpha=0.8;
+    ctx.beginPath();ctx.moveTo(px,m.t);ctx.lineTo(px,m.t+ih);ctx.stroke();ctx.globalAlpha=1;
+    if(opts.playY!=null){ctx.fillStyle=P.cyan;ctx.beginPath();ctx.arc(px,Y(opts.playY),4,0,7);ctx.fill();
+      if(P.glow){ctx.shadowColor=P.cyan;ctx.shadowBlur=10;ctx.fill();ctx.shadowBlur=0;}}
+  }
+  return {X,Y,m,iw,ih};
+}
+
+function drawScatter(cv,pts,fit_,pack){
+  const {ctx,w,h}=fit(cv); const P=pal();
+  const m={l:40,r:12,t:10,b:22}, iw=w-m.l-m.r, ih=h-m.t-m.b;
+  let xmn=1e9,xmx=-1e9,ymn=1e9,ymx=-1e9;
+  for(const p of pts){if(p.x<xmn)xmn=p.x;if(p.x>xmx)xmx=p.x;if(p.y<ymn)ymn=p.y;if(p.y>ymx)ymx=p.y;}
+  const px=(xmx-xmn)*0.05, py=(ymx-ymn)*0.08; xmn-=px;xmx+=px;ymn-=py;ymx+=py;
+  const X=x=>m.l+(x-xmn)/(xmx-xmn)*iw, Y=y=>m.t+(1-(y-ymn)/(ymx-ymn))*ih;
+  ctx.strokeStyle=P.grid;ctx.lineWidth=1;ctx.fillStyle=P.muted;ctx.font="10px "+css("--font-mono");
+  ctx.textAlign="right";ctx.textBaseline="middle";
+  for(let i=0;i<=4;i++){const yy=ymn+(ymx-ymn)*i/4, py2=Y(yy);ctx.beginPath();ctx.moveTo(m.l,py2);ctx.lineTo(m.l+iw,py2);ctx.stroke();ctx.fillText(yy.toFixed(0),m.l-6,py2);}
+  ctx.textAlign="center";ctx.textBaseline="top";
+  for(let i=0;i<=4;i++){const xx=xmn+(xmx-xmn)*i/4;ctx.fillText(Math.round(xx),X(xx),m.t+ih+5);}
+  if(xmn<0&&xmx>0){ctx.strokeStyle=P.gridS;ctx.beginPath();ctx.moveTo(X(0),m.t);ctx.lineTo(X(0),m.t+ih);ctx.stroke();}
+  ctx.fillStyle=P.violet; ctx.globalAlpha=P.dark?0.35:0.30;
+  for(const p of pts){ctx.beginPath();ctx.arc(X(p.x),Y(p.y),1.7,0,7);ctx.fill();}
+  ctx.globalAlpha=1;
+  // fit line
+  const x0=xmn,x1=xmx;
+  ctx.strokeStyle=P.text;ctx.lineWidth=2;ctx.setLineDash([6,4]);
+  ctx.beginPath();ctx.moveTo(X(x0),Y(fit_.R*x0+fit_.c));ctx.lineTo(X(x1),Y(fit_.R*x1+fit_.c));ctx.stroke();ctx.setLineDash([]);
+  // axis label (x only; y is identified by the legend + panel meta)
+  ctx.fillStyle=P.muted;ctx.font="9px "+css("--font-mono");
+  ctx.textAlign="center";ctx.fillText("current I [A]",m.l+iw/2,m.t+ih+13);
+}
+
+function drawGauge(cv,frac,ghost,color,valueStr,unit){
+  const {ctx,w,h}=fit(cv); const P=pal();
+  const cx=w/2, cy=h*0.94, r=Math.min(w*0.42,h*0.82);
+  const A0=Math.PI*0.86, A1=Math.PI*2.14; // ~230° arc
+  ctx.lineCap="round";
+  // track
+  ctx.beginPath();ctx.arc(cx,cy,r,A0,A1);ctx.strokeStyle=P.dark?P.panel2:P.grid;ctx.lineWidth=10;ctx.stroke();
+  ctx.strokeStyle=P.border;ctx.lineWidth=1;ctx.beginPath();ctx.arc(cx,cy,r,A0,A1);ctx.stroke();
+  // value arc
+  const av=A0+(A1-A0)*Math.max(0,Math.min(1,frac));
+  ctx.beginPath();ctx.arc(cx,cy,r,A0,av);ctx.strokeStyle=color;ctx.lineWidth=10;
+  if(P.glow){ctx.shadowColor=color;ctx.shadowBlur=10;}
+  ctx.stroke();ctx.shadowBlur=0;
+  // ghost tick (true value)
+  if(ghost!=null){
+    const ag=A0+(A1-A0)*Math.max(0,Math.min(1,ghost));
+    ctx.strokeStyle=P.text;ctx.lineWidth=2.5;ctx.globalAlpha=0.75;
+    ctx.beginPath();ctx.arc(cx,cy,r,ag-0.015,ag+0.015);ctx.stroke();ctx.globalAlpha=1;
+  }
+  // center text
+  ctx.fillStyle=P.text;ctx.textAlign="center";ctx.textBaseline="alphabetic";
+  ctx.font="700 "+Math.round(r*0.52)+"px "+css("--font-mono");
+  ctx.fillText(valueStr, cx, unit?cy-r*0.06:cy+r*0.04);
+  if(unit){ ctx.fillStyle=P.muted;ctx.font="600 10px "+css("--font-mono");
+    ctx.fillText(unit, cx, cy+r*0.16); }
+}
+
+/* ============================ COMPUTE + RENDER ============================ */
+function healthColor(soh){ const P=pal();
+  return soh>=0.9?P.green : soh>=0.8?P.amber : P.red; }
+
+function compute(){
+  const cycle=buildCycle(STATE.cyc);
+  const pack=makePack(STATE.energy,STATE.chem);
+  const P=batteryPower(cycle.t,cycle.v,STATE.mass,STATE.cd);
+  const sim=simulate(cycle.t,P,STATE.soc0,STATE.sohc,STATE.rgrow,pack,STATE.noise);
+  const stats=cycleStats(cycle,sim);
+  const cap=capacityTest(cycle,STATE.soc0,STATE.sohc,STATE.rgrow,pack,STATE.noise);
+  const res=resistanceSOH(cap,pack);
+  const aging=agingCurve();
+  const thermal=thermalModel(cycle,pack,P);
+  STATE.data={cycle,pack,P,sim,stats,cap,res,aging,thermal};
+  return STATE.data;
+}
+
+function renderStatic(){
+  const d=STATE.data; if(!d)return; const P=pal();
+  const {cycle,pack,sim,stats,cap,res,aging}=d;
+
+  // spec panel
+  $("#spec").innerHTML=
+    row("Config",`${pack.Ns}S &middot; ${pack.Np}P`)+row("Nominal",`${pack.Vnom.toFixed(0)} V`)+
+    row("Capacity",`${pack.Qpack.toFixed(0)} Ah`)+row("Energy",`${pack.Ebol.toFixed(1)} kWh`)+
+    row("R (BOL)",`${(pack.Rpack*1000).toFixed(0)} m&Omega;`)+row("Chem",STATE.chem.toUpperCase());
+  function row(k,v){return `<div><span class="k">${k}</span><span class="v">${v}</span></div>`;}
+
+  // hero
+  $("#cycName").textContent=cycle.name;
+  drawHero(null);
+  // chips
+  $("#chips").innerHTML=
+    chip(P.cyan,"Distance",stats.dist.toFixed(1)+" km")+
+    chip(P.accent,"Consumption",stats.cons.toFixed(1)+" kWh/100km")+
+    chip(P.green,"Max speed",stats.vmax.toFixed(0)+" km/h")+
+    chip(P.muted,"Duration",Math.round(stats.dur/60)+" min");
+  function chip(c,k,v){return `<span class="chip"><i class="sw" style="background:${c}"></i>${k} <b>${v}</b></span>`;}
+
+  // KPIs
+  $("#kCons").innerHTML=stats.cons.toFixed(1)+'<small> kWh/100km</small>';
+  $("#kConsSub").innerHTML=`${stats.dist.toFixed(1)} km &middot; ${stats.eNet.toFixed(2)} kWh drawn`;
+  const usableKWh=pack.Ebol*STATE.sohc*STATE.soc0;
+  const range=usableKWh/stats.cons*100;
+  $("#kRange").innerHTML=Math.round(range)+'<small> km</small>';
+  $("#kRangeSub").innerHTML=aging.eol?`EOL &asymp; ${aging.eol} full cycles`:"EOL beyond 2000 cycles";
+
+  // gauge foot / error
+  $("#capTrue").textContent=(STATE.sohc*100).toFixed(1)+"%";
+  $("#resTrue").textContent=((2-STATE.rgrow)*100).toFixed(1)+"%";
+  errPill("#capErr", cap.sohEst-STATE.sohc);
+  errPill("#resErr", res.sohR-(2-STATE.rgrow));
+
+  // load trace
+  const t=cycle.t;
+  let pmn=1e9,pmx=-1e9; for(let i=0;i<sim.P.length;i++){const kw=sim.P[i]/1000;if(kw<pmn)pmn=kw;if(kw>pmx)pmx=kw;}
+  const pr=Math.max(Math.abs(pmn),Math.abs(pmx));
+  $("#mLoad").textContent=`peak ${pmx>0?'+':''}${pmx.toFixed(0)} kW`;
+  drawLine($("#cLoad"),{xmin:0,xmax:t[t.length-1],ymin:-niceMax(pr),ymax:niceMax(pr),yticks:4,
+    xfmt:x=>Math.round(x)+"s", yfmt:y=>y.toFixed(0),
+    series:[{xs:t,ys:Array.from(sim.P,x=>x/1000),color:P.accent,width:1.4,fill:true,glow:true}]});
+
+  // SOC trace
+  $("#mSoc").textContent=`${(sim.SOC[0]*100).toFixed(0)}% -> ${(sim.SOC[sim.SOC.length-1]*100).toFixed(0)}%`;
+  drawLine($("#cSoc"),{xmin:0,xmax:t[t.length-1],ymin:Math.max(0,sim.SOC[sim.SOC.length-1]*100-6),ymax:Math.min(100,sim.SOC[0]*100+3),yticks:4,
+    xfmt:x=>Math.round(x)+"s",yfmt:y=>y.toFixed(0)+"%",
+    series:[{xs:t,ys:Array.from(sim.SOC,x=>x*100),color:P.green,width:2,fill:true,glow:true}]});
+
+  // resistance scatter
+  const pts=[]; const step=Math.max(1,Math.floor(res.I.length/1400));
+  for(let i=0;i<res.I.length;i+=step){ if(Math.abs(res.I[i])>20) pts.push({x:res.I[i],y:res.eta[i]}); }
+  $("#mRes").innerHTML=`R ${(res.R*1000).toFixed(0)} m&Omega;`;
+  drawScatter($("#cScatter"),pts,res,pack);
+
+  // life projection (dual axis: SOH cap left, R/Rbol right mapped)
+  drawLife($("#cLife"),aging);
+  $("#mLife").textContent=aging.eol?`EOL ${aging.eol} EFC`:"-";
+
+  // gauges (static draw here; animation handled separately)
+  drawGauge($("#gCap"),cap.sohEst,STATE.sohc,healthColor(cap.sohEst),(cap.sohEst*100).toFixed(1),"%");
+  const resSohClamped=Math.max(0,Math.min(1,res.sohR));
+  drawGauge($("#gRes"),resSohClamped,2-STATE.rgrow,healthColor(res.sohR),(res.sohR*100).toFixed(1),"%");
+}
+
+function errPill(sel,errFrac){
+  const el=$(sel); const pp=errFrac*100; const P=pal();
+  const good=Math.abs(pp)<=1.5;
+  el.textContent=(pp>=0?'+':'')+pp.toFixed(1)+" pp est. error";
+  el.style.background = good ? "color-mix(in srgb,"+P.green+" 16%,transparent)" : "color-mix(in srgb,"+P.amber+" 18%,transparent)";
+  el.style.color = good ? P.green : P.amber;
+}
+
+function drawHero(playIdx){
+  const d=STATE.data; if(!d)return; const P=pal();
+  const {cycle,sim}=d; const t=cycle.t;
+  // phase bands
+  const bandColors={Low:P.cyan,Medium:P.green,High:P.amber,"Extra-High":P.red,Urban:P.cyan,Cruise:P.cyan,Rapid:P.amber,Custom:P.violet};
+  const bands=[]; let s=0;
+  for(let i=1;i<=cycle.ph.length;i++){
+    if(i===cycle.ph.length||cycle.ph[i]!==cycle.ph[s]){
+      bands.push({x0:t[s],x1:t[i-1],color:bandColors[cycle.ph[s]]||P.cyan}); s=i;
+    }
+  }
+  const vmaxKmh=Math.max.apply(null,Array.from(cycle.v))*3.6;
+  const kmh=Array.from(cycle.v,x=>x*3.6);
+  const playX = playIdx!=null ? t[playIdx] : null;
+  const playY = playIdx!=null ? kmh[playIdx] : null;
+  drawLine($("#cHero"),{xmin:0,xmax:t[t.length-1],ymin:0,ymax:niceMax(vmaxKmh),yticks:3,mb:20,
+    xfmt:x=>Math.round(x)+"s",yfmt:y=>y.toFixed(0),bands,
+    series:[{xs:t,ys:kmh,color:P.cyan,width:1.8,fill:true,glow:true}], playX, playY});
+}
+
+function drawLife(cv,aging){
+  const {ctx,w,h}=fit(cv); const P=pal();
+  const m={l:40,r:42,t:10,b:20},iw=w-m.l-m.r,ih=h-m.t-m.b;
+  const N=aging.N, xmax=N[N.length-1];
+  const yL0=0.74,yL1=1.005; // SOH cap axis
+  const yR0=1.0,yR1=2.0;    // R/Rbol axis
+  const X=x=>m.l+x/xmax*iw, YL=y=>m.t+(1-(y-yL0)/(yL1-yL0))*ih, YR=y=>m.t+(1-(y-yR0)/(yR1-yR0))*ih;
+  ctx.strokeStyle=P.grid;ctx.lineWidth=1;ctx.fillStyle=P.muted;ctx.font="10px "+css("--font-mono");
+  ctx.textAlign="right";ctx.textBaseline="middle";
+  for(let i=0;i<=4;i++){const yy=yL0+(yL1-yL0)*i/4,py=YL(yy);ctx.beginPath();ctx.moveTo(m.l,py);ctx.lineTo(m.l+iw,py);ctx.stroke();ctx.fillText((yy*100).toFixed(0),m.l-6,py);}
+  // right ticks
+  ctx.textAlign="left";ctx.fillStyle=P.accent;
+  for(let i=0;i<=4;i++){const yy=yR0+(yR1-yR0)*i/4;ctx.fillText(yy.toFixed(1)+"x",m.l+iw+6,YR(yy));}
+  ctx.textAlign="center";ctx.textBaseline="top";ctx.fillStyle=P.muted;
+  for(let i=0;i<=4;i++){const xx=xmax*i/4;ctx.fillText(Math.round(xx),X(xx),m.t+ih+5);}
+  // EOL line
+  ctx.strokeStyle=P.red;ctx.setLineDash([4,3]);ctx.lineWidth=1.2;
+  ctx.beginPath();ctx.moveTo(m.l,YL(0.80));ctx.lineTo(m.l+iw,YL(0.80));ctx.stroke();ctx.setLineDash([]);
+  if(aging.eol){ctx.strokeStyle=P.red;ctx.globalAlpha=0.5;ctx.beginPath();ctx.moveTo(X(aging.eol),m.t);ctx.lineTo(X(aging.eol),m.t+ih);ctx.stroke();ctx.globalAlpha=1;}
+  // R/Rbol dashed
+  ctx.strokeStyle=P.accent;ctx.lineWidth=1.6;ctx.setLineDash([5,3]);ctx.beginPath();
+  for(let i=0;i<N.length;i++){const px=X(N[i]),py=YR(aging.rr[i]);i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);}ctx.stroke();ctx.setLineDash([]);
+  // SOH cap solid
+  ctx.strokeStyle=P.green;ctx.lineWidth=2.2;if(P.glow){ctx.shadowColor=P.green;ctx.shadowBlur=6;}ctx.beginPath();
+  for(let i=0;i<N.length;i++){const px=X(N[i]),py=YL(aging.cap[i]);i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);}ctx.stroke();ctx.shadowBlur=0;
+  // today marker
+  let ti=0; for(let i=0;i<aging.cap.length;i++){if(aging.cap[i]<=STATE.sohc){ti=i;break;}}
+  const tx=X(N[ti]),ty=YL(STATE.sohc);
+  ctx.fillStyle=P.text;ctx.beginPath();ctx.arc(tx,ty,4,0,7);ctx.fill();
+  ctx.strokeStyle=P.panel;ctx.lineWidth=2;ctx.stroke();
+}
+
+/* ============================ GAUGE + HERO ANIMATION ============================ */
+let heroRAF=null, animSeq=0;   // animSeq invalidates stale animation frames after a repaint
+function animateGauges(){
+  const d=STATE.data; if(!d)return;
+  const capTarget=d.cap.sohEst, resTarget=Math.max(0,Math.min(1,d.res.sohR));
+  const seq=++animSeq;
+  const drawFinal=()=>{ if(seq!==animSeq)return;
+    drawGauge($("#gCap"),capTarget,STATE.sohc,healthColor(capTarget),(capTarget*100).toFixed(1),"%");
+    drawGauge($("#gRes"),resTarget,2-STATE.rgrow,healthColor(d.res.sohR),(resTarget*100).toFixed(1),"%");
+  };
+  if(reduceMotion){drawFinal();return;}
+  const dur=650, t0=performance.now();
+  function frame(now){ if(seq!==animSeq)return;
+    const k=Math.min(1,(now-t0)/dur); const e=1-Math.pow(1-k,3);
+    drawGauge($("#gCap"),capTarget*e,k>0.6?STATE.sohc:null,healthColor(capTarget),(capTarget*e*100).toFixed(1),"%");
+    drawGauge($("#gRes"),resTarget*e,k>0.6?(2-STATE.rgrow):null,healthColor(d.res.sohR),(resTarget*e*100).toFixed(1),"%");
+    if(k<1)requestAnimationFrame(frame); else drawFinal();
+  }
+  requestAnimationFrame(frame);
+  setTimeout(drawFinal, dur+80);   // fallback: rAF pauses when tab is backgrounded
+}
+function runCycleAnim(){
+  const d=STATE.data; if(!d){return;}
+  const N=d.cycle.t.length;
+  $("#runBtn").disabled=true;
+  animateGauges();
+  const finish=()=>{ drawHero(null); $("#spNow").textContent="0"; $("#runBtn").disabled=false; };
+  if(reduceMotion){ drawHero(null); $("#spNow").textContent=Math.round(d.stats.vmax); $("#runBtn").disabled=false; return; }
+  if(heroRAF)cancelAnimationFrame(heroRAF);
+  const seq=animSeq;   // a later paint() bumps animSeq and stops this stale sweep
+  const dur=Math.min(6000,Math.max(3000,N*2.4)); const t0=performance.now();
+  const kmh=Array.from(d.cycle.v,x=>x*3.6);
+  function frame(now){
+    if(seq!==animSeq)return;
+    const k=Math.min(1,(now-t0)/dur); const idx=Math.min(N-1,Math.floor(k*N));
+    drawHero(idx); $("#spNow").textContent=Math.round(kmh[idx]);
+    if(k<1)heroRAF=requestAnimationFrame(frame); else finish();
+  }
+  heroRAF=requestAnimationFrame(frame);
+  setTimeout(()=>{ $("#runBtn").disabled=false; if(seq===animSeq)finish(); }, dur+150);
+}
+
+/* ============================ THERMAL RENDER ============================ */
+function tempColor(T){ const P=pal(); return T<T_WARN?P.green : T<T_CRIT?P.amber : P.red; }
+
+function drawDonut(cv,segs,centerTop,centerBot){
+  const {ctx,w,h}=fit(cv); const P=pal();
+  const cx=w/2, cy=h*0.5, r=Math.min(w*0.33,h*0.42), lw=13;
+  let total=0; for(const s of segs)total+=s.value; if(total<=0)total=1;
+  ctx.lineWidth=lw; ctx.lineCap="butt";
+  ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.strokeStyle=P.dark?P.panel2:P.grid;ctx.stroke();
+  let a=-Math.PI/2;
+  for(const s of segs){ const a2=a+(s.value/total)*Math.PI*2;
+    ctx.beginPath();ctx.arc(cx,cy,r,a,a2);ctx.strokeStyle=s.color;
+    if(P.glow){ctx.shadowColor=s.color;ctx.shadowBlur=8;} ctx.stroke();ctx.shadowBlur=0; a=a2; }
+  ctx.fillStyle=P.text;ctx.textAlign="center";ctx.textBaseline="alphabetic";
+  ctx.font="700 "+Math.round(r*0.56)+"px "+css("--font-mono");ctx.fillText(centerTop,cx,cy+2);
+  ctx.fillStyle=P.muted;ctx.font="600 9px "+css("--font-mono");ctx.textBaseline="top";ctx.fillText(centerBot,cx,cy+r*0.55+3);
+}
+
+function renderSpec(){
+  const {pack}=STATE.data;
+  const row=(k,v)=>`<div><span class="k">${k}</span><span class="v">${v}</span></div>`;
+  $("#spec").innerHTML=
+    row("Config",`${pack.Ns}S &middot; ${pack.Np}P`)+row("Nominal",`${pack.Vnom.toFixed(0)} V`)+
+    row("Capacity",`${pack.Qpack.toFixed(0)} Ah`)+row("Energy",`${pack.Ebol.toFixed(1)} kWh`)+
+    row("R (BOL)",`${(pack.Rpack*1000).toFixed(0)} m&Omega;`)+row("Chem",STATE.chem.toUpperCase());
+}
+
+function updateCTAs(){
+  const d=STATE.data; if(!d)return;
+  $("#ctaSOHstat").textContent=(d.cap.sohEst*100).toFixed(1)+"%";
+  const pk=d.thermal.peak, el=$("#ctaThermStat");
+  el.innerHTML=pk.toFixed(0)+"&deg;C"; el.style.color=tempColor(pk);
+}
+
+function renderThermal(){
+  const d=STATE.data; if(!d)return; const P=pal(); const th=d.thermal;
+  renderSpec();
+  const chip=(c,k,v)=>`<span class="chip"><i class="sw" style="background:${c}"></i>${k} <b>${v}</b></span>`;
+
+  // hero
+  drawThermHero(null);
+  $("#tpNow").textContent=th.peak.toFixed(1); $("#tpNow").style.color=tempColor(th.peak);
+  $("#thChips").innerHTML=
+    chip(P.blue,"Coolant",th.Tcool.toFixed(0)+"&deg;C")+
+    chip(tempColor(th.Tss),"Steady state",th.Tss.toFixed(1)+"&deg;C")+
+    chip(P.accent,"Cooling load",(th.qgAvg/1000).toFixed(2)+" kW")+
+    chip(P.muted,"Time const",(th.tau/60).toFixed(1)+" min");
+
+  // instruments
+  drawGauge($("#gTemp"),Math.max(0,Math.min(1,th.peak/60)),T_WARN/60,tempColor(th.peak),th.peak.toFixed(1),"");
+  $("#gTempFoot").innerHTML=`coolant <b>${th.Tcool.toFixed(0)}&deg;C</b>`;
+  const jo=Math.max(0,th.qjAvg), en=Math.abs(th.qeAvg), jpct=jo/(jo+en||1)*100;
+  drawDonut($("#dHeat"),[{value:jo,color:P.accent},{value:en,color:P.violet}], jpct.toFixed(0)+"%","Joule");
+  $("#kCool").innerHTML=(th.qgAvg/1000).toFixed(2)+'<small> kW</small>';
+  $("#kCoolSub").innerHTML=`min cooling to hold ${th.Tcool.toFixed(0)}&deg;C`;
+  $("#kTau").innerHTML=(th.tau/60).toFixed(1)+'<small> min</small>';
+  $("#kTauSub").innerHTML=`peak ${th.cRate.toFixed(1)}C &middot; ${th.ipk.toFixed(0)} A`;
+
+  // heat generation trace
+  const t=d.cycle.t, L=th.L;
+  const qjArr=Array.from(th.Qj,x=>x/1000), qeArr=Array.from(th.Qe,x=>x/1000);
+  let hmx=0,emn=0; for(let k=0;k<L;k++){ if(qjArr[k]>hmx)hmx=qjArr[k]; if(qeArr[k]>hmx)hmx=qeArr[k]; if(qeArr[k]<emn)emn=qeArr[k]; }
+  $("#mHeat").innerHTML=`avg ${(th.qgAvg/1000).toFixed(1)} kW`;
+  drawLine($("#cHeat"),{xmin:0,xmax:t[L-1],ymin:emn<0?-niceMax(-emn):0,ymax:niceMax(hmx),yticks:4,
+    xfmt:x=>Math.round(x)+"s",yfmt:y=>y.toFixed(0),
+    series:[{xs:t,ys:qjArr,color:P.accent,width:1.3,fill:true,glow:true},
+            {xs:t,ys:qeArr,color:P.violet,width:1.3}]});
+
+  // heat balance trace (tiled)
+  const nn=th.n; const xsT=new Float64Array(nn); for(let i=0;i<nn;i++)xsT[i]=i;
+  const qgen=new Float64Array(nn), qcool=new Float64Array(nn);
+  let bmx=0;
+  for(let k=0;k<nn;k++){ qgen[k]=(th.Qj[k%L]+th.Qe[k%L])/1000; qcool[k]=th.Qcool[k]/1000;
+    if(qgen[k]>bmx)bmx=qgen[k]; if(qcool[k]>bmx)bmx=qcool[k]; }
+  const stepB=Math.max(1,Math.floor(nn/1400));
+  $("#mBalance").textContent=`gen vs cooling`;
+  drawLine($("#cBalance"),{xmin:0,xmax:nn,ymin:0,ymax:niceMax(bmx),yticks:4,
+    xfmt:x=>(x/L).toFixed(0)+"c",yfmt:y=>y.toFixed(0),
+    series:[{xs:xsT,ys:qgen,color:P.accent,width:1.0,fill:true,step:stepB},
+            {xs:xsT,ys:qcool,color:P.blue,width:1.8,step:stepB}]});
+
+  // sensitivity: steady temp vs resistance growth
+  { const xs=[],ys=[]; let mn=1e9,mx=-1e9;
+    for(let rg=1.0; rg<=2.0001; rg+=0.05){ const qj=th.qjAvg*(rg/STATE.rgrow); const tss=th.Tcool+(qj+th.qeAvg)/th.UA;
+      xs.push(rg); ys.push(tss); if(tss<mn)mn=tss; if(tss>mx)mx=tss; }
+    const apad=Math.max(1,(mx-mn)*0.5);
+    const ymin=Math.floor(Math.min(mn,th.Tcool)-0.5), ymax=Math.ceil(mx+apad);
+    $("#mSensAge").innerHTML=`now ${STATE.rgrow.toFixed(2)}&times;`;
+    drawLine($("#cSensAge"),{xmin:1,xmax:2,ymin,ymax,yticks:4,
+      xfmt:x=>x.toFixed(1)+"x",yfmt:y=>y.toFixed(0),
+      hlines:[{y:T_WARN,color:P.amber,dash:[5,4]},{y:T_CRIT,color:P.red,dash:[5,4]}],
+      series:[{xs:Float64Array.from(xs),ys,color:P.accent,width:2,fill:true,glow:true}],
+      playX:STATE.rgrow, playY:Math.min(Math.max(th.Tss,ymin),ymax)}); }
+
+  // sensitivity: steady temp vs cooling UA
+  { const xs=[],ys=[]; let mx=-1e9;
+    for(let ua=60; ua<=1000.001; ua+=20){ const tss=th.Tcool+th.qgAvg/ua; xs.push(ua); ys.push(tss); if(tss>mx)mx=tss; }
+    const ymax=Math.ceil(Math.min(mx,95)), ymin=Math.floor(th.Tcool-1);
+    const ysC=ys.map(v=>Math.min(v,ymax));
+    $("#mSensCool").innerHTML=`now ${th.UA} W/K`;
+    drawLine($("#cSensCool"),{xmin:60,xmax:1000,ymin,ymax,yticks:4,
+      xfmt:x=>Math.round(x),yfmt:y=>y.toFixed(0),
+      hlines:[{y:T_WARN,color:P.amber,dash:[5,4]},{y:T_CRIT,color:P.red,dash:[5,4]}],
+      series:[{xs:Float64Array.from(xs),ys:ysC,color:P.accent,width:2,fill:true,glow:true}],
+      playX:th.UA, playY:Math.min(th.Tss,ymax)}); }
+}
+
+function drawThermHero(playIdx){
+  const d=STATE.data; if(!d)return; const P=pal(); const th=d.thermal;
+  const n=th.n, L=th.L; const xs=new Float64Array(n); for(let i=0;i<n;i++)xs[i]=i;
+  const ys=Array.from(th.T);
+  let tmx=-1e9,tmn=1e9; for(let i=0;i<n;i++){if(th.T[i]>tmx)tmx=th.T[i];if(th.T[i]<tmn)tmn=th.T[i];}
+  const top=Math.max(tmx,th.Tss,th.peak);
+  const ymin=Math.floor(Math.min(th.Tcool,tmn)-1), ymax=Math.ceil(top)+2;
+  const step=Math.max(1,Math.floor(n/1400));
+  const playX=playIdx!=null?playIdx:null, playY=playIdx!=null?th.T[playIdx]:null;
+  drawLine($("#cThermHero"),{xmin:0,xmax:n,ymin,ymax,yticks:4,mb:20,
+    xfmt:x=>(x/L).toFixed(0)+"c",yfmt:y=>y.toFixed(0),
+    hlines:[{y:th.Tcool,color:P.blue,dash:[4,3],label:"coolant",alpha:0.85},
+            {y:th.Tss,color:P.muted,dash:[2,3],label:"steady",alpha:0.7},
+            {y:T_WARN,color:P.amber,dash:[6,4],label:"warn",alpha:0.85},
+            {y:T_CRIT,color:P.red,dash:[6,4],label:"crit",alpha:0.85}],
+    series:[{xs,ys,color:tempColor(th.peak),width:1.9,fill:true,glow:true,step}], playX, playY});
+}
+
+function animateTempGauge(){
+  const d=STATE.data; if(!d)return; const th=d.thermal; const target=Math.max(0,Math.min(1,th.peak/60));
+  const seq=++animSeq;
+  const drawFinal=()=>{ if(seq!==animSeq)return; drawGauge($("#gTemp"),target,T_WARN/60,tempColor(th.peak),th.peak.toFixed(1),""); };
+  if(reduceMotion){ drawFinal(); return; }
+  const dur=650,t0=performance.now();
+  function frame(now){ if(seq!==animSeq)return; const k=Math.min(1,(now-t0)/dur); const e=1-Math.pow(1-k,3);
+    drawGauge($("#gTemp"),target*e,k>0.6?T_WARN/60:null,tempColor(th.peak),(th.peak*e).toFixed(1),"");
+    if(k<1)requestAnimationFrame(frame); else drawFinal(); }
+  requestAnimationFrame(frame);
+  setTimeout(drawFinal, dur+80);   // fallback: rAF pauses when tab is backgrounded
+}
+function runThermalAnim(){
+  const d=STATE.data; if(!d)return; const th=d.thermal;
+  $("#runBtn").disabled=true; animateTempGauge();
+  const finish=()=>{ drawThermHero(null); $("#tpNow").textContent=th.peak.toFixed(1); $("#tpNow").style.color=tempColor(th.peak); $("#runBtn").disabled=false; };
+  if(reduceMotion){ finish(); return; }
+  if(heroRAF)cancelAnimationFrame(heroRAF);
+  const seq=animSeq;   // a later paint() bumps animSeq and stops this stale sweep
+  const n=th.n, dur=Math.min(6000,Math.max(3000,n*0.38)), t0=performance.now();
+  function frame(now){ if(seq!==animSeq)return; const k=Math.min(1,(now-t0)/dur); const idx=Math.min(n-1,Math.floor(k*n));
+    drawThermHero(idx); $("#tpNow").textContent=th.T[idx].toFixed(1); $("#tpNow").style.color=tempColor(th.T[idx]);
+    if(k<1)heroRAF=requestAnimationFrame(frame); else finish(); }
+  heroRAF=requestAnimationFrame(frame);
+  setTimeout(()=>{ $("#runBtn").disabled=false; if(seq===animSeq)finish(); }, dur+150);
+}
+
+/* ============================ MODE DISPATCH ============================ */
+function paint(){ animSeq++; updateCTAs(); if(STATE.mode==="thermal") renderThermal(); else renderStatic(); }
+function animateInstruments(){ if(STATE.mode==="thermal") animateTempGauge(); else animateGauges(); }
+function runAnim(){ if(STATE.mode==="thermal") runThermalAnim(); else runCycleAnim(); }
+function setMode(m){
+  if(STATE.mode===m)return;
+  STATE.mode=m; app.setAttribute("data-mode",m);
+  document.querySelectorAll(".mode-cta").forEach(x=>x.setAttribute("aria-pressed", x.dataset.mode===m?"true":"false"));
+  paint(); requestAnimationFrame(runAnim);
+}
+
+/* ============================ THEME ============================ */
+function themeMode(){
+  const forced=document.documentElement.getAttribute("data-theme");
+  if(forced)return forced;
+  return window.matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light";
+}
+function setTheme(mode){ document.documentElement.setAttribute("data-theme",mode); updateThemeIcon(); paint(); }
+function updateThemeIcon(){
+  const dark=themeMode()==="dark";
+  $("#themeIcon").innerHTML = dark
+    ? '<path d="M21 12.8A9 9 0 1111.2 3 7 7 0 0021 12.8z"/>'
+    : '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
+}
+$("#themeBtn").addEventListener("click",()=>setTheme(themeMode()==="dark"?"light":"dark"));
+window.matchMedia("(prefers-color-scheme:dark)").addEventListener("change",()=>{updateThemeIcon();paint();});
+
+/* ============================ INPUT WIRING ============================ */
+let debTimer=null;
+function recompute(animate){
+  clearTimeout(debTimer);
+  debTimer=setTimeout(()=>{ try{ compute(); paint(); if(animate)animateInstruments(); }catch(e){console.error(e);} },50);
+}
+function bindRange(id,fmt,apply){
+  const el=$("#"+id), out=$("#"+id+"V");
+  el.addEventListener("input",()=>{ apply(parseFloat(el.value)); out.innerHTML=fmt(parseFloat(el.value)); recompute(false); });
+}
+bindRange("mass",v=>v+'<small> kg</small>',v=>STATE.mass=v);
+bindRange("cd",v=>v.toFixed(2),v=>STATE.cd=v);
+bindRange("energy",v=>v+'<small> kWh</small>',v=>STATE.energy=v);
+bindRange("soc0",v=>v+'<small> %</small>',v=>STATE.soc0=v/100);
+bindRange("sohc",v=>v.toFixed(1)+'<small> %</small>',v=>STATE.sohc=v/100);
+bindRange("rgrow",v=>v.toFixed(2)+'<small> &times;</small>',v=>STATE.rgrow=v);
+bindRange("noise",v=>v.toFixed(1)+'<small> &times;</small>',v=>STATE.noise=v);
+bindRange("tcool",v=>v+'<small> &deg;C</small>',v=>STATE.tcool=v);
+bindRange("dudt",v=>v.toFixed(2)+'<small> mV/K</small>',v=>STATE.dudt=v);
+
+$("#cycleSeg").addEventListener("click",e=>{
+  const b=e.target.closest(".seg"); if(!b)return;
+  if(b.dataset.cyc==="custom" && !STATE.customCycle)return;   // ignore until a CSV is loaded
+  document.querySelectorAll("#cycleSeg .seg").forEach(x=>x.setAttribute("aria-pressed","false"));
+  b.setAttribute("aria-pressed","true"); STATE.cyc=b.dataset.cyc; compute(); paint(); runAnim();
+});
+
+/* ---- custom drive-cycle CSV import ---- */
+let lastCSV=null;
+const UNIT_LABEL={kmh:'km/h', ms:'m/s', mph:'mph'};
+function importMsg(kind, text){ const el=$("#importMsg"); el.dataset.kind=kind; el.textContent=text; }
+function applyCSV(text, name, unitOverride){
+  const cyc=parseCSVCycle(text, unitOverride);       // throws Error on bad input
+  cyc.name='Custom: '+name;
+  STATE.customCycle=cyc; lastCSV={text, name};
+  const seg=$("#customSeg");
+  seg.hidden=false;
+  seg.querySelector('.cs-name').textContent = name.length>24 ? name.slice(0,22)+'...' : name;
+  document.querySelectorAll("#cycleSeg .seg").forEach(x=>x.setAttribute("aria-pressed","false"));
+  seg.setAttribute("aria-pressed","true"); STATE.cyc='custom';
+  $("#importLabel").textContent='Replace CSV';
+  const un=$("#csvUnit"); un.hidden=false;
+  un.querySelectorAll('.u').forEach(u=>u.setAttribute('aria-pressed', u.dataset.u===cyc.unit?'true':'false'));
+  importMsg('ok', `Loaded ${cyc.nSrc} rows -> ${cyc.dur+1}s, ${cyc.dist.toFixed(1)} km, ${cyc.vmaxKmh.toFixed(0)} km/h max (as ${UNIT_LABEL[cyc.unit]})`);
+  compute(); paint(); runAnim();
+}
+$("#importBtn").addEventListener("click",()=>$("#csvInput").click());
+$("#csvInput").addEventListener("change",e=>{
+  const f=e.target.files && e.target.files[0]; if(!f)return;
+  const rd=new FileReader();
+  rd.onload=()=>{ try{ applyCSV(String(rd.result||''), f.name); }
+    catch(err){ importMsg('err', (err && err.message) || 'Could not parse CSV.'); } };
+  rd.onerror=()=>importMsg('err','Could not read the file.');
+  rd.readAsText(f);
+  e.target.value='';   // allow re-picking the same file
+});
+$("#csvUnit").addEventListener("click",e=>{
+  const u=e.target.closest('.u'); if(!u || !lastCSV)return;
+  try{ applyCSV(lastCSV.text, lastCSV.name, u.dataset.u); }
+  catch(err){ importMsg('err', (err && err.message) || 'Could not parse CSV.'); }
+});
+$("#chemSeg").addEventListener("click",e=>{
+  const b=e.target.closest(".chem"); if(!b)return;
+  document.querySelectorAll("#chemSeg .chem").forEach(x=>x.setAttribute("aria-pressed","false"));
+  b.setAttribute("aria-pressed","true"); STATE.chem=b.dataset.chem; recompute(true);
+});
+$("#coolSeg").addEventListener("click",e=>{
+  const b=e.target.closest(".seg"); if(!b)return;
+  document.querySelectorAll("#coolSeg .seg").forEach(x=>x.setAttribute("aria-pressed","false"));
+  b.setAttribute("aria-pressed","true"); STATE.cooling=b.dataset.cool; STATE.ua=UA_PRESET[b.dataset.cool]; recompute(true);
+});
+$("#modes").addEventListener("click",e=>{ const b=e.target.closest(".mode-cta"); if(b)setMode(b.dataset.mode); });
+document.querySelectorAll('[role="button"]').forEach(el=>{
+  el.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();el.click();}});
+});
+$("#runBtn").addEventListener("click",runCycleAnim);
+
+let rsTimer=null;
+window.addEventListener("resize",()=>{clearTimeout(rsTimer);rsTimer=setTimeout(paint,120);});
+
+/* ============================ INIT ============================ */
+updateThemeIcon();
+compute();
+paint();
+setTimeout(()=>{ if(!reduceMotion) runAnim(); }, 350);
+})();
+</script>
+
+</body>
+</html>
