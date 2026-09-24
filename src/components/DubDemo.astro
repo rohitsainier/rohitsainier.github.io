@@ -13,13 +13,12 @@ import { url } from '../data/site';
 
     <div class="demo__stage" role="group" aria-label="Side-by-side comparison">
       {[
-        { l: 'en', label: 'Original', lang: 'English', sub: 'Source recording' },
-        { l: 'hi', label: 'AI dub', lang: 'हिन्दी', sub: 'Cloned voice · regenerated lips' },
+        { l: 'en', label: 'Source', lang: 'English', sub: 'Original script' },
+        { l: 'hi', label: 'AI', lang: 'हिन्दी', sub: 'Translated · Hindi voice' },
       ].map((p) => (
         <button class={`demo__panel demo__panel--${p.l}`} type="button" data-panel={p.l} aria-pressed={p.l === 'hi' ? 'true' : 'false'}>
           <span class="demo__vwrap">
-            <video data-dv={p.l} playsinline preload="auto" poster={url('media/hero/poster.webp')}>
-              <source src={url(`media/hero/${p.l}.webm`)} type="video/webm" />
+            <video data-dv={p.l} playsinline preload="auto" poster={url(`media/hero/${p.l}.webp`)}>
               <source src={url(`media/hero/${p.l}.mp4`)} type="video/mp4" />
               <track kind="captions" srclang={p.l} label={p.lang} src={url(`media/hero/${p.l}.vtt`)} />
             </video>
@@ -40,7 +39,7 @@ import { url } from '../data/site';
         <span class="demo__pp" aria-hidden="true"></span><span data-demo-play-label>Pause</span>
       </button>
       <div class="demo__progress" aria-hidden="true"><i data-demo-progress></i></div>
-      <p class="micro dim demo__time" data-demo-time>00:00 / 00:24</p>
+      <p class="micro dim demo__time" data-demo-time>00:00 / 00:23</p>
       <div class="demo__seg" role="group" aria-label="Audio language">
         <button type="button" class="micro" data-seg="en" aria-pressed="false">EN</button>
         <button type="button" data-seg="hi" lang="hi" aria-pressed="true">हिन्दी</button>
@@ -97,7 +96,7 @@ import { url } from '../data/site';
   .demo__vwrap {
     position: relative; flex: none;
     height: calc(100% - 76px); width: auto;
-    aspect-ratio: 732 / 1280;
+    aspect-ratio: 2 / 3;
     border-radius: 16px; overflow: hidden;
     box-shadow: 0 0 0 1px var(--line-2);
     transition: box-shadow 0.5s;

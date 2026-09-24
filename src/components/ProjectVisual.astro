@@ -22,13 +22,13 @@ const pts = kmh.filter((_, i) => i % 2 === 0).map((v, i, a) => `${((i / (a.lengt
   {p.visual === 'dub' && (
     <div class="dubv">
       <figure class="dubv__side">
-        <Video src="hero/en" label="English source" />
+        <Video src="hero/en" label="Meera, a virtual anchor, presenting in English" />
         <figcaption><span class="micro">Source</span><span>English</span></figcaption>
       </figure>
       <span class="dubv__arrow" aria-hidden="true"><i></i>AI</span>
       <figure class="dubv__side dubv__side--hi">
-        <Video src="hero/hi" label="Hindi dub with regenerated lips" />
-        <figcaption><span class="micro">AI dub</span><span lang="hi">हिन्दी</span></figcaption>
+        <Video src="hero/hi" label="Meera presenting the same script in Hindi" />
+        <figcaption><span class="micro">AI</span><span lang="hi">हिन्दी</span></figcaption>
       </figure>
     </div>
   )}
@@ -70,7 +70,7 @@ const pts = kmh.filter((_, i) => i % 2 === 0).map((v, i, a) => `${((i / (a.lengt
   .dubv { position: relative; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: clamp(10px, 1.6vw, 24px); padding: clamp(18px, 3vw, 44px); aspect-ratio: 16 / 11; background: radial-gradient(90% 80% at 50% 50%, #17130f, #0b0b0c); }
   .pv--hero .dubv { aspect-ratio: auto; height: clamp(420px, 74vh, 780px); }
   .dubv__side { position: relative; height: 100%; min-height: 0; display: flex; flex-direction: column; gap: 12px; }
-  .dubv__side :global(.vid) { flex: 1; min-height: 0; aspect-ratio: 732 / 1280; width: auto; margin-inline: auto; border-radius: 12px; box-shadow: 0 0 0 1px var(--line-2); }
+  .dubv__side :global(.vid) { flex: 1; min-height: 0; aspect-ratio: 2 / 3; width: auto; margin-inline: auto; border-radius: 12px; box-shadow: 0 0 0 1px var(--line-2); }
   .dubv__side--hi :global(.vid) { box-shadow: 0 0 0 1.5px var(--accent), 0 20px 60px -20px rgb(255 91 34 / 0.45); }
   .dubv__side figcaption { display: flex; justify-content: center; align-items: baseline; gap: 10px; }
   .dubv__side figcaption span:last-child { font-size: 1.05rem; }

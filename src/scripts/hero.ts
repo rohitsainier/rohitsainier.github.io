@@ -1,5 +1,5 @@
 import { gsap, ScrollTrigger, reduceMotion, getLenis } from './core';
-import { EN, HI, TRACK, CAPS, type Track, type Lang } from './dub-data';
+import { EN, HI, TRACK, CAPS, mapTime, type Track, type Lang } from './dub-data';
 import './demo';
 
 const BEATS = 9;
@@ -52,41 +52,76 @@ function initHero(hero: HTMLElement) {
   const desktop = matchMedia('(min-width: 860px)');
   const state = {
     beat: 0,
-    dub: 0, // 0 = source visible, 1 = dub visible (circle wipe amount)
+    dub: 0, // opacity of the Hindi take over the English one (0 = English, 1 = Hindi)
+    cur: 'en' as Lang, // the take on screen, or fading in
+    switching: false,
+    sent: 0, // trailer: the sentence the take on screen is telling
     waveMix: 0,
     zoom: 0,
     trailer: true,
     manual: null as Lang | null,
-    cycle: 0,
-    lastT: 0,
     capKey: '',
     enSent: -1,
     hiSent: -1,
     running: false,
   };
-  const wipe = { v: 0 }; // animated wipe used by trailer / manual toggles
+  const fade = { v: 0 }; // tweened crossfade amount
 
   /* ——— video helpers ——— */
   const visibleLang = (): Lang => (state.dub >= 0.5 ? 'hi' : 'en');
-  const master = () => V[state.dub >= 0.999 ? 'hi' : 'en'];
+  const other = (l: Lang): Lang => (l === 'en' ? 'hi' : 'en');
   const play = (v: HTMLVideoElement) => { if (v.paused) v.play().catch(() => {}); };
-  const syncSlave = () => {
-    const m = master();
-    const s = m === V.en ? V.hi : V.en;
-    if (s.readyState < 2) return;
-    const want = m.currentTime % (s.duration || 999);
-    if (Math.abs(s.currentTime - want) > 0.14) s.currentTime = want;
-  };
 
   const applyDub = (d: number) => {
     state.dub = d;
-    const r = d <= 0.001 ? 0 : d >= 0.999 ? 160 : 4 + ease(d) * 150;
-    V.hi.style.clipPath = `circle(${r}% at 52% 38.7%)`;
+    V.hi.style.opacity = String(d);
     const isHi = d >= 0.5;
     tag.classList.toggle('is-dub', isHi);
-    const label = state.beat === 7 && d > 0.02 && d < 0.98 ? 'Lip sync · rendering' : isHi ? 'AI dub · हिन्दी' : 'Source · English';
+    const label = state.beat === 7 && state.switching ? 'Lip sync · rendering' : isHi ? 'AI · हिन्दी' : 'Source · English';
     if (tagText.textContent !== label) tagText.textContent = label;
     toggle.setAttribute('aria-pressed', String(isHi));
+  };
+
+  /*
+   * Crossfade to the other take. The incoming video is parked on the matching moment first (`at`, or the
+   * sentence-mapped time of the outgoing one), so the story carries on in the new language.
+   * Only the take on screen keeps decoding; the other one is paused once the fade completes.
+   */
+  let token = 0;
+  const switchTo = (to: Lang, at?: number, dur = 0.8) => {
+    if (to === state.cur) return;
+    const from = state.cur;
+    const my = ++token;
+    state.cur = to;
+    state.switching = true;
+    const inc = V[to];
+    const target = at ?? mapTime(from, to, V[from].currentTime || 0);
+    const onScreen = to === 'hi' ? state.dub : 1 - state.dub; // already partly visible → don't jump it
+    const go = () => {
+      if (my !== token) return;
+      if (state.running) play(inc);
+      gsap.killTweensOf(fade);
+      fade.v = state.dub;
+      const d = reduceMotion ? 0 : dur;
+      if (d) gsap.fromTo(scan, { top: '0%', opacity: 1 }, { top: '100%', opacity: 0, duration: d * 1.25, ease: 'power2.inOut' });
+      gsap.to(fade, {
+        v: to === 'hi' ? 1 : 0, duration: d, ease: 'power2.inOut',
+        onUpdate: () => applyDub(fade.v),
+        onComplete: () => {
+          if (my !== token) return;
+          state.switching = false;
+          applyDub(fade.v);
+          V[from].pause();
+        },
+      });
+    };
+    if (onScreen < 0.25 && Math.abs((inc.currentTime || 0) - target) > 0.08) {
+      let fired = false;
+      const fire = () => { if (!fired) { fired = true; go(); } };
+      inc.addEventListener('seeked', fire, { once: true });
+      setTimeout(fire, 450);
+      inc.currentTime = target;
+    } else go();
   };
 
   const applyZoom = (z: number) => {
@@ -141,7 +176,7 @@ function initHero(hero: HTMLElement) {
       const h = Math.max(1.5, a * ch * 0.9);
       const past = f < 0;
       const alpha = past ? 0.9 : 0.35;
-      // warm white → signal orange as the voice is regenerated
+      // warm white → signal orange as the new voice takes over
       const r = Math.round(mix(236, 255, m)), g = Math.round(mix(232, 91, m)), b = Math.round(mix(225, 34, m));
       ctx.fillStyle = `rgba(${r},${g},${b},${alpha})`;
       ctx.fillRect(i * 4, cy - h / 2, 2, h);
@@ -154,41 +189,43 @@ function initHero(hero: HTMLElement) {
   let lastCheck = 0;
   const tick = () => {
     const vis = visibleLang();
-    const m = master();
-    // watchdog: browsers may suspend media; keep the visible layers rolling while we run
+    const cur = V[state.cur];
+    // watchdog: browsers may suspend media; keep the take on screen rolling while we run
     const now = performance.now();
     if (state.running && now - lastCheck > 800) {
       lastCheck = now;
-      if (V.en.paused) play(V.en);
-      if (V.hi.paused) play(V.hi);
+      play(cur);
     }
-    const t = m.currentTime || 0;
-    syncSlave();
+    const t = cur.currentTime || 0;
     if (state.beat <= 0) {
       state.waveMix = state.dub;
-      const lbl = vis === 'hi' ? 'HI · cloned voice' : 'EN · source voice';
+      const lbl = vis === 'hi' ? 'HI · synthetic voice' : 'EN · source voice';
       if (waveLabel.textContent !== lbl) waveLabel.textContent = lbl;
     }
 
-    // trailer: alternate language every sentence
-    if (state.trailer && !state.manual && !reduceMotion) {
-      if (t + 0.5 < state.lastT) state.cycle++;
-      const tr = TRACK[vis];
-      const k = tr.sentences.findIndex((s) => t >= s.start - 0.45 && t < s.end);
-      if (k >= 0) {
-        const want: Lang = (k + state.cycle) % 2 === 0 ? 'en' : 'hi';
-        if (want !== vis && !gsap.isTweening(wipe)) animateWipe(want === 'hi' ? 1 : 0);
+    // trailer: a relay — each sentence is told in the other language, so the story never stops
+    if (state.trailer && !state.manual && !reduceMotion && !state.switching) {
+      const s = TRACK[state.cur].sentences[state.sent];
+      if (t >= s.end + 0.06 || t < s.start - 1) {
+        state.sent = (state.sent + 1) % EN.sentences.length;
+        const next = TRACK[other(state.cur)].sentences[state.sent];
+        switchTo(other(state.cur), Math.max(0, next.start - 0.3), 0.7);
       }
     }
-    state.lastT = t;
 
-    const tEn = V.en.currentTime || 0;
-    const tHi = V.hi.currentTime || 0;
+    // the hidden take is parked; read its clock through the sentence map
+    const tEn = state.cur === 'en' || !V.en.paused ? V.en.currentTime || 0 : mapTime(state.cur, 'en', t);
+    const tHi = state.cur === 'hi' || !V.hi.paused ? V.hi.currentTime || 0 : mapTime(state.cur, 'hi', t);
     tcEl.textContent = tc(t);
 
-    // captions (visible language)
+    // captions (visible language). In the relay each take only captions the sentence it is telling,
+    // so the tail of a neighbouring line never flashes up during a crossfade.
     const tv = vis === 'hi' ? tHi : tEn;
-    const cap = CAPS[vis].find((c) => tv >= c.start - 0.12 && tv <= c.end + 0.4);
+    const n = EN.sentences.length;
+    const relay = state.trailer && !state.manual && !reduceMotion;
+    const sv = relay ? (vis === state.cur ? state.sent : (state.sent + n - 1) % n) : sentenceAt(TRACK[vis], tv);
+    const S = TRACK[vis].sentences[sv];
+    const cap = CAPS[vis].find((c) => tv >= c.start - 0.12 && tv <= c.end + 0.4 && (!relay || (c.start >= S.start - 0.05 && c.end <= S.end + 0.05)));
     const key = cap ? vis + cap.start : '';
     if (key !== state.capKey) {
       state.capKey = key;
@@ -198,10 +235,9 @@ function initHero(hero: HTMLElement) {
     }
 
     // transcript + translation (index-aligned)
-    const iEn = vis === 'en' ? sentenceAt(EN, tEn) : sentenceAt(HI, tHi);
-    if (iEn >= 0) {
-      renderEnSentence(iEn);
-      renderHiSentence(iEn, state.beat >= 5 || state.beat === 0);
+    if (sv >= 0) {
+      renderEnSentence(sv);
+      renderHiSentence(sv, state.beat >= 5 || state.beat === 0);
     }
     txEn.querySelectorAll<HTMLElement>('.w').forEach((w) => {
       const s = Number(w.dataset.s), e = Number(w.dataset.e);
@@ -210,14 +246,13 @@ function initHero(hero: HTMLElement) {
       w.classList.toggle('is-past', vis === 'hi' || tEn > e + 0.08);
     });
 
-    drawWave(tEn, vis === 'hi' || state.waveMix > 0 ? tHi : tEn);
+    drawWave(tEn, tHi);
   };
 
   const start = () => {
     if (state.running) return;
     state.running = true;
-    play(V.en);
-    play(V.hi);
+    play(V[state.cur]);
     gsap.ticker.add(tick);
   };
   const stop = () => {
@@ -226,15 +261,6 @@ function initHero(hero: HTMLElement) {
     V.en.pause();
     V.hi.pause();
   };
-
-  function animateWipe(to: 0 | 1, dur = 1.1) {
-    wipe.v = state.dub;
-    return gsap.to(wipe, {
-      v: to, duration: dur, ease: 'power2.inOut',
-      onStart: () => { gsap.fromTo(scan, { top: '0%', opacity: 1 }, { top: '100%', opacity: 0, duration: dur, ease: 'power2.inOut' }); },
-      onUpdate: () => applyDub(wipe.v),
-    });
-  }
 
   /* ——— beats (scroll story) ——— */
   const setPipe = (beat: number) => {
@@ -251,7 +277,7 @@ function initHero(hero: HTMLElement) {
     gsap.to(txHi, { opacity: beat === 0 || beat >= 5 ? 1 : 0, duration: 0.6, overwrite: 'auto' });
     gsap.to(langChip, { opacity: beat === 0 || beat >= 4 ? 1 : 0.25, duration: 0.5, overwrite: 'auto' });
     if (beat === 4) gsap.fromTo(langChip.querySelector('.lang__bar i'), { scaleX: 0 }, { scaleX: 1, duration: 1.2, ease: 'expo.out' });
-    waveLabel.textContent = beat >= 6 || (beat === 0 && visibleLang() === 'hi') ? 'HI · cloned voice' : 'EN · source voice';
+    waveLabel.textContent = beat >= 6 || (beat === 0 && visibleLang() === 'hi') ? 'HI · synthetic voice' : 'EN · source voice';
   };
 
   let shownBeat = 0;
@@ -270,15 +296,18 @@ function initHero(hero: HTMLElement) {
       t.classList.toggle('is-done', i + 1 < b);
     });
     gsap.to(cue, { autoAlpha: b === 0 ? 1 : 0, duration: 0.4 });
-    if (b === 1 || b === 7) gsap.fromTo(scan, { top: '0%', opacity: 1 }, { top: '100%', opacity: 0, duration: 1.4, ease: 'power2.inOut' });
+    if (b === 1) gsap.fromTo(scan, { top: '0%', opacity: 1 }, { top: '100%', opacity: 0, duration: 1.4, ease: 'power2.inOut' });
   };
 
   const setBeat = (b: number) => {
     if (b === state.beat) return;
-    const wasTrailer = state.beat === 0;
     state.beat = b;
     state.trailer = b === 0;
-    if (b > 0 && wasTrailer) gsap.killTweensOf(wipe);
+    if (b === 0) {
+      // pick the relay up from wherever the story left the take on screen
+      const t = V[state.cur].currentTime || 0;
+      state.sent = TRACK[state.cur].sentences.reduce((k, s, i) => (t >= s.start - 0.3 ? i : k), 0);
+    }
     setPipe(b);
     showBeat(b);
   };
@@ -291,7 +320,9 @@ function initHero(hero: HTMLElement) {
     state.waveMix = b < 6 ? 0 : b === 6 ? ease(clamp(lp / 0.8)) : 1;
     const z = b === 7 ? clamp(lp / 0.3) : b === 8 ? 1 - clamp(lp / 0.55) : 0;
     applyZoom(z);
-    applyDub(b < 7 ? 0 : b === 7 ? clamp((lp - 0.32) / 0.55) : 1);
+    // English until the lip-sync beat is under way, Hindi after it (with a little hysteresis on the way back)
+    const want: Lang = b < 7 ? 'en' : b > 7 ? 'hi' : lp >= (state.cur === 'hi' ? 0.36 : 0.44) ? 'hi' : 'en';
+    switchTo(want, undefined, b === 7 ? 1.3 : 0.7);
   };
 
   /* ——— layout modes ——— */
@@ -333,15 +364,18 @@ function initHero(hero: HTMLElement) {
 
   // manual toggle (mobile / reduced motion / anyone)
   toggle.addEventListener('click', () => {
-    const to: Lang = visibleLang() === 'hi' ? 'en' : 'hi';
+    const to = other(state.cur);
     state.manual = to;
     state.trailer = false;
-    gsap.killTweensOf(wipe);
-    if (reduceMotion) applyDub(to === 'hi' ? 1 : 0);
-    else animateWipe(to === 'hi' ? 1 : 0, 0.9);
-    if (V[to].paused) { play(V.en); play(V.hi); start(); }
+    start();
+    switchTo(to, undefined, 0.9);
   });
 
+
+  // no `loop` attribute: a take that runs out mid-fade holds its last frame; the one on screen starts over
+  (['en', 'hi'] as Lang[]).forEach((l) => V[l].addEventListener('ended', () => {
+    if (state.running && state.cur === l) { V[l].currentTime = 0; play(V[l]); }
+  }));
 
   addEventListener('resize', () => sizeCanvas());
   desktop.addEventListener('change', () => { setupStory(); ScrollTrigger.refresh(); });

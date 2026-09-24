@@ -51,14 +51,14 @@ export const projects: Project[] = [
     links: [{ label: 'GitHub', href: 'https://github.com/rohitsainier', kind: 'github' }],
     visual: 'dub',
     media: [
-      { video: 'hero/en', poster: 'hero/poster', caption: 'Source — English, 22.9 s', aspect: '9/16' },
+      { video: 'hero/en', poster: 'hero/poster', caption: 'Meera, a virtual anchor — English, 20.6 s', aspect: '2/3' },
       { video: 'work/editra-transcript', caption: 'Speech recognition inside Editra, my Mac captioning studio', aspect: '16/9' },
     ],
     story: {
       idea:
         'Most of the world never hears most videos. Subtitles ask people to read instead of watch, and classic dubbing breaks the spell — the mouth says one thing while the audio says another. I wanted to know how far a single laptop could get on its own: same face, same voice, new language.',
       experiment:
-        'A pipeline that takes a finished video and hands back the same video speaking Hindi. The heavy lifting — recognition, voice and lips — runs on my MacBook.',
+        'A pipeline that takes a finished video and hands it back speaking Hindi. The heavy lifting — recognition, voice and lips — runs on my MacBook.',
       experimentPoints: [
         'Speech recognition transcribes the source with word-level timestamps and detects the language.',
         'Each line is translated to fit the timing window of the original sentence.',
@@ -77,7 +77,7 @@ export const projects: Project[] = [
         { stage: 'Video', detail: 'Loudness-matched · muxed' },
       ],
       interface:
-        'The demo on this site is the real output: the English source on one side, the Hindi render on the other. Flip between them mid-sentence — the face never changes, only the language does.',
+        'The demo on this site plays both takes side by side — English on one side, Hindi on the other, locked sentence by sentence. Flip between them mid-sentence and you land on the same line in the other language.',
       result:
         'A short clip, dubbed end to end on a laptop. The same pipeline powers my experiments in synthetic news anchors and real-time avatars.',
       stats: [

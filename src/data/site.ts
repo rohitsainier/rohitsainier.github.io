@@ -3,7 +3,7 @@ export const site = {
   role: 'AI Engineer / Creator / Builder',
   title: 'Rohit Saini — AI Engineer, Creator, Builder',
   description:
-    'Rohit Saini builds experimental products at the intersection of AI, video, creative tools and engineering — from real-time AI dubbing to GPU terminals and battery simulations.',
+    'Rohit Saini builds experimental products at the intersection of AI, video, creative tools and engineering — from AI video dubbing to GPU terminals and battery simulations.',
   email: 'rohitsainier@gmail.com',
   location: 'New Delhi, India',
   timezone: 'Asia/Kolkata',

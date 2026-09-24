@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
-# Rebuilds every web-optimised video + poster in public/media from Rohit's original footage.
-# Usage: bash scripts/media.sh        (needs ffmpeg with libx264 + libvpx-vp9 + libwebp)
+# Rebuilds every web-optimised video + poster in public/media from the original footage.
+# Usage: bash scripts/media.sh        (needs ffmpeg with libx264 + libwebp, and python3 with numpy, scipy + Pillow)
 set -euo pipefail
 cd "$(dirname "$0")/.."
 OUT=public/media
 PROMO="$HOME/Documents/PromoVideos"
-ANCHOR="$HOME/Documents/Web/rohitsainier.github.io/assets/videos/anchor.mp4"
 
 # clip <src> <start> <end> <out-name> <width> [crop-filter]
 # Muted, looping preview: H.264 MP4 + WebP poster (first frame). Clips are tiny, so MP4 alone is enough.
@@ -18,24 +17,22 @@ clip() {
   echo "  $name  mp4=$(du -h "$OUT/$name.mp4" | cut -f1)"
 }
 
-echo "hero (English source, with audio)"
-ffmpeg -v error -y -ss 0 -to 22.96 -i "$ANCHOR" -vf "fps=25" -c:v libx264 -preset slow -crf 25 -pix_fmt yuv420p \
-  -profile:v high -movflags +faststart -c:a aac -b:a 96k -ac 1 "$OUT/hero/en.mp4"
-ffmpeg -v error -y -ss 0 -to 22.96 -i "$ANCHOR" -vf "fps=25" -c:v libvpx-vp9 -crf 34 -b:v 0 -row-mt 1 -deadline good \
-  -cpu-used 2 -c:a libopus -b:a 64k -ac 1 "$OUT/hero/en.webm"
-ffmpeg -v error -y -ss 0.4 -i "$ANCHOR" -frames:v 1 -c:v libwebp -quality 80 "$OUT/hero/poster.webp"
-echo "  en.mp4=$(du -h $OUT/hero/en.mp4 | cut -f1) en.webm=$(du -h $OUT/hero/en.webm | cut -f1)"
-
-echo "hero (Hindi dub from the dubbing pipeline)"
-DUB="${DUB:-}"
-if [ -n "$DUB" ] && [ -f "$DUB" ]; then
-  ffmpeg -v error -y -i "$DUB" -vf fps=25 -c:v libx264 -preset slow -crf 25 -pix_fmt yuv420p -profile:v high -movflags +faststart -c:a aac -b:a 96k -ac 1 "$OUT/hero/hi.mp4"
-  ffmpeg -v error -y -i "$DUB" -vf fps=25 -c:v libvpx-vp9 -crf 34 -b:v 0 -row-mt 1 -deadline good -cpu-used 2 -c:a libopus -b:a 64k -ac 1 "$OUT/hero/hi.webm"
-  ffmpeg -v error -y -ss 0.4 -i "$DUB" -frames:v 1 -c:v libwebp -quality 80 "$OUT/hero/hi.webp"
-else
-  echo "  (set DUB=/path/to/hi_dub.mp4 to re-encode the Hindi clip)"
-fi
-cp "$OUT/hero/poster.webp" "$OUT/hero/en.webp"
+echo "hero (Meera, the virtual anchor — keyed onto the studio set, then encoded)"
+# Green-screen takes of the same script in both languages. --face = face centre x, y and width in source pixels,
+# so both takes land on the same spot of the 720×1080 frame and can crossfade.
+TAKES="${TAKES:-$HOME/Desktop/port}"
+TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
+python3 scripts/composite_anchor.py "$TAKES/anchor1_en.mp4" "$TMP/en.mp4" --face 540.2 576.6 318.2
+python3 scripts/composite_anchor.py "$TAKES/anchor1_hi.mp4" "$TMP/hi.mp4" --face 617.4 445.8 364.7
+for l in en hi; do
+  crf=25; [ "$l" = hi ] && crf=27   # the Hindi take is busier (jewellery, woven silk)
+  ffmpeg -v error -y -i "$TMP/$l.mp4" -vf hqdn3d=1.5:1.5:4:4 -c:v libx264 -preset slow -crf $crf -tune film -pix_fmt yuv420p \
+    -profile:v high -movflags +faststart -c:a aac -b:a 96k -ac 1 "$OUT/hero/$l.mp4"
+  ffmpeg -v error -y -i "$TMP/$l.mp4" -frames:v 1 -c:v libwebp -quality 82 "$OUT/hero/$l.webp"
+done
+cp "$OUT/hero/en.webp" "$OUT/hero/poster.webp"
+echo "  en.mp4=$(du -h $OUT/hero/en.mp4 | cut -f1) hi.mp4=$(du -h $OUT/hero/hi.mp4 | cut -f1)"
+echo "  (captions: update src/data/hero-{en,hi}.json, then run node scripts/vtt.mjs)"
 
 echo "work clips"
 clip "$PROMO/CreatorCutAd_branded.mp4"        31.0 37.0 work/creatorcut-dual     1280

@@ -3,23 +3,23 @@ import { url } from '../data/site';
 import en from '../data/hero-en.json';
 
 const pipeline = [
-  { name: 'Video', detail: 'Source · 732×1280 · 25 fps' },
+  { name: 'Video', detail: 'Source · 720×1080 · 25 fps' },
   { name: 'Speech recognition', detail: `word-level timing · ${en.words.length} words` },
-  { name: 'Translation', detail: 'en → hi · timing-aware' },
-  { name: 'Voice generation', detail: 'cloned from the source voice' },
-  { name: 'Lip synchronization', detail: 'mouth region · frame by frame' },
+  { name: 'Translation', detail: 'en → hi · sentence by sentence' },
+  { name: 'Voice generation', detail: 'synthetic hindi voice' },
+  { name: 'Lip synchronization', detail: 'face · frame by frame' },
   { name: 'Video', detail: 'loudness-matched · muxed' },
 ];
 
 const beats = [
-  { no: 'Source', title: 'The original video.', body: 'One take, one speaker, English. Everything that follows is generated from these 23 seconds.' },
+  { no: 'Source', title: 'The original video.', body: 'One presenter, one take, in English. Meera is a virtual anchor — she has never set foot in a studio.' },
   { no: 'Audio', title: 'Isolate the voice.', body: 'The soundtrack becomes a waveform the models can reason about.' },
   { no: 'Transcript', title: 'Every word, timestamped.', body: `Speech recognition catches every word — ${en.words.length} of them, each pinned to the millisecond.` },
   { no: 'Language', title: 'Detect the language.', body: `English, with ${(en.probability * 100).toFixed(1)}% confidence. Now pick a new one.` },
-  { no: 'Translation', title: 'Rewrite it in Hindi.', body: 'Each sentence is translated to fit the time the original took to say it.' },
-  { no: 'Voice', title: 'Speak it in the same voice.', body: 'A voice model clones the speaker from a few seconds of audio and reads the translation.' },
-  { no: 'Lip sync', title: 'Move the lips to match.', body: 'Only the lower half of the face is regenerated, frame by frame, to match the new audio.' },
-  { no: 'Output', title: 'Same face. New language.', body: 'Nothing re-shot. Nothing re-recorded. The person never said these words — their face does.' },
+  { no: 'Translation', title: 'Rewrite it in Hindi.', body: 'Sentence by sentence, for meaning rather than word for word. The story keeps its shape.' },
+  { no: 'Voice', title: 'Give her a Hindi voice.', body: 'A synthetic voice reads the translation — no booth, no voice actor, no second session.' },
+  { no: 'Lip sync', title: 'Move the lips to match.', body: 'Her face is animated to the new audio, frame by frame, so every syllable lands on the lips.' },
+  { no: 'Output', title: 'Same face. New language.', body: 'No camera, no crew, no studio. Change the script and Meera presents it in another language.' },
   { no: 'Pipeline', title: 'Five models. One timeline.', body: 'Video → speech → translation → voice → lips → video. Time stays aligned from the first word to the last frame.' },
 ];
 ---
@@ -65,12 +65,10 @@ const beats = [
             data-v="en"
             muted
             playsinline
-            loop
             preload="auto"
             poster={url('media/hero/poster.webp')}
-            aria-label="The original clip: an AI presenter with Rohit's face speaks English"
+            aria-label="Meera, a virtual news anchor, presenting in English"
           >
-            <source src={url('media/hero/en.webm')} type="video/webm" />
             <source src={url('media/hero/en.mp4')} type="video/mp4" />
             <track kind="captions" srclang="en" label="English" src={url('media/hero/en.vtt')} />
           </video>
@@ -79,18 +77,16 @@ const beats = [
             data-v="hi"
             muted
             playsinline
-            loop
             preload="auto"
-            poster={url('media/hero/poster.webp')}
-            aria-label="The same clip dubbed into Hindi, with the lips regenerated to match"
+            poster={url('media/hero/hi.webp')}
+            aria-label="Meera presenting the same script in Hindi"
           >
-            <source src={url('media/hero/hi.webm')} type="video/webm" />
             <source src={url('media/hero/hi.mp4')} type="video/mp4" />
             <track kind="captions" srclang="hi" label="हिन्दी" src={url('media/hero/hi.vtt')} />
           </video>
           <div class="hv__roi" data-roi aria-hidden="true">
-            <span class="hv__roi-label">face · mouth region</span>
-            <span class="hv__roi-mask"><em>regenerated</em></span>
+            <span class="hv__roi-label">face · lip region</span>
+            <span class="hv__roi-mask"><em>lip sync</em></span>
           </div>
         </div>
         <div class="hv__hud" aria-hidden="true">
@@ -107,8 +103,8 @@ const beats = [
         </button>
       </div>
       <figcaption class="sr-only">
-        A 23-second clip of Rohit’s AI presenter speaking English, and the same clip dubbed into Hindi with a cloned
-        voice and regenerated lip movement.
+        Meera, a virtual news anchor, presents a 21-second script in English; the same script follows in Hindi, with a
+        Hindi voice and matching lip movement. The two takes alternate sentence by sentence.
       </figcaption>
     </figure>
 
@@ -207,7 +203,7 @@ const beats = [
   .hero__video {
     grid-column: 2; grid-row: 1; align-self: center;
     height: min(76svh, 820px);
-    aspect-ratio: 732 / 1280;
+    aspect-ratio: 2 / 3;
     position: relative;
   }
   .hv__frame {
@@ -217,12 +213,11 @@ const beats = [
     box-shadow: 0 0 0 1px var(--line), 0 40px 120px -40px rgb(0 0 0 / 0.9);
     isolation: isolate;
   }
-  .hv__zoom { position: absolute; inset: 0; transform-origin: 52% 38.7%; }
+  .hv__zoom { position: absolute; inset: 0; transform-origin: 49.7% 37.5%; }
   .hv__v { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-  .hv__v--src { filter: saturate(0.82) contrast(1.02); }
-  .hv__v--dub { clip-path: circle(0% at 52% 38.7%); }
+  .hv__v--dub { opacity: 0; }
   .hv__roi {
-    position: absolute; left: 40.5%; top: 28.6%; width: 23%; height: 16%;
+    position: absolute; left: 35.1%; top: 25.5%; width: 29.3%; height: 19.6%;
     border: 1px solid var(--accent);
     opacity: 0; pointer-events: none;
   }
@@ -390,7 +385,7 @@ const beats = [
     .hero__title { font-size: clamp(2.9rem, 15.5cqi, 4.8rem); }
     .hero__lede { font-size: 1rem; }
     .hero__video { order: 3; width: 100%; height: auto; margin-top: 30px; align-self: stretch; }
-    .hv__frame { position: relative; aspect-ratio: 732 / 1280; max-height: 82svh; margin-inline: auto; }
+    .hv__frame { position: relative; aspect-ratio: 2 / 3; max-height: 82svh; margin-inline: auto; }
     .hv__toggle { display: inline-flex; }
     .hv__caption { font-size: 0.9rem; }
     .hero__console { order: 4; display: grid; margin-top: 16px; align-self: stretch; }

@@ -39,7 +39,7 @@ def frame(path, box, text, border):
     d.text((x, y + h + 14), text, font=label, fill=border if border == ACC else DIM)
 
 frame('public/media/hero/poster.webp', (760, 70, 190, 332), 'SOURCE · EN', (70, 68, 64))
-frame('public/media/hero/hi.webp', (975, 70, 190, 332), 'AI DUB · HI', ACC)
+frame('public/media/hero/hi.webp', (975, 70, 190, 332), 'AI · HINDI', ACC)
 d.text((962, 236), '→', font=font(['/System/Library/Fonts/Menlo.ttc'], 20), fill=ACC, anchor='mm')
 
 d.text((60, 70), 'ROHIT SAINI — AI ENGINEER / CREATOR / BUILDER', font=mono, fill=FG)
